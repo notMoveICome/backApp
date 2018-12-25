@@ -1,0 +1,195 @@
+@charset "utf-8";
+/* basic style */
+html, body, h1, h2, h3, h4, ul, li, dl, input {
+    font-family: "Noto Sans CJK SC", "Source Han Sans CN" !important;
+    margin: 0px;
+    padding: 0px;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    background-color: #fff;
+}
+
+p {
+    margin-bottom: 0;
+}
+
+ul, dl, dd, h1, h2, h3, h4, h5, h6, form {
+    padding: 0px;
+    margin: 0px;
+}
+
+ul, li {
+    list-style: none;
+    border: none;
+}
+
+img {
+    border: 0px;
+    vertical-align: middle;
+}
+
+a {
+    color: #333333;
+    text-decoration: none;
+}
+
+.clear {
+    clear: both;
+}
+
+a:focus {
+    text-decoration: none;
+    outline: none;
+}
+
+/*浮动*/
+.fl {
+    float: left !important;
+}
+
+.fr {
+    float: right !important;
+}
+
+.t-center {
+    text-align: center;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.clearfix {
+    zoom: 1;
+    clear: both;
+}
+
+input[type=file]:focus, input[type=checkbox]:focus, input[type=radio]:focus {
+    outline: none;
+}
+
+input[type=checkbox]:focus, input[type=checkbox]:active {
+    background-color: #ffffff;
+}
+
+/*定义滚动条宽高及背景，宽高分别对应横竖滚动条的尺寸*/
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+    border-radius: 10px;
+    background-color: #0a3163;
+}
+
+/*定义滚动条的轨道，内阴影及圆角*/
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+    border-radius: 10px;
+    background-color: #0a3163;
+}
+
+/*定义滑块，内阴影及圆角*/
+::-webkit-scrollbar-thumb {
+    width: 5px;
+    height: 5px;
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+    background-color: #1569d4;
+}
+
+.base {
+    font-size: 100%;
+    height: 100%;
+    overflow-y: hidden;
+}
+
+.header {
+    width: 100%;
+    height: 4em;
+    background-color: #dba37c;
+}
+
+.header-logo {
+    float: left;
+    height: 4em;
+    line-height: 4em;
+    margin: 0 1em;
+    color: #fff;
+}
+.header-logo span{
+    font-size: 1.5em;
+}
+.header-item{
+    float: right;
+    display: block;
+    line-height: 4em;
+    margin: 0 1em;
+    color: #fff !important;
+}
+
+.user{
+    height: 4em;
+    line-height: 4em;
+}
+
+.user img{
+    float: left;
+    width: 2em;
+    height: 2em;
+    margin: 1em;
+}
+
+.main{
+    position: relative;
+    height: calc(100% - 8em);
+    background-color: #e9edf3;
+}
+.main-left{
+    position: absolute;
+    width: 15em;
+    top: 1px;
+    height: calc(100% - 1px);
+    z-index: 999;
+    background-color: #fff;
+    overflow-y: auto;
+}
+
+.main-right{
+    float: right;
+    width: calc(100% - 17em);
+    height: calc(100% - 2em);
+    margin: 1em;
+    padding: 1em;
+    background-color: #fff;
+    overflow-y: auto;
+}
+.main-right-search{
+    padding: 1em 2em;
+}
+.main-right-search input{
+    width: 10em;
+    padding: 0.5em 1em;
+    font-size: 100%;
+}
+.main-right table{
+    font-size: 100%;
+    margin: 0;
+}
+.main-right table th,.main-right table td{
+    padding: 0 0.5em !important;
+    height: 3em !important;
+    line-height: 3em !important;
+    text-align: center;
+}
+.main-right table td a{
+    height: 2em;
+    padding: 0em 1em;
+    margin: 0 0.5em;
+    line-height: 2em;
+    font-size: 1em;
+}

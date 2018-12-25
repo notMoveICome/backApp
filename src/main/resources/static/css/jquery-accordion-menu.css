@@ -1,0 +1,192 @@
+.jquery-accordion-menu,.jquery-accordion-menu * {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    outline: 0
+}
+.jquery-accordion-menu {
+    width: 100%;
+    float: left;
+    position: relative;
+}
+.jquery-accordion-menu ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.jquery-accordion-menu ul li {
+    position: relative;
+    float: left;
+    display: block;
+    width: 100%;
+}
+.jquery-accordion-menu ul li a {
+    float: left;
+    width: 100%;
+    height: 3em;
+    line-height: 3em;
+    padding-left: 2em;
+    font-size: 100%;
+    color: #616160;
+    background-color: #fff;
+    white-space: nowrap;
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    -o-transition: color .2s linear,background .2s linear;
+    -moz-transition: color .2s linear,background .2s linear;
+    -webkit-transition: color .2s linear,background .2s linear;
+    transition: color .2s linear,background .2s linear;
+}
+.jquery-accordion-menu ul li.active a{
+    background-color: #faf9fa;
+}
+.jquery-accordion-menu ul li a:hover{
+    color: #616160;
+    text-shadow: 0px 0px 0.25em #fff;
+}
+.jquery-accordion-menu ul li.active ul{
+    background-color: #fff;
+}
+.jquery-accordion-menu ul li a b{
+    font-weight: normal;
+    font-size: 1.2em;
+}
+.jquery-accordion-menu .submenu-indicator {
+    position: absolute;
+    top: 1.1em;
+    right: 1em;
+    display: block;
+    width: 0.8em;
+    height: 0.8em;
+    background: url(../img/list-open.png) center no-repeat;
+    -o-transition: transform .3s linear;
+    -moz-transition: transform .3s linear;
+    -webkit-transition: transform .3s linear;
+    -ms-transition: transform .3s linear;
+    background-size: 0.8em 0.8em !important;
+}
+.jquery-accordion-menu .submenu-indicator-minus>.submenu-indicator {
+    background: url(../img/list-close.png) center no-repeat;
+}
+.jquery-accordion-menu ul li ul.submenu,.jquery-accordion-menu ul li ul.submenu li ul.submenu {
+    display: none;
+    width: 100%;
+}
+.jquery-accordion-menu ul li ul.submenu li {
+    clear: both;
+}
+.jquery-accordion-menu>ul>li>ul>li>a{
+    float: left;
+    position: relative;
+    width: 100%;
+    font-size: 100%;
+    padding-left: 3em;
+    background-color: #fff;
+    -o-transition: border .2s linear;
+    -moz-transition: border .2s linear;
+    -webkit-transition: border .2s linear;
+    transition: border .2s linear;
+    height: 2.4em;
+    line-height: 2.4em;
+    border-left: 0.25em solid transparent;
+}
+.jquery-accordion-menu>ul>li>ul>li>a .submenu-indicator {
+    position: absolute;
+    top: 0.8em;
+    right: 1em;
+    display: block;
+    width: 0.8em;
+    height: 0.8em;
+    background: url(../img/list-open.png) center no-repeat;
+    -o-transition: transform .3s linear;
+    -moz-transition: transform .3s linear;
+    -webkit-transition: transform .3s linear;
+    -ms-transition: transform .3s linear;
+    background-size: 0.8em 0.8em !important;
+}
+.jquery-accordion-menu>ul>li>ul>li>a .submenu-indicator-minus>.submenu-indicator {
+    background: url(../img/list-close.png) center no-repeat;
+}
+.jquery-accordion-menu>ul>li.active>ul>li>a{
+    background-color: #fff;
+}
+.jquery-accordion-menu>ul>li>ul>li.active>a{
+    color: #616160;
+    background-color: #faf9fa;
+    border-left: 0.25em solid #dba37c;
+}
+.jquery-accordion-menu>ul>li>ul>li>a>b{
+    font-size: 1em;
+}
+.jquery-accordion-menu>ul>li>ul>li>ul>li>a{
+    padding-left: 4.5em;
+    background-color: #04102a;
+    font-size: 0.8em;
+    height: 2.5em;
+    line-height: 2.5em;
+}
+.jquery-accordion-menu>ul>li>ul>li>ul>li>a span{
+    float: left;
+    display: block;
+    width: 2em;
+    height: 2.4em;
+    margin-right: 0.5em;
+    background: url("../img/left-line.png") no-repeat;
+    background-size: 2em 2.7em !important;
+}
+.jquery-accordion-menu>ul>li>ul>li>ul>li:last-child>a span{
+    background: url("../img/left-line2.png") no-repeat;
+    background-size: 2em 1.4em !important;
+}
+.jquery-accordion-menu>ul>li>ul>li>ul>li:hover>a{
+    text-shadow: 0px 0px 0.25em #fff;
+}
+.jquery-accordion-menu>ul>li>ul>li>ul>li.active>a{
+    color: #fff;
+    text-shadow: 0px 0px 0.25em #fff;
+    background: url("../img/active.png") no-repeat;
+    background-size: 100% 100%;
+}
+.ink {
+    display: block;
+    position: absolute;
+    background: rgba(255,255,255,.3);
+    border-radius: 100%;
+    -webkit-transform: scale(0);
+    -moz-transform: scale(0);
+    -ms-transform: scale(0);
+    -o-transform: scale(0);
+    transform: scale(0)
+}
+.animate-ink {
+    -webkit-animation: ripple .5s linear;
+    -moz-animation: ripple .5s linear;
+    -ms-animation: ripple .5s linear;
+    -o-animation: ripple .5s linear;
+    animation: ripple .5s linear
+}
+@-webkit-keyframes ripple {
+    100% {
+        opacity: 0;
+        -webkit-transform: scale(2.5)
+    }
+}
+@-moz-keyframes ripple {
+    100% {
+        opacity: 0;
+        -moz-transform: scale(2.5)
+    }
+}
+@-o-keyframes ripple {
+    100% {
+        opacity: 0;
+        -o-transform: scale(2.5)
+    }
+}
+@keyframes ripple {
+    100% {
+        opacity: 0;
+        transform: scale(2.5)
+    }
+}
