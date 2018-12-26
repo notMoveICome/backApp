@@ -1,0 +1,205 @@
+@charset "utf-8";
+/* basic style */
+html, body, h1, h2, h3, h4, ul, li, dl, input {
+    font-family: "Noto Sans CJK SC", "Source Han Sans CN" !important;
+    margin: 0px;
+    padding: 0px;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    background-color: #fff;
+}
+
+p {
+    margin-bottom: 0;
+}
+
+ul, dl, dd, h1, h2, h3, h4, h5, h6, form {
+    padding: 0px;
+    margin: 0px;
+}
+
+ul, li {
+    list-style: none;
+    border: none;
+}
+
+img {
+    border: 0px;
+    vertical-align: middle;
+}
+
+a {
+    color: #333333;
+    text-decoration: none;
+}
+
+.clear {
+    clear: both;
+}
+
+a:focus {
+    text-decoration: none;
+    outline: none;
+}
+
+/*浮动*/
+.fl {
+    float: left !important;
+}
+
+.fr {
+    float: right !important;
+}
+
+.t-center {
+    text-align: center;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.clearfix {
+    zoom: 1;
+    clear: both;
+}
+
+input[type=file]:focus, input[type=checkbox]:focus, input[type=radio]:focus {
+    outline: none;
+}
+
+input[type=checkbox]:focus, input[type=checkbox]:active {
+    background-color: #ffffff;
+}
+
+/*定义滚动条宽高及背景，宽高分别对应横竖滚动条的尺寸*/
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+    border-radius: 10px;
+    background-color: #0a3163;
+}
+
+/*定义滚动条的轨道，内阴影及圆角*/
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+    border-radius: 10px;
+    background-color: #0a3163;
+}
+
+/*定义滑块，内阴影及圆角*/
+::-webkit-scrollbar-thumb {
+    width: 5px;
+    height: 5px;
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+    background-color: #1569d4;
+}
+
+.base-bg {
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    z-index: -10; 
+    background: url("../img/bg.png") no-repeat;
+    background-position: center center; 
+    background-repeat: no-repeat; 
+    background-attachment: fixed; 
+    background-size: 100% auto; 
+    background-color: #fff; 
+    zoom: 1;
+    clear: both;
+}
+
+.base {
+    position: relative;
+    font-size: 100%;
+    height: 100%;
+}
+
+.base-main{
+    position: absolute;
+    left: 50%;
+    width: 20em;
+    margin-left: -10em;
+    top: 50%;
+    height: 25em;
+    margin-top: -13em;
+    text-align: center;
+}
+
+.base-logo{
+    width: 20em;
+    height: 8em;
+    background: url("../img/logo.png") no-repeat;
+    background-size: 20em 8em;
+}
+
+.base-form{
+    padding: 2em;
+}
+
+.base-con{
+    position: relative;
+    margin-bottom: 1.5em;
+}
+
+.icon-user{
+    position: absolute;
+    left: 1em;
+    top: 0.75em;
+    width: 1em;
+    height: 1em;
+    background: url("../img/icon-user.png") center no-repeat;
+    background-size: auto 1em;
+}
+
+.icon-pwd{
+    position: absolute;
+    left: 1em;
+    top: 0.75em;
+    width: 1em;
+    height: 1em;
+    background: url("../img/icon-pwd.png") center no-repeat;
+    background-size: auto 1em;
+}
+
+.base-con input{
+    height: 2.5em;
+    line-height: 2.5em;
+    font-size: 100%;
+    padding: 0 0.5em 0 2.5em;
+}
+
+.btn-login{
+    display: block;
+    width: 100%; 
+    height: 2.5em;
+    line-height: 2.5em;
+    color: #fff !important;
+    background-color: #daa27d;
+    text-align: center;
+    border-radius: 0.25em;
+}
+
+.btn-login:hover{
+    opacity: 0.9;
+    text-decoration: none;
+}
+
+.base-tool{
+    height: 2em;
+    line-height: 2em;
+}
+
+.base-tool a{
+    color: #fff !important;
+}
