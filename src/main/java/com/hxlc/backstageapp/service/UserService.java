@@ -5,5 +5,6 @@ import com.hxlc.backstageapp.pojo.User;
 import java.util.List;
 
 public interface UserService {
-    List<User> getUserInfo();
+
+    Object getUserByRole(String role);
 }

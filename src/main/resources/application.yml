@@ -26,7 +26,7 @@ spring:
 mybatis:
   mapUnderscoreToCamelCase: true
   typeAliasesPackage: com.hxlc.backstageapp.pojo
-  mapperLocations: classpath:static/mappers/*.xml
+  mapperLocations: classpath:com/hxlc/backstageapp/mapper/**/*.xml
 
 mybatis-plus:
   configuration:

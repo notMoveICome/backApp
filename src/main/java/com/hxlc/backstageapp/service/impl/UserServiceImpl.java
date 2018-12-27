@@ -1,7 +1,9 @@
 package com.hxlc.backstageapp.service.impl;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.hxlc.backstageapp.mapper.CustomerMapper;
 import com.hxlc.backstageapp.mapper.UserMapper;
+import com.hxlc.backstageapp.pojo.Customer;
 import com.hxlc.backstageapp.pojo.User;
 import com.hxlc.backstageapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +16,22 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private CustomerMapper customerMapper;
 
     @Override
-    public List<User> getUserInfo() {
-        return userMapper.selectList(new EntityWrapper<User>());
+    public Object getUserByRole(String role) {
+         if ("客户".equals(role)){
+             List<Customer> customerList = customerMapper.findAllCustomerInfo();
+             return customerList;
+         }else {
+             Integer roleId;
+             if ("管理员".equals(role)){
+                 roleId = 3;
+             }else {
+                 roleId = 2;
+             }
+             return userMapper.selectList(new EntityWrapper<User>().eq("role_id",roleId));
+         }
     }
 }

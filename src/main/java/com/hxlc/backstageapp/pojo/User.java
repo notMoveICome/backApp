@@ -6,34 +6,27 @@ import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.sql.Date;
 
 @TableName("user_info")
 public class User implements Serializable {
     @TableId(value="gid",type= IdType.AUTO)
-    private Integer GID;
-    @TableField("name")
+    private Integer gid;
     private String name;
-    @TableField("password")
     private String password;
-    @TableField("tel")
     private String tel;
-    @TableField("role_id")
     private Integer roleId;
-    @TableField("state")
     private String state;
-    @TableField("create_time")
     private Date createTime;
-    @TableField("remark")
     private String remark;
 
 
     public Integer getGID() {
-        return GID;
+        return gid;
     }
 
     public void setGID(Integer GID) {
-        this.GID = GID;
+        this.gid = GID;
     }
 
     public String getName() {

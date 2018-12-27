@@ -8,9 +8,10 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1"/>
     <meta name="viewport" content="width=device-width"/>
     <!-- Bootstrap 3.3.6 -->
-	<link rel="stylesheet" type="text/css" th:href="@{/bootstrap/css/bootstrap.min.css}"/>
-	<link rel="stylesheet" type="text/css" th:href="@{/css/jquery-accordion-menu.css}"/>
-	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap/bootstrap-table/bootstrap-table.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/jquery-accordion-menu.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/main.css}"/>
 </head>
 <body>
 <div class="base">
@@ -18,24 +19,24 @@
     <!--header-->
     <div class="header clearfix">
         <div class="header-logo">
-        	<span>爱家APP后台管理系统</span>
+            <span>爱家APP后台管理系统</span>
         </div>
         <a class="header-item" href="javascript:void(0);">
-			<span class="glyphicon glyphicon-align-justify"></span>
+            <span class="glyphicon glyphicon-align-justify"></span>
         </a>
     </div>
 
     <!--user-->
     <div class="user clearfix">
-		<img th:src="@{/img/user.png}">
-		<span>您好，超级管理员</span>
-		<span>&gt;</span>
-		<span>首页</span>
+        <img th:src="@{/img/user.png}">
+        <span>您好，超级管理员</span>
+        <span>&gt;</span>
+        <span>首页</span>
     </div>
 
     <!--main-->
     <div class="main clearfix">
-		
+
         <!--左侧列表-->
         <div class="main-left">
             <div id="jquery-accordion-menu" class="jquery-accordion-menu">
@@ -45,7 +46,7 @@
                     </li>
                     <li class="mainmenu">
                         <a href="javascript:void(0);"><b>项目发布</b></a>
-                        <ul  class="submenu">
+                        <ul class="submenu">
                             <li><a href="javascript:void(0);">1</a></li>
                             <li><a href="javascript:void(0);">2</a></li>
                             <li><a href="javascript:void(0);">3</a></li>
@@ -54,14 +55,13 @@
                     <li class="active mainmenu">
                         <a href="javascript:void(0);" class="submenu-indicator-minus"><b>项目管理</b></a>
                         <ul class="submenu" style="display: block;;">
-                            <li class="active"><a href="javascript:void(0);">1</a></li>
-                            <li><a href="javascript:void(0);">2</a></li>
-                            <li><a href="javascript:void(0);">3</a></li>
+                            <li class="active" id="projectList"><a href="javascript:void(0);">项目列表</a></li>
+                            <li id="projectAdd"><a href="javascript:void(0);">项目新增</a></li>
                         </ul>
                     </li>
                     <li class="mainmenu">
                         <a href="javascript:void(0);"><b>报备查询</b></a>
-                        <ul  class="submenu">
+                        <ul class="submenu">
                             <li><a href="javascript:void(0);">1</a></li>
                             <li><a href="javascript:void(0);">2</a></li>
                             <li><a href="javascript:void(0);">3</a></li>
@@ -69,10 +69,18 @@
                     </li>
                     <li class="mainmenu">
                         <a href="javascript:void(0);"><b>综合管理</b></a>
-                        <ul  class="submenu">
+                        <ul class="submenu">
                             <li><a href="javascript:void(0);">1</a></li>
                             <li><a href="javascript:void(0);">2</a></li>
                             <li><a href="javascript:void(0);">3</a></li>
+                        </ul>
+                    </li>
+                    <li class="mainmenu">
+                        <a href="javascript:void(0);"><b>人员管理</b></a>
+                        <ul class="submenu" id="userManage">
+                            <li><a href="javascript:void(0);">管理员</a></li>
+                            <li><a href="javascript:void(0);">分销商</a></li>
+                            <li><a href="javascript:void(0);">客户</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -81,79 +89,95 @@
 
         <!--右侧表格-->
         <div class="main-right">
-        	<div class="main-right-search">
-				<input type="text" class="form-control" placeholder="请输入项目名称" />
-        	</div>
-        	<table class="table table-hover">
-				<thead>
-				<tr>
-					<th>项目名称</th>
-					<th>开放商</th>
-					<th>开包时间</th>
-					<th>项目名称</th>
-					<th>允许设备次数</th>
-					<th>佣金额度</th>
-					<th>操作</th>
-				</tr>
-				</thead>
-				<tbody>
-				<tr>
-					<td>1</td>
-					<td>2</td>
-					<td>3</td>
-					<td>4</td>
-					<td>5</td>
-					<td>6</td>
-					<td><a href="javascript:void(0);" class="btn btn-primary">修改</a><a href="javascript:void(0);" class="btn btn-danger">删除</a></td>
-				</tr>
-				<tr>
-					<td>1</td>
-					<td>2</td>
-					<td>3</td>
-					<td>4</td>
-					<td>5</td>
-					<td>6</td>
-					<td><a href="javascript:void(0);" class="btn btn-primary">修改</a><a href="javascript:void(0);" class="btn btn-danger">删除</a></td>
-				</tr>
-				<tr>
-					<td>1</td>
-					<td>2</td>
-					<td>3</td>
-					<td>4</td>
-					<td>5</td>
-					<td>6</td>
-					<td><a href="javascript:void(0);" class="btn btn-primary">修改</a><a href="javascript:void(0);" class="btn btn-danger">删除</a></td>
-				</tr>
-				<tr>
-					<td>1</td>
-					<td>2</td>
-					<td>3</td>
-					<td>4</td>
-					<td>5</td>
-					<td>6</td>
-					<td><a href="javascript:void(0);" class="btn btn-primary">修改</a><a href="javascript:void(0);" class="btn btn-danger">删除</a></td>
-				</tr>
-				<tr>
-					<td>1</td>
-					<td>2</td>
-					<td>3</td>
-					<td>4</td>
-					<td>5</td>
-					<td>6</td>
-					<td><a href="javascript:void(0);" class="btn btn-primary">修改</a><a href="javascript:void(0);" class="btn btn-danger">删除</a></td>
-				</tr>
-				<tr>
-					<td>1</td>
-					<td>2</td>
-					<td>3</td>
-					<td>4</td>
-					<td>5</td>
-					<td>6</td>
-					<td><a href="javascript:void(0);" class="btn btn-primary">修改</a><a href="javascript:void(0);" class="btn btn-danger">删除</a></td>
-				</tr>
-				</tbody>
-        	</table>
+            <div class="main-right-search">
+                <input type="text" class="form-control" placeholder="请输入项目名称"/>
+            </div>
+            <div class="table-responsive">
+                <table id="rightTable" class="table text-nowrap">
+                    <thead>
+                    <tr>
+                        <th>项目名称</th>
+                        <th>开放商</th>
+                        <th>开包时间</th>
+                        <th>项目名称</th>
+                        <th>允许设备次数</th>
+                        <th>佣金额度</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td>4</td>
+                        <td>5</td>
+                        <td>6</td>
+                        <td><a href="javascript:void(0);" class="btn btn-primary">修改</a><a href="javascript:void(0);"
+                                                                                           class="btn btn-danger">删除</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td>4</td>
+                        <td>5</td>
+                        <td>6</td>
+                        <td><a href="javascript:void(0);" class="btn btn-primary">修改</a><a href="javascript:void(0);"
+                                                                                           class="btn btn-danger">删除</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td>4</td>
+                        <td>5</td>
+                        <td>6</td>
+                        <td><a href="javascript:void(0);" class="btn btn-primary">修改</a><a href="javascript:void(0);"
+                                                                                           class="btn btn-danger">删除</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td>4</td>
+                        <td>5</td>
+                        <td>6</td>
+                        <td><a href="javascript:void(0);" class="btn btn-primary">修改</a><a href="javascript:void(0);"
+                                                                                           class="btn btn-danger">删除</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td>4</td>
+                        <td>5</td>
+                        <td>6</td>
+                        <td><a href="javascript:void(0);" class="btn btn-primary">修改</a><a href="javascript:void(0);"
+                                                                                           class="btn btn-danger">删除</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td>4</td>
+                        <td>5</td>
+                        <td>6</td>
+                        <td><a href="javascript:void(0);" class="btn btn-primary">修改</a><a href="javascript:void(0);"
+                                                                                           class="btn btn-danger">删除</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
+
+        <img id="pic"/>
     </div>
 
     <!--footer-->
@@ -162,6 +186,8 @@
     </div> -->
 </div>
 <script type="text/javascript" th:src="@{/js/jquery-1.12.0.min.js}"></script>
+<script type="text/javascript" th:src="@{/bootstrap/bootstrap-table/bootstrap-table.min.js}"></script>
+<script type="text/javascript" th:src="@{/bootstrap/bootstrap-table/local/bootstrap-table-zh-CN.min.js}"></script>
 <script type="text/javascript" th:src="@{/js/jquery-accordion-menu.js}"></script>
 <script type="text/javascript" th:src="@{/js/index.js}"></script>
 </body>
