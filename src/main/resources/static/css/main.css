@@ -162,10 +162,10 @@ input[type=checkbox]:focus, input[type=checkbox]:active {
 .main-right{
     float: right;
     width: calc(100% - 17em);
-    height: calc(100% - 2em);
+    height: calc(100% - 1em);
     margin: 1em;
     padding: 1em;
-    background-color: #fff;
+    /*background-color: #fff;*/
     overflow-y: auto;
 }
 .main-right-search{
@@ -204,3 +204,68 @@ input[type=checkbox]:focus, input[type=checkbox]:active {
     line-height: 2em;
     font-size: 1em;
 }
+/*首页*/
+.main-right .recommendDiv{
+    float: left;
+    text-align: center;
+    margin-right: 2em;
+    background-color: #fff;
+}
+.main-right .recommendDiv span{
+    display: block;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+.main-right .recommendDiv img{
+    width: 27em;
+    height: 12em;
+}
+.main-right #recommendProManage{
+    width: 85em;
+    margin-top: 16em;
+    background-color: #fff;
+    padding-top: 1em;
+}
+/*项目发布*/
+.main-right .publishFileDiv{
+    float: left;
+    text-align: center;
+    margin-right: 2em;
+    background-color: #fff;
+}
+.main-right .publishFileDiv span{
+    display: block;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+.main-right .publishFileDiv img{
+    width: 27em;
+    height: 12em;
+}
+.main-right #projectPublishDiv{
+    width: 85em;
+    height: 50em;
+    margin-top: 16em;
+    background-color: #fff;
+    padding-top: 1em;
+    text-align: center;
+}
+#projectPublishDiv table th, .main-right table td{
+    text-align: left;
+}
+#projectPublishDiv table th, .main-right table td b{
+    font-weight: normal;
+    font-size: 1.2em;
+}
+#projectPublishDiv input{
+    background-color: #e9edf3;
+    height: 2em;
+    border: none;
+}
+#searchUser span{
+    float: left;
+    width: 10em;
+    margin-right: 2em;
+}
+
+

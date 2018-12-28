@@ -7,4 +7,6 @@ import java.util.List;
 public interface UserService {
 
     Object getUserByRole(String role);
+
+    Object getCustomerInfoBySale(String customerName, Integer saleId);
 }

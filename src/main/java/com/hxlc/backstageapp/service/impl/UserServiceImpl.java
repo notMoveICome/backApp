@@ -28,10 +28,17 @@ public class UserServiceImpl implements UserService {
              Integer roleId;
              if ("管理员".equals(role)){
                  roleId = 3;
-             }else {
+             }else if ("分销商".equals(role)){
                  roleId = 2;
+             }else {
+                 roleId = 1;
              }
              return userMapper.selectList(new EntityWrapper<User>().eq("role_id",roleId));
          }
+    }
+
+    @Override
+    public Object getCustomerInfoBySale(String customerName, Integer saleId) {
+        return customerMapper.findCustomerInfoBySale(customerName,saleId);
     }
 }

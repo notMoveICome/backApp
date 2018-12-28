@@ -25,4 +25,27 @@
 		WHERE
 			d.distrition_id = uu.gid
     </select>
+	<select id="findCustomerInfoBySale" resultType="com.hxlc.backstageapp.pojo.Customer">
+        SELECT
+			d.*, uu. NAME distrition_name
+		FROM
+			(
+				SELECT
+					A .*, u. NAME sale_name,
+					C . NAME project_name,
+					b.distrition_id
+				FROM
+					(SELECT * FROM customer_info WHERE NAME = #{customerName} AND sale_id = #{saleId}) A,
+					sale_relate b,
+					project_info C,
+					user_info u
+				WHERE
+					A .sale_id = u.gid
+				AND A .project_id = C .gid
+				AND A .sale_id = b.sale_id
+			) d,
+			user_info uu
+		WHERE
+			d.distrition_id = uu.gid
+    </select>
 </mapper>

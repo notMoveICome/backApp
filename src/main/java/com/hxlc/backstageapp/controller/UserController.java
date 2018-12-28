@@ -17,4 +17,9 @@ public class UserController {
     public SysObject getUserByRole(String role){
         return new SysObject(userService.getUserByRole(role));
     }
+
+    @RequestMapping("/getCustomerInfoBySale")
+    public  SysObject getCustomerInfoBySale(String customerName,Integer saleId){
+        return new SysObject(userService.getCustomerInfoBySale(customerName,saleId));
+    }
 }
