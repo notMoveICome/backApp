@@ -27,7 +27,7 @@ $(function () {
                  var path = window.location.href.replace("login","index");
                    window.location.href =path;
                }else{
-                   layer.msg("用户名或密码错误",{icon:2});
+                   layer.msg(res.msg,{icon:2});
                }
             })
         })
