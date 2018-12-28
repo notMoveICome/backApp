@@ -8,6 +8,10 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1"/>
     <meta name="viewport" content="width=device-width"/>
     <!-- Bootstrap 3.3.6 -->
+	<link rel="stylesheet" type="text/css" th:href="@{/bootstrap/css/bootstrap.min.css}"/>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/jquery-accordion-menu.css}"/>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}"/>
+	<link rel="stylesheet" type="text/css" th:href="@{/js/layer/css/layui.css}">
     <link rel="stylesheet" type="text/css" th:href="@{/bootstrap/css/bootstrap.min.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/bootstrap/bootstrap-table/bootstrap-table.min.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/jquery-accordion-menu.css}"/>
@@ -24,14 +28,15 @@
         <a class="header-item" href="javascript:void(0);">
             <span class="glyphicon glyphicon-align-justify"></span>
         </a>
+		<button type="button" class="btn btn-danger" id="signOut" style="float: right;margin-top: 20px">退出</button>
     </div>
 
     <!--user-->
     <div class="user clearfix">
         <img th:src="@{/img/user.png}">
-        <span>您好，超级管理员</span>
-        <span>&gt;</span>
-        <span>首页</span>
+		<span id="name"></span>
+		<span>&gt;</span>
+		<span>首页</span>
     </div>
 
     <!--main-->
@@ -55,6 +60,7 @@
 <script type="text/javascript" th:src="@{/bootstrap/bootstrap-table/bootstrap-table.min.js}"></script>
 <script type="text/javascript" th:src="@{/bootstrap/bootstrap-table/local/bootstrap-table-zh-CN.min.js}"></script>
 <script type="text/javascript" th:src="@{/js/jquery-accordion-menu.js}"></script>
+<script type="text/javascript" th:src="@{js/layer/layui.js}"></script>
 <script type="text/javascript" th:src="@{/js/index.js}"></script>
 </body>
 </html>

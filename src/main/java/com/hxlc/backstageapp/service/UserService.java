@@ -8,5 +8,6 @@ public interface UserService {
 
     Object getUserByRole(String role);
 
+    User findUser(String username,String password);
     Object getCustomerInfoBySale(String customerName, Integer saleId);
 }

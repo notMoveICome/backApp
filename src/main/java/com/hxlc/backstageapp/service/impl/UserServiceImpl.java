@@ -41,4 +41,14 @@ public class UserServiceImpl implements UserService {
     public Object getCustomerInfoBySale(String customerName, Integer saleId) {
         return customerMapper.findCustomerInfoBySale(customerName,saleId);
     }
+
+    @Override
+    public User findUser(String username, String password) {
+        User user = new User();
+        user.setName(username);
+        user.setPassword(password);
+        return userMapper.selectOne(user);
+    }
+
+
 }

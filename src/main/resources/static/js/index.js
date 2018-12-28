@@ -45,7 +45,12 @@ $(function () {
     initLeftUtilOfAdmin();
     initLeftUtilOfDistributor();
     monitorWindowView();
-
+    //退出
+    $("#signOut").on("click",function () {
+        $.post("/backApp/signOut",function () {
+            window.location.href =window.location.href.replace("index","login");
+        })
+    })
     /*默认首页管理*/
     $("#indexManage").click();
 });

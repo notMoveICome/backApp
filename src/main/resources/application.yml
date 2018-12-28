@@ -35,3 +35,9 @@ mybatis-plus:
 logging:
   level:
     com.hxlc.backstageapp.mapper: debug
+security:
+  ignoring: "/static/**, /css/**/**, /login.html,/img/**"
+  intercept: "/*.html"
+  successUrl: "/index.html"
+  logoutSuccessUrl: "/login.html"
+

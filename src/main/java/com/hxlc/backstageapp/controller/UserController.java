@@ -22,4 +22,5 @@ public class UserController {
     public  SysObject getCustomerInfoBySale(String customerName,Integer saleId){
         return new SysObject(userService.getCustomerInfoBySale(customerName,saleId));
     }
+
 }
