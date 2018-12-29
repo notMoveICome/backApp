@@ -55,8 +55,12 @@ public class ProjectController {
         return SysObject.ok(list);
     }
 
+    /**
+     * 首页推荐
+     * @return
+     */
     @RequestMapping("/getRecommendPro")
     public SysObject  getRecommendPro(){
-        return null;
+        return SysObject.ok(projectService.getRecommendPro());
     }
 }

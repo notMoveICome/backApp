@@ -6,6 +6,7 @@ import com.hxlc.backstageapp.pojo.Project;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface ProjectMapper extends BaseMapper<Project> {
@@ -15,4 +16,10 @@ public interface ProjectMapper extends BaseMapper<Project> {
      * @return
      */
     List<Media> findCapAndQueByProId(Integer projectId);
+
+    /**
+     * 获取首页的推荐项目
+     * @return
+     */
+    List<Map> findRecommendPro();
 }

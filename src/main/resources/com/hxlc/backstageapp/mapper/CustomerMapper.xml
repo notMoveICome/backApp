@@ -35,7 +35,7 @@
 					C . NAME project_name,
 					b.distrition_id
 				FROM
-					(SELECT * FROM customer_info WHERE NAME = #{customerName} AND sale_id = #{saleId}) A,
+					(SELECT * FROM customer_info WHERE sale_id = #{saleId}) A,
 					sale_relate b,
 					project_info C,
 					user_info u

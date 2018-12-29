@@ -19,4 +19,16 @@
 			A .gid = b.caption_id
 		OR A .gid = b.question_id
     </select>
+
+	<select id="findRecommendPro" resultType="map">
+		SELECT
+			A .*, b.develop,
+			b. NAME project_name,
+			b.desc_pic
+		FROM
+			(SELECT * FROM app_face) A,
+			project_info b
+		WHERE
+			A .project_id = b.gid
+	</select>
 </mapper>

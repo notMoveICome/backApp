@@ -19,8 +19,8 @@ public class UserController {
     }
 
     @RequestMapping("/getCustomerInfoBySale")
-    public  SysObject getCustomerInfoBySale(String customerName,Integer saleId){
-        return new SysObject(userService.getCustomerInfoBySale(customerName,saleId));
+    public  SysObject getCustomerInfoBySale(Integer saleId){
+        return new SysObject(userService.getCustomerInfoBySale(saleId));
     }
 
 }

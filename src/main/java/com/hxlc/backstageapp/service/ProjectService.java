@@ -4,6 +4,7 @@ import com.hxlc.backstageapp.pojo.Media;
 import com.hxlc.backstageapp.pojo.Project;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ProjectService {
     List<Project> findProjectList();
@@ -13,4 +14,6 @@ public interface ProjectService {
     List<Media> getCapAndQueByProId(Integer projectId);
 
     List<Media> getProMediaByProId(Integer projectId);
+
+    List<Map> getRecommendPro();
 }

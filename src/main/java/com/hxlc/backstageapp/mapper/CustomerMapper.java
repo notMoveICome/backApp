@@ -18,10 +18,9 @@ public interface CustomerMapper extends BaseMapper<Customer> {
 
     /**
      * 根据客户名字与业务员ID查找客户的相关信息
-     * @param customerName
      * @param saleId
      * @return
      */
-    List<Customer> findCustomerInfoBySale(@Param("customerName") String customerName, @Param("saleId") Integer saleId);
+    List<Customer> findCustomerInfoBySale(@Param("saleId") Integer saleId);
 
 }

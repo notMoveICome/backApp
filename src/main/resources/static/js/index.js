@@ -38,25 +38,23 @@ var project_fields = {
     descPic: "项目图片",
     remark: "备注"
 };
-var userRole = "超级管理员";
-// var userRole = "分销商";
+var userRole;
 $(function () {
     initHtmlCss();
     initLeftUtilOfAdmin();
     initLeftUtilOfDistributor();
     monitorWindowView();
-    //退出
-    $("#signOut").on("click",function () {
-        $.post("/backApp/signOut",function () {
-            window.location.href =window.location.href.replace("index","login");
-        })
-    });
+    logout();
+
     /*默认首页管理*/
     $("#indexManage").click();
 });
 
 /*页面样式*/
 function initHtmlCss() {
+    var userName = getCookie("iframe_user");
+    userRole = getCookie("iframe_userRole") == "4" ? "超级管理员" : "分销商";
+    $("#name").text("您好！" + userName + " " + userRole);
     var leftMenu = "";
     if (userRole == "超级管理员") {
         leftMenu = '<div id="jquery-accordion-menu" class="jquery-accordion-menu">' +
@@ -131,6 +129,15 @@ function monitorWindowView() {
     });
 }
 
+/*退出*/
+function logout(){
+    $("#signOut").on("click",function () {
+        $.post("/backApp/signOut",function () {
+            window.location.href =window.location.href.replace("index","login");
+        })
+    });
+}
+
 /*左边菜单_分销商*/
 function initLeftUtilOfDistributor() {
     customerManage();
@@ -175,37 +182,72 @@ function initLeftUtilOfAdmin() {
 function indexManage() {
     $("#indexManage").on('click', function () {
         var indexHtml = '<div class="recommendDiv">' +
-            '                <img src="img/home/home1.png">' +
+            '                <img src="">' +
             '                <span> ' +
             '                     <button class="btn btn-primary btn-sm">修改</button> ' +
             '                </span>' +
             '            </div>' +
             '            <div class="recommendDiv">' +
-            '                <img src="img/home/home2.png">' +
+            '                <img src="">' +
             '                <span> ' +
             '                      <button class="btn btn-primary btn-sm">修改</button> ' +
             '                </span>' +
             '            </div>' +
             '            <div class="recommendDiv">' +
-            '                <img src="img/home/home3.png">' +
+            '                <img src="">' +
             '                <span> ' +
             '                      <button class="btn btn-primary btn-sm">修改</button> ' +
             '                </span>' +
             '            </div>' +
-            '            <div class="recommendDiv">' +
+            '            <div class="recommendDiv" title="添加">' +
             '                <img src="img/home/addPic.png" style="height: 14.6em;cursor: pointer;">' +
             '            </div>' +
             '            <div id="recommendProManage">' +
-            '                <h3 style="margin-left: 1em;">项目推荐管理</h3>' +
+            '                <h3 style="margin-left: 1em;margin-bottom: 0.5em;">项目推荐管理</h3>' +
             '                <div>' +
-            '                    <table class="table table-hover">' +
+            '                    <table id="rightTable" class="table table-hover">' +
             '                    </table>' +
             '                </div>' +
             '            </div>';
         $(".main-right").html(indexHtml);
+        var fileds = {
+            develop: "地产商",
+            project_name: "项目名称",
+            price: "宣传费用(万)",
+            publish_time: "宣传时间"
+        };
         $.get('/backApp/project/getRecommendPro',function (res) {
             if (res.status == 200){
-
+                var data = res.data;
+                var imgs = $(".main-right").find("img");
+                for (var i = 0;i < 3;i++){
+                    $(imgs[i]).attr("src","data:image/gif;base64," + data[i].desc_pic);
+                }
+                var columns=[];
+                for (var attr in data[0]){
+                    if (attr == "desc_pic" || attr == "index" || attr.indexOf("id") > -1){
+                        continue;
+                    }
+                    var column = {
+                        field: attr,
+                        title: fileds[attr],
+                        valign: "middle",
+                        align: "center",
+                        visible: true,
+                        formatter: paramsMatter
+                    };
+                    columns.push(column);
+                }
+                columns.reverse();
+                columns.push({
+                    field: 'operate',
+                    title: '操作',
+                    valign: "middle",
+                    align: 'center',
+                    events: recommOperateEvents,
+                    formatter: recommOperateFormatter
+                });
+                initTable(columns, data);
             }
         })
     })
@@ -215,19 +257,19 @@ function indexManage() {
 function projectPublish() {
     $("#projectPublish").on('click', function () {
         var publishHtml = '<div class="publishFileDiv">' +
-            '                <img src="img/home/home1.png">' +
+            '                <img src="img/home/upFile.png">' +
             '                <span>' +
             '                    <button class="btn btn-primary btn-sm">上传文档</button>' +
             '                </span>' +
             '            </div>' +
             '            <div class="publishFileDiv">' +
-            '                <img src="img/home/home2.png">' +
+            '                <img src="img/home/upPic.png">' +
             '                <span>' +
             '                    <button class="btn btn-primary btn-sm">上传资料</button>' +
             '                </span>' +
             '            </div>' +
             '            <div class="publishFileDiv">' +
-            '                <img src="img/home/home3.png">' +
+            '                <img src="img/home/upZiLiao.png">' +
             '                <span>' +
             '                    <button class="btn btn-primary btn-sm">上传图片</button>' +
             '                </span>' +
@@ -313,7 +355,6 @@ function projectList() {
                     formatter: projectOperateFormatter_Dis
                 });
             }
-
             initTable(columns, res.data);
         }
     });
@@ -425,6 +466,14 @@ function userOperateFormatter(value, row, index) {
     ].join('');
 }
 
+function recommOperateFormatter(value, row, index) {
+    return [
+        '<button type="button" class="recommOfedit btn btn-primary  btn-sm" style="margin-right:15px;">修改</button>',
+        '<button type="button" class="recommOfdisable btn btn-primary  btn-sm" style="margin-right:15px;">停止</button>',
+        '<button type="button" class="recommOfdelete btn btn-primary  btn-sm" style="margin-right:15px;">删除</button>'
+    ].join('');
+}
+
 function projectOperateFormatter(value, row, index) {
     return [
         '<button type="button" class="ProOfwatch btn btn-primary btn-sm" style="margin-right:15px;">查看资料</button>',
@@ -453,7 +502,21 @@ window.userOperateEvents = {
         console.log(row);
         console.log(index);
     }
-
+};
+window.recommOperateEvents = {
+    'click .recommOfedit': function (e, value, row, index) {
+        console.log(row);
+        console.log(index);
+        // $("#editModal").modal('show');
+    },
+    'click .recommOfdisable': function (e, value, row, index) {
+        console.log(row);
+        console.log(index);
+    },
+    'click .recommOfdelete': function (e, value, row, index) {
+        console.log(row);
+        console.log(index);
+    }
 };
 window.projectOperateEvents = {
     'click .ProOfwatch': function (e, value, row, index) {
@@ -468,9 +531,18 @@ window.projectOperateEvents = {
         console.log(row);
         console.log(index);
     }
-
 };
 
+function getCookie(name) {
+    var DC = document.cookie;
+    var cookies = DC.split(";");
+    for (var i = 0;i < cookies.length;i++){
+        var cookie = cookies[i].trim().split("=");
+        if (cookie[0] == name){
+            return cookie[1];
+        }
+    }
+}
 
 
 

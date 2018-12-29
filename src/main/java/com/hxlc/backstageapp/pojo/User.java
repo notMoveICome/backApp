@@ -84,4 +84,6 @@ public class User implements Serializable {
     public void setRemark(String remark) {
         this.remark = remark;
     }
+
+
 }

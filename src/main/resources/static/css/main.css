@@ -223,6 +223,7 @@ input[type=checkbox]:focus, input[type=checkbox]:active {
 }
 .main-right #recommendProManage{
     width: 85.4em;
+    /*height: 25em;*/
     margin-top: 16em;
     background-color: #fff;
     padding-top: 1em;

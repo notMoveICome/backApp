@@ -11,5 +11,5 @@ public interface UserService {
 
     User findUser(String username, String password);
 
-    List<Customer> getCustomerInfoBySale(String customerName, Integer saleId);
+    List<Customer> getCustomerInfoBySale(Integer saleId);
 }

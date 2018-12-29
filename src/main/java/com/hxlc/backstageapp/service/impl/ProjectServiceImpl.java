@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -36,5 +37,10 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public List<Media> getProMediaByProId(Integer projectId) {
         return mediaMapper.selectList(new EntityWrapper<Media>().eq("project_id",projectId));
+    }
+
+    @Override
+    public List<Map> getRecommendPro() {
+        return projectMapper.findRecommendPro();
     }
 }
