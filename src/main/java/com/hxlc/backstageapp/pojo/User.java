@@ -19,7 +19,19 @@ public class User implements Serializable {
     private String state;
     private Date createTime;
     private String remark;
+    public User(){
 
+    }
+    public User(Integer gid, String name, String password, String tel, Integer roleId, String state, Date createTime, String remark) {
+        this.gid = gid;
+        this.name = name;
+        this.password = password;
+        this.tel = tel;
+        this.roleId = roleId;
+        this.state = state;
+        this.createTime = createTime;
+        this.remark = remark;
+    }
 
     public Integer getGID() {
         return gid;

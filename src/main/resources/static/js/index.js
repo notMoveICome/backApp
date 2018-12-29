@@ -40,10 +40,21 @@ var project_fields = {
 };
 var userRole;
 $(function () {
+    layui.use(['layer', 'form'], function(){
+        var layer = layui.layer
+            ,form = layui.form;
+    });
     initHtmlCss();
     initLeftUtilOfAdmin();
     initLeftUtilOfDistributor();
     monitorWindowView();
+
+    //退出
+    $("#signOut").on("click", function () {
+        $.post("/backApp/signOut", function () {
+            window.location.href = window.location.href.replace("index", "login");
+        })
+    })
     logout();
 
     /*默认首页管理*/
@@ -313,13 +324,13 @@ function projectPublish() {
 function projectManage() {
     $("#projectList").on('click', function () {
         var proListHtml = '<div style="background-color: #fff;height: 100%;">' +
-                        '       <div class="main-right-search"> ' +
-                        '           <input type="text" class="form-control" placeholder="请输入项目名称"/> ' +
-                        '       </div> ' +
-                        '       <div class="table-responsive"> ' +
-                        '           <table id="rightTable" class="table text-nowrap"></table> ' +
-                        '       </div>' +
-                        '  </div>';
+            '       <div class="main-right-search"> ' +
+            '           <input type="text" class="form-control" placeholder="请输入项目名称"/> ' +
+            '       </div> ' +
+            '       <div class="table-responsive"> ' +
+            '           <table id="rightTable" class="table text-nowrap"></table> ' +
+            '       </div>' +
+            '  </div>';
         $(".main-right").html(proListHtml);
         projectList();
     });
@@ -378,6 +389,7 @@ function paramsMatter(value, row, index) {
 function userManage() {
     $('#userManage>li').each(function (index) {
         $(this).on('click', function () {
+            var role = $('#userManage>li').eq(index).text();
             var userHtml = '<div style="background-color: #fff;height: 100%;padding-top: 1em;">' +
                 '                <div id="searchUser" style="margin-left: 1em;height: 2em;margin-bottom: 1em;">' +
                 '                    <span><input type="text" class="form-control" placeholder="请输入电话号码"/></span>' +
@@ -392,6 +404,9 @@ function userManage() {
                 '                </div>' +
                 '            </div>';
             $(".main-right").html(userHtml);
+            if (role == "管理员") {
+                $("#searchUser").append('<button id="addUser" class="btn btn-primary" type="button" style="float: right;margin-right: 20px">添加</button>');
+            }
             $("#fromReport,#toReport").datetimepicker({
                 format: 'yyyy-mm-dd',//显示格式
                 todayHighlight: 1,//今天高亮
@@ -404,9 +419,93 @@ function userManage() {
             });
             var role = $('#userManage>li').eq(index).text();
             getUserByRole(role);
+            addUser();
         })
     })
 }
+
+//添加管理员用户
+function addUser() {
+    $("#addUser").on("click", function () {
+        var $form = $('<form id="userForm" class="layui-form" style="padding: 20px 30px 10px 0;"></form>');
+            $form.append($('<div class="layui-form-item"></div>')
+                .append($('<label class="layui-form-label" style="width: 107px">用户姓名:</label>'))
+                .append($('<div class="layui-input-block"></div>')
+                    .append($('<input type="text" id="username" name="username" lay-verify="required" autocomplete="off" ' +
+                        'placeholder="请输入用户姓名" class="layui-input"/>'))
+                )
+            );
+            $form.append($('<div class="layui-form-item"></div>')
+                .append($('<label class="layui-form-label" style="width: 107px">用户号码:</label>'))
+                .append($('<div class="layui-input-block"></div>')
+                    .append($('<input type="text" id="tel" name="tel" lay-verify="required" autocomplete="off" ' +
+                        'placeholder="请输入用户号码" class="layui-input"/>'))
+                )
+            );
+            $form.append($('<div class="layui-form-item"></div>')
+                .append($('<label class="layui-form-label" style="width: 107px">用户密码:</label>'))
+                .append($('<div class="layui-input-block"></div>')
+                    .append($('<input type="password" id="password" name="password" lay-verify="required|pass" ' +
+                        'placeholder="请输入密码" autocomplete="off" class="layui-input" />'))
+                )
+            ).append($('<div class="layui-form-item"></div>')
+                .append($('<label class="layui-form-label" style="width: 107px">确认密码:</label>'))
+                .append($('<div class="layui-input-block"></div>')
+                    .append($('<input type="password" id="confirmPassword" name="confirmPassword" lay-verify="required|comfirmPass" ' +
+                        'placeholder="确认密码" autocomplete="off" class="layui-input"/>'))
+                )
+            );
+            // $("body").append($form);
+        layui.use(['layer', 'form'], function () {
+            var form = layui.form;
+            layer.open({
+                type: 1, offset: '50px', area: '650px', title: '添加用户',
+                content:'<div id="addUserDiv"></div>',
+                btn:['添加']
+                ,yes: function(index, layero){
+                    var reg = /\S+/;//正则
+                   if(!reg.test($("#username").val())){
+                       layer.msg("用户名不符合规范",{icon:2});
+                       return false;
+                   }
+                    var pass =/^[0-9A-Za-z]{6,12}$/;
+                    if(!pass.test($("#password").val())){
+                        layer.msg("密码必须是6到12位，且不能出现空格",{icon:2});
+                        return false;
+                    }
+                    var telpass =/0?(13|14|15|18|17)[0-9]{9}/;
+                    if(!telpass.test($("#tel").val())){
+                        layer.msg("请输入正确的手机号",{icon:2});
+                        return false;
+                    }
+                    if($("#password").val()!=$("#confirmPassword").val()){
+                        layer.msg("两次密码不一致!",{icon:2});
+                        return false;
+                    }
+                    data={
+                        username:$("#username").val(),
+                        password:$("#password").val(),
+                        tel:$("#tel").val(),
+                    },
+                    $.post("/backApp/user/addUser",data,function (res) {
+                        if(res.status==200){
+                            layer.msg("添加管理员成功",{icon:1});
+                            getUserByRole("管理员");
+                            layer.close(index)
+                        }else{
+                            layer.msg(res.msg,{icon:2});
+                        }
+                    })
+                }
+
+            });
+
+            $("#addUserDiv").append($form);
+        });
+
+    })
+}
+
 
 function getUserByRole(role) {
     $.get('/backApp/user/getUserByRole', {role: role}, function (res) {
@@ -515,12 +614,27 @@ window.userOperateEvents = {
         // $("#editModal").modal('show');
     },
     'click .RoleOfdisable': function (e, value, row, index) {
-        console.log(row);
-        console.log(index);
+        $.post("/backApp/user/changeState",{gid:row.gid,state:row.state},function (res) {
+            if(res.status==200){
+                layer.msg(res.msg,{icon:1});
+                getUserByRole("管理员");
+                layer.close(index)
+            }else{
+                layer.msg(res.msg,{icon:2});
+            }
+        })
     },
     'click .RoleOfdelete': function (e, value, row, index) {
-        console.log(row);
-        console.log(index);
+        layer.confirm('是否删除此用户？', {
+            btn: ['删除','取消'] //按钮
+        }, function(){
+            $.post("/backApp/user/delUser",{gid:row.gid},function (res) {
+                layer.msg(res.msg,{icon:1});
+                getUserByRole("管理员");
+            })
+        }, function(){
+
+        });
     }
 };
 window.recommOperateEvents = {
