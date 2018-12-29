@@ -15,11 +15,11 @@ $(function () {
             var username =$("#username").val();
             var password =$("#password").val();
             if(username==null||username==""){
-                layer.msg("账号不能为空",{icon:2})
+                layer.msg("账号不能为空",{icon:2});
                 return false;
             }
             if(password==null||password==""){
-                layer.msg("密码不能为空",{icon:2})
+                layer.msg("密码不能为空",{icon:2});
                 return false;
             }
             $.post("/backApp/userLogin",{username:username,password:password},function (res) {

@@ -208,20 +208,21 @@ input[type=checkbox]:focus, input[type=checkbox]:active {
 .main-right .recommendDiv{
     float: left;
     text-align: center;
-    margin-right: 2em;
+    margin-right: 1.8em;
     background-color: #fff;
 }
 .main-right .recommendDiv span{
     display: block;
     margin-top: 0.5em;
     margin-bottom: 0.5em;
+    height: 1.6em;
 }
 .main-right .recommendDiv img{
-    width: 27em;
+    width: 20em;
     height: 12em;
 }
 .main-right #recommendProManage{
-    width: 85em;
+    width: 85.4em;
     margin-top: 16em;
     background-color: #fff;
     padding-top: 1em;
@@ -244,7 +245,7 @@ input[type=checkbox]:focus, input[type=checkbox]:active {
 }
 .main-right #projectPublishDiv{
     width: 85em;
-    height: 50em;
+    height: 25em;
     margin-top: 16em;
     background-color: #fff;
     padding-top: 1em;

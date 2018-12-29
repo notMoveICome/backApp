@@ -14,6 +14,7 @@ public class Customer {
     private String name;
     private String tel;
     private Integer projectId;
+    // 表中不存在的字段
     @TableField(exist=false)
     private String  projectName;
     @TableField(exist=false)

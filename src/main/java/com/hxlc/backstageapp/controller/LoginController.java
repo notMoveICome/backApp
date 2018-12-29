@@ -24,11 +24,16 @@ public class LoginController {
     public SysObject login(String username, String password, HttpSession session) {
         User user = userService.findUser(username, password);
         if (user != null) {
-           if((user.getRoleId()==2||user.getRoleId()==4)&&("正常").equals(user.getState())){
-               session.setAttribute("user",user);
-               return new SysObject(200, "登录成功", user);
+           if((user.getRoleId()==2||user.getRoleId()==4)){
+               if (("正常").equals(user.getState())){
+                   user.setPassword(null);
+                   session.setAttribute("user",user);
+                   return new SysObject(200, "登录成功", user);
+               }else {
+                   return new SysObject(201, "此用户已停用!", null);
+               }
            }else{
-               return new SysObject(201, "账户权限不足", null);
+               return new SysObject(201, "此用户不存在!", null);
            }
         }
         return new SysObject(201, "账号或密码错误", null);

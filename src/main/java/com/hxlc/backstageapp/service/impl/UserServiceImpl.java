@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Object getCustomerInfoBySale(String customerName, Integer saleId) {
+    public List<Customer> getCustomerInfoBySale(String customerName, Integer saleId) {
         return customerMapper.findCustomerInfoBySale(customerName,saleId);
     }
 

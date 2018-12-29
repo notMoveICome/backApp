@@ -50,7 +50,7 @@ $(function () {
         $.post("/backApp/signOut",function () {
             window.location.href =window.location.href.replace("index","login");
         })
-    })
+    });
     /*默认首页管理*/
     $("#indexManage").click();
 });
@@ -192,81 +192,22 @@ function indexManage() {
             '                      <button class="btn btn-primary btn-sm">修改</button> ' +
             '                </span>' +
             '            </div>' +
+            '            <div class="recommendDiv">' +
+            '                <img src="img/home/addPic.png" style="height: 14.6em;cursor: pointer;">' +
+            '            </div>' +
             '            <div id="recommendProManage">' +
             '                <h3 style="margin-left: 1em;">项目推荐管理</h3>' +
             '                <div>' +
             '                    <table class="table table-hover">' +
-            '                        <thead>' +
-            '                        <tr>' +
-            '                            <th>项目名称</th>' +
-            '                            <th>开放商</th>' +
-            '                            <th>开包时间</th>' +
-            '                            <th>项目名称</th>' +
-            '                            <th>允许设备次数</th>' +
-            '                            <th>佣金额度</th>' +
-            '                            <th>操作</th>' +
-            '                        </tr>' +
-            '                        </thead>' +
-            '                        <tbody>' +
-            '                        <tr>' +
-            '                            <td>1</td>' +
-            '                            <td>2</td>' +
-            '                            <td>3</td>' +
-            '                            <td>4</td>' +
-            '                            <td>5</td>' +
-            '                            <td>6</td>' +
-            '                            <td><a href="javascript:void(0);" class="btn btn-primary">修改</a><a href="javascript:void(0);" class="btn btn-danger">删除</a></td>' +
-            '                        </tr>' +
-            '                        <tr>' +
-            '                            <td>1</td>' +
-            '                            <td>2</td>' +
-            '                            <td>3</td>' +
-            '                            <td>4</td>' +
-            '                            <td>5</td>' +
-            '                            <td>6</td>' +
-            '                            <td><a href="javascript:void(0);" class="btn btn-primary">修改</a><a href="javascript:void(0);" class="btn btn-danger">删除</a></td>' +
-            '                        </tr>' +
-            '                        <tr>' +
-            '                            <td>1</td>' +
-            '                            <td>2</td>' +
-            '                            <td>3</td>' +
-            '                            <td>4</td>' +
-            '                            <td>5</td>' +
-            '                            <td>6</td>' +
-            '                            <td><a href="javascript:void(0);" class="btn btn-primary">修改</a><a href="javascript:void(0);" class="btn btn-danger">删除</a></td>' +
-            '                        </tr>' +
-            '                        <tr>' +
-            '                            <td>1</td>' +
-            '                            <td>2</td>' +
-            '                            <td>3</td>' +
-            '                            <td>4</td>' +
-            '                            <td>5</td>' +
-            '                            <td>6</td>' +
-            '                            <td><a href="javascript:void(0);" class="btn btn-primary">修改</a><a href="javascript:void(0);" class="btn btn-danger">删除</a></td>' +
-            '                        </tr>' +
-            '                        <tr>' +
-            '                            <td>1</td>' +
-            '                            <td>2</td>' +
-            '                            <td>3</td>' +
-            '                            <td>4</td>' +
-            '                            <td>5</td>' +
-            '                            <td>6</td>' +
-            '                            <td><a href="javascript:void(0);" class="btn btn-primary">修改</a><a href="javascript:void(0);" class="btn btn-danger">删除</a></td>' +
-            '                        </tr>' +
-            '                        <tr>' +
-            '                            <td>1</td>' +
-            '                            <td>2</td>' +
-            '                            <td>3</td>' +
-            '                            <td>4</td>' +
-            '                            <td>5</td>' +
-            '                            <td>6</td>' +
-            '                            <td><a href="javascript:void(0);" class="btn btn-primary">修改</a><a href="javascript:void(0);" class="btn btn-danger">删除</a></td>' +
-            '                        </tr>' +
-            '                        </tbody>' +
             '                    </table>' +
             '                </div>' +
             '            </div>';
         $(".main-right").html(indexHtml);
+        $.get('/backApp/project/getRecommendPro',function (res) {
+            if (res.status == 200){
+
+            }
+        })
     })
 }
 
@@ -345,7 +286,7 @@ function projectList() {
                     field: attr,
                     title: project_fields[attr],
                     valign: "middle",
-                    halign: "center",
+                    align: "center",
                     visible: true,
                     formatter: paramsMatter
                 };
@@ -424,7 +365,7 @@ function getUserByRole(role) {
                     field: attr,
                     title: titles[attr],
                     valign: "middle",
-                    halign: "center",
+                    align: "center",
                     visible: true
                 };
                 columns.push(column);
