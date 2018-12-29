@@ -265,13 +265,13 @@ function projectPublish() {
             '            <div class="publishFileDiv">' +
             '                <img src="img/home/upPic.png">' +
             '                <span>' +
-            '                    <button class="btn btn-primary btn-sm">上传资料</button>' +
+            '                    <button class="btn btn-primary btn-sm">上传图片</button>' +
             '                </span>' +
             '            </div>' +
             '            <div class="publishFileDiv">' +
             '                <img src="img/home/upZiLiao.png">' +
             '                <span>' +
-            '                    <button class="btn btn-primary btn-sm">上传图片</button>' +
+            '                    <button class="btn btn-primary btn-sm">资料上传</button>' +
             '                </span>' +
             '            </div>' +
             '            <div id="projectPublishDiv">' +
@@ -284,7 +284,7 @@ function projectPublish() {
             '                                <td><b>详细地址：</b><input type="text"></td>' +
             '                            </tr>' +
             '                            <tr>' +
-            '                                <td><b>发包时间：</b><input type="text"><b> 至 </b><input type="text"></td>' +
+            '                                <td><b>发包时间：</b><input type="text" id="fromTime"><b> 至 </b><input type="text" id="toTime"></td>' +
             '                                <td><b>允许报备次数：</b><input type="text"></td>' +
             '                                <td><b>佣金设置：</b><input type="text"></td>' +
             '                            </tr>' +
@@ -296,6 +296,16 @@ function projectPublish() {
             '                </div>' +
             '            </div>';
         $(".main-right").html(publishHtml);
+        $("#fromTime,#toTime").datetimepicker({
+            format: 'yyyy-mm-dd',//显示格式
+            todayHighlight: 1,//今天高亮
+            minView: "month",//设置只显示到月份
+            startView: 2,
+            forceParse: 0,
+            language:"zh-CN", //语言设置
+            showMeridian: 1,
+            autoclose: 1//选择后自动关闭
+        });
     })
 }
 
@@ -372,9 +382,9 @@ function userManage() {
                 '                <div id="searchUser" style="margin-left: 1em;height: 2em;margin-bottom: 1em;">' +
                 '                    <span><input type="text" class="form-control" placeholder="请输入电话号码"/></span>' +
                 '                    <span><input type="text" class="form-control" placeholder="请输入姓名"/></span>' +
-                '                    <span><input type="text" class="form-control" placeholder="请输入报备时间"/></span>' +
+                '                    <span><input type="text" class="form-control" placeholder="请输入报备时间" id="fromReport"/></span>' +
                 '                    <span style="width: 2em;line-height: 30px;margin-right: 1em;">至</span>' +
-                '                    <span><input type="text" class="form-control" placeholder="请输入报备时间"/></span>' +
+                '                    <span><input type="text" class="form-control" placeholder="请输入报备时间" id="toReport"/></span>' +
                 '                </div>' +
                 '                <div class="table-responsive">' +
                 '                    <table id="rightTable" class="table text-nowrap">' +
@@ -382,6 +392,16 @@ function userManage() {
                 '                </div>' +
                 '            </div>';
             $(".main-right").html(userHtml);
+            $("#fromReport,#toReport").datetimepicker({
+                format: 'yyyy-mm-dd',//显示格式
+                todayHighlight: 1,//今天高亮
+                minView: "month",//设置只显示到月份
+                startView: 2,
+                forceParse: 0,
+                language:"zh-CN", //语言设置
+                showMeridian: 1,
+                autoclose: 1//选择后自动关闭
+            });
             var role = $('#userManage>li').eq(index).text();
             getUserByRole(role);
         })
