@@ -26,7 +26,7 @@
 			b. NAME project_name,
 			b.desc_pic
 		FROM
-			(SELECT * FROM app_face) A,
+			(SELECT * FROM app_face ORDER BY index) A,
 			project_info b
 		WHERE
 			A .project_id = b.gid

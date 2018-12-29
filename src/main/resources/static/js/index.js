@@ -60,13 +60,13 @@ function initHtmlCss() {
         leftMenu = '<div id="jquery-accordion-menu" class="jquery-accordion-menu">' +
             '                <ul id="demo-list" class="menu-container">' +
             '                    <li class="active mainmenu">' +
-            '                        <a href="javascript:void(0);" id="indexManage"><b>首页管理</b></a>' +
+            '                        <a href="javascript:void(0);" id="indexManage" class="submenu-indicator-minus"><b>首页管理</b></a>' +
             '                    </li>' +
             '                    <li class="mainmenu">' +
             '                        <a href="javascript:void(0);" id="projectPublish"><b>项目发布</b></a>' +
             '                    </li>' +
             '                    <li class="mainmenu">' +
-            '                        <a href="javascript:void(0);" class="submenu-indicator-minus" id="projectList"><b>项目管理</b></a>' +
+            '                        <a href="javascript:void(0);" id="projectList"><b>项目管理</b></a>' +
             '                    </li>' +
             '                    <li class="mainmenu">' +
             '                        <a href="javascript:void(0);"><b>报备管理</b></a>' +
@@ -82,21 +82,21 @@ function initHtmlCss() {
     } else if (userRole == "分销商") {
         leftMenu = '<div id="jquery-accordion-menu" class="jquery-accordion-menu">' +
             '                <ul id="demo-list" class="menu-container">' +
-            '                    <li class="mainmenu">' +
-            '                        <a href="javascript:void(0);"><b>首页管理</b></a>' +
-            '                    </li>' +
-            '                    <li class="mainmenu">' +
-            '                        <a href="javascript:void(0);"><b>客户管理</b></a>' +
-            '                        <ul class="submenu">' +
-            '                            <li id="customerList"><a href="javascript:void(0);">客户列表</a></li>' +
+            // '                    <li class="mainmenu">' +
+            // '                        <a href="javascript:void(0);"><b>首页管理</b></a>' +
+            // '                    </li>' +
+            '                    <li class="active mainmenu">' +
+            '                        <a href="javascript:void(0);" class="submenu-indicator-minus"><b>客户管理</b></a>' +
+            '                        <ul class="submenu" style="display: block;">' +
+            '                            <li id="customerList" class="active"><a href="javascript:void(0);">客户列表</a></li>' +
             '                            <li><a href="javascript:void(0);">新增客户报备</a></li>' +
             '                            <li><a href="javascript:void(0);">批量报备</a></li>' +
             '                        </ul>' +
             '                    </li>' +
-            '                    <li class="active mainmenu">' +
-            '                        <a href="javascript:void(0);" class="submenu-indicator-minus"><b>业务员管理</b></a>' +
+            '                    <li class="mainmenu">' +
+            '                        <a href="javascript:void(0);"><b>业务员管理</b></a>' +
             '                        <ul class="submenu">' +
-            '                            <li class="active" id="salesList"><a href="javascript:void(0);">业务员列表</a></li>' +
+            '                            <li id="salesList"><a href="javascript:void(0);">业务员列表</a></li>' +
             '                            <li id="saleAdd"><a href="javascript:void(0);">新增业务员</a></li>' +
             '                        </ul>' +
             '                    </li>' +
@@ -463,7 +463,7 @@ function initTable(columns, data) {
         // pageList: [5, 10, 25, 50, 100],        //可供选择的每页的行数（*）
         smartDisplay: false,
         // search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
-        strictSearch: true,
+        // strictSearch: true,
         // showColumns: true,                  //是否显示所有的列
         // showRefresh: true,                  //是否显示刷新按钮
         // minimumCountColumns: 2,             //最少允许的列数

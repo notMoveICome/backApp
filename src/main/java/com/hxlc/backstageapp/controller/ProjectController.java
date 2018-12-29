@@ -50,8 +50,13 @@ public class ProjectController {
      * @return
      */
     @RequestMapping("/getProMediaByProId")
-    public SysObject getProMediaByProId(Integer projectId){
+    public SysObject getProMediaByProId(Integer projectId) throws IOException {
         List<Media> list = projectService.getProMediaByProId(projectId);
+//        File file = new File("D:\\" ,list.get(1).getName() + "." + list.get(1).getFormat());
+//        file.createNewFile();
+//        FileOutputStream fis = new FileOutputStream(file);
+//        fis.write(list.get(1).getContent());
+//        fis.close();
         return SysObject.ok(list);
     }
 
