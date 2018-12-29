@@ -9,6 +9,7 @@ import com.hxlc.backstageapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
 import java.util.List;
 
 @Service
@@ -43,11 +44,50 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Integer addUser(String username, String password, String tel) {
+        Date date = new Date(new java.util.Date().getTime());
+        User user = new User(null,username,password,tel,3,"正常",date,null);
+        return userMapper.insert(user);
+    }
+
+    @Override
+    public Integer changeState(Integer gid, String state) {
+        User user = new User();
+        user.setGID(gid);
+        user.setState("正常".equals(state)?"非正常":"正常");
+        return userMapper.updateById(user);
+    }
+
+    @Override
+    public User findUserByUsername(String username) {
+        User user = new User();
+        user.setName(username);
+        return userMapper.selectOne(user);
+    }
+
+    @Override
+    public User findUserByTel(String tel) {
+        User user = new User();
+        user.setTel(tel);
+        return userMapper.selectOne(user);
+    }
+
+    @Override
+    public Integer delUser(Integer gid) {
+        return userMapper.deleteById(gid);
+    }
+
+    @Override
     public User findUser(String username, String password) {
         User user = new User();
         user.setName(username);
         user.setPassword(password);
         return userMapper.selectOne(user);
+    }
+
+    @Override
+    public Object getCustomerInfoBySale(String customerName, Integer saleId) {
+        return customerMapper.findCustomerInfoBySale(saleId);
     }
 
 
