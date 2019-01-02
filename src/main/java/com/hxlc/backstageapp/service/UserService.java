@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UserService {
 
@@ -27,4 +28,7 @@ public interface UserService {
 
 
     Integer changeState(Integer gid, String state);
+
+
+    Integer updateUser(Integer gid, String username, String password, String tel);
 }

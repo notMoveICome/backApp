@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -55,6 +56,16 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setGID(gid);
         user.setState("正常".equals(state)?"非正常":"正常");
+        return userMapper.updateById(user);
+    }
+
+    @Override
+    public Integer updateUser(Integer gid, String username, String password, String tel) {
+        User user = new User();
+        user.setGID(gid);
+        user.setName(username);
+        user.setPassword(password);
+        user.setTel(tel);
         return userMapper.updateById(user);
     }
 

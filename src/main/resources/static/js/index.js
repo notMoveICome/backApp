@@ -325,7 +325,8 @@ function projectManage() {
     $("#projectList").on('click', function () {
         var proListHtml = '<div style="background-color: #fff;height: 100%;">' +
             '       <div class="main-right-search"> ' +
-            '           <input type="text" class="form-control" placeholder="请输入项目名称"/> ' +
+            '           <input type="text" id="projectName" style="display: inline" class="form-control" placeholder="请输入项目名称"/> ' +
+            '               <button type="button" class="btn-primary btn" style="display: inline;margin-left: 20px" id="queryPro">查询</button>'+
             '       </div> ' +
             '       <div class="table-responsive"> ' +
             '           <table id="rightTable" class="table text-nowrap"></table> ' +
@@ -333,6 +334,11 @@ function projectManage() {
             '  </div>';
         $(".main-right").html(proListHtml);
         projectList();
+        $("#queryPro").on("click",function () {
+            $.post("/backApp/queryPro",{projectName:$("#queryPro").val()},function (res) {
+                
+            })
+        })
     });
 }
 
@@ -459,7 +465,7 @@ function addUser() {
         layui.use(['layer', 'form'], function () {
             var form = layui.form;
             layer.open({
-                type: 1, offset: '50px', area: '650px', title: '添加用户',
+                type: 1, offset: '250px', area: '650px', title: '添加用户',
                 content:'<div id="addUserDiv"></div>',
                 btn:['添加']
                 ,yes: function(index, layero){
@@ -468,14 +474,14 @@ function addUser() {
                        layer.msg("用户名不符合规范",{icon:2});
                        return false;
                    }
-                    var pass =/^[0-9A-Za-z]{6,12}$/;
-                    if(!pass.test($("#password").val())){
-                        layer.msg("密码必须是6到12位，且不能出现空格",{icon:2});
-                        return false;
-                    }
                     var telpass =/0?(13|14|15|18|17)[0-9]{9}/;
                     if(!telpass.test($("#tel").val())){
                         layer.msg("请输入正确的手机号",{icon:2});
+                        return false;
+                    }
+                    var pass =/^[0-9A-Za-z]{6,12}$/;
+                    if(!pass.test($("#password").val())){
+                        layer.msg("密码必须是6到12位，且不能出现空格",{icon:2});
                         return false;
                     }
                     if($("#password").val()!=$("#confirmPassword").val()){
@@ -609,9 +615,61 @@ function projectOperateFormatter_Dis(value, row, index) {
 
 window.userOperateEvents = {
     'click .RoleOfedit': function (e, value, row, index) {
-        console.log(row);
-        console.log(index);
-        // $("#editModal").modal('show');
+        var $form = $('<form id="userForm" class="layui-form" style="padding: 20px 30px 10px 0;"></form>');
+        $form.append($('<div class="layui-form-item"></div>')
+            .append($('<label class="layui-form-label" style="width: 107px">用户姓名:</label>'))
+            .append($('<div class="layui-input-block"></div>')
+                .append($('<input type="text" id="updatename" name="updatename" lay-verify="required" autocomplete="off" ' +
+                    'placeholder="请输入用户姓名" class="layui-input"/>'))
+            )
+        );
+        $form.append($('<div class="layui-form-item"></div>')
+            .append($('<label class="layui-form-label" style="width: 107px">用户号码:</label>'))
+            .append($('<div class="layui-input-block"></div>')
+                .append($('<input type="text" id="updatetel" name="updatetel" lay-verify="required" autocomplete="off" ' +
+                    'placeholder="请输入用户号码" class="layui-input"/>'))
+            )
+        );
+        $form.append($('<div class="layui-form-item"></div>')
+            .append($('<label class="layui-form-label" style="width: 107px">用户密码:</label>'))
+            .append($('<div class="layui-input-block"></div>')
+                .append($('<input type="password" id="updatepassword" name="updatepassword" lay-verify="required|pass" ' +
+                    'placeholder="请输入密码" autocomplete="off" class="layui-input" />'))
+            )
+        ).append($('<div class="layui-form-item"></div>')
+            .append($('<label class="layui-form-label" style="width: 107px">确认密码:</label>'))
+            .append($('<div class="layui-input-block"></div>')
+                .append($('<input type="password" id="updateconfirmPassword" name="updateconfirmPassword" lay-verify="required|comfirmPass" ' +
+                    'placeholder="确认密码" autocomplete="off" class="layui-input"/>'))
+            )
+        );
+        layer.open({
+            type: 1, offset: '250px', area: '650px', title: '修改用户',
+            content:'<div id="updateUserDiv"></div>',
+            btn:['修改'],
+            yes:function (index, layero) {
+                var data ={
+                        gid:row.gid,
+                        username:$("#updatename").val(),
+                        password:$("#updatepassword").val(),
+                        tel:$("#updatetel").val()
+                };
+                $.post("/backApp/user/updateUser",data,function (res) {
+                      if(res.status==200){
+                          layer.msg(res.msg,{icon:1});
+                          getUserByRole("管理员");
+                          layer.close(index)
+                      }else{
+                          layer.msg(res.msg,{icon:2});
+                      }
+                })
+            }
+        });
+        $("#updateUserDiv").append($form)
+        $("#updatename").val(row.name);
+        $("#updatetel").val(row.tel);
+        $("#updatepassword").val(row.password);
+        $("#updateconfirmPassword").val(row.password);
     },
     'click .RoleOfdisable': function (e, value, row, index) {
         $.post("/backApp/user/changeState",{gid:row.gid,state:row.state},function (res) {

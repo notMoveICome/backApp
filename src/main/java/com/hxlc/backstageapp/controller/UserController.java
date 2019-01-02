@@ -6,7 +6,10 @@ import com.hxlc.backstageapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -60,5 +63,14 @@ public class UserController {
             return new SysObject(200, "修改状态成功", null);
         }
         return new SysObject(201, "修改状态失败", null);
+    }
+
+    @RequestMapping("/updateUser")
+    public SysObject updateUser(Integer gid,String username,String password,String tel){
+        Integer result = userService.updateUser(gid,username,password,tel);
+        if(result>0){
+            return new SysObject(200, "修改用户成功", null);
+        }
+        return new SysObject(201, "修改用户失败", null);
     }
 }
