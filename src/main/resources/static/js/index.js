@@ -48,13 +48,6 @@ $(function () {
     initLeftUtilOfAdmin();
     initLeftUtilOfDistributor();
     monitorWindowView();
-
-    //退出
-    $("#signOut").on("click", function () {
-        $.post("/backApp/signOut", function () {
-            window.location.href = window.location.href.replace("index", "login");
-        })
-    })
     logout();
 
     /*默认首页管理*/
@@ -211,7 +204,7 @@ function indexManage() {
             '                </span>' +
             '            </div>' +
             '            <div class="recommendDiv" title="添加">' +
-            '                <img src="img/home/addPic.png" style="height: 14.6em;cursor: pointer;">' +
+            '                <img src="img/home/addPic.png" style="height: 14.6em;cursor: pointer;" id="addRecommendImg">' +
             '            </div>' +
             '            <div id="recommendProManage">' +
             '                <h3 style="margin-left: 1em;margin-bottom: 0.5em;">项目推荐管理</h3>' +
@@ -261,6 +254,9 @@ function indexManage() {
                 initTable(columns, data);
             }
         })
+        $("#addRecommendImg").on('click',function () {
+
+        });
     })
 }
 

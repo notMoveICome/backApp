@@ -55,7 +55,7 @@ public class LoginController {
         if (user != null){
             if (("正常").equals(user.getState())){
                 user.setPassword(null);
-                return new SysObject(201, "业务员登录成功!", user);
+                return new SysObject(200, "业务员登录成功!", user);
             }
             return new SysObject(201, "该业务员已被停用!", null);
         }
