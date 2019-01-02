@@ -8,6 +8,7 @@ import com.hxlc.backstageapp.pojo.Customer;
 import com.hxlc.backstageapp.pojo.Project;
 import com.hxlc.backstageapp.pojo.User;
 import com.hxlc.backstageapp.service.UserService;
+import com.sun.xml.internal.ws.policy.jaxws.PolicyWSDLGeneratorExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -83,6 +84,14 @@ public class UserServiceImpl implements UserService {
         EntityWrapper<User> u = new EntityWrapper<>();
 
         return userMapper.selectList(u);
+    }
+
+    @Override
+    public User findSaleByTelAndPwd(String tel, String pwd) {
+        User user = new User();
+        user.setTel(tel);
+        user.setPassword(pwd);
+        return userMapper.selectOne(user);
     }
 
     @Override

@@ -33,4 +33,6 @@ public interface UserService {
     Integer updateUser(Integer gid, String username, String password, String tel);
 
     List<User> findUserByCondition(Map map);
+
+    User findSaleByTelAndPwd(String tel, String pwd);
 }

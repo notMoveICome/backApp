@@ -48,6 +48,20 @@ public class LoginController {
         return new SysObject(201, "账号或密码错误", null);
     }
 
+
+    @RequestMapping("/salesLogin")
+    public SysObject salesLogin(String tel,String pwd){
+        User user = userService.findSaleByTelAndPwd(tel, pwd);
+        if (user != null){
+            if (("正常").equals(user.getState())){
+                user.setPassword(null);
+                return new SysObject(201, "业务员登录成功!", user);
+            }
+            return new SysObject(201, "该业务员已被停用!", null);
+        }
+        return new SysObject(201, "业务员登录失败!", null);
+    }
+
     @RequestMapping("/signOut")
     public void singOut(HttpSession session, HttpServletResponse response) {
         session.invalidate();
