@@ -9,11 +9,20 @@ public class Media {
     @TableId(value="gid",type= IdType.AUTO)
     private Integer gid;
     private String name;
-    private byte[] content;
+//    private byte[] content;
     private String format;
     private String remark;
     private Integer projectId;
     private String type;
+    private String url;
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
     public Integer getGid() {
         return gid;
@@ -31,13 +40,13 @@ public class Media {
         this.name = name;
     }
 
-    public byte[] getContent() {
-        return content;
-    }
-
-    public void setContent(byte[] content) {
-        this.content = content;
-    }
+//    public byte[] getContent() {
+//        return content;
+//    }
+//
+//    public void setContent(byte[] content) {
+//        this.content = content;
+//    }
 
     public String getFormat() {
         return format;
