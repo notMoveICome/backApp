@@ -73,4 +73,9 @@ public class UserController {
         }
         return new SysObject(201, "修改用户失败", null);
     }
+
+    @RequestMapping("/findUser")
+    public SysObject findUser(@RequestParam Map map){
+        return new SysObject(userService.findUserByCondition(map));
+    }
 }

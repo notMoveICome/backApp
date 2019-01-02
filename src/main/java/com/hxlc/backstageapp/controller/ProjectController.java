@@ -68,4 +68,10 @@ public class ProjectController {
     public SysObject  getRecommendPro(){
         return SysObject.ok(projectService.getRecommendPro());
     }
+
+    //项目查询
+    @RequestMapping("/queryPro")
+    public SysObject  queryPro(String projectName){
+        return SysObject.ok(projectService.findProjectByProjectName(projectName));
+    }
 }

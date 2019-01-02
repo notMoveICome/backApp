@@ -335,8 +335,47 @@ function projectManage() {
         $(".main-right").html(proListHtml);
         projectList();
         $("#queryPro").on("click",function () {
-            $.post("/backApp/queryPro",{projectName:$("#queryPro").val()},function (res) {
-                
+            var projectName =$("#projectName").val();
+            $.post("/backApp/project/queryPro",{projectName:projectName},function (res) {
+                if (res.status == 200) {
+                    var columns = [];
+                    for (var attr in res.data[0]) {
+                        if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr.indexOf("desc") > -1 || attr == "keyword" || attr == "address" || attr == "remark") {
+                            continue;
+                        }
+                        var column = {
+                            field: attr,
+                            title: project_fields[attr],
+                            valign: "middle",
+                            align: "center",
+                            visible: true,
+                            formatter: paramsMatter
+                        };
+                        columns.push(column);
+                    }
+                    if (userRole == "超级管理员") {
+                        columns.push({
+                            field: 'operate',
+                            title: '操作',
+                            valign: "middle",
+                            align: 'center',
+                            width: '250',
+                            events: projectOperateEvents,
+                            formatter: projectOperateFormatter
+                        });
+                    } else if (userRole == "分销商") {
+                        columns.push({
+                            field: 'operate',
+                            title: '操作',
+                            valign: "middle",
+                            align: 'center',
+                            width: '90',
+                            events: projectOperateEvents,
+                            formatter: projectOperateFormatter_Dis
+                        });
+                    }
+                    initTable(columns, res.data);
+                }
             })
         })
     });
@@ -398,11 +437,11 @@ function userManage() {
             var role = $('#userManage>li').eq(index).text();
             var userHtml = '<div style="background-color: #fff;height: 100%;padding-top: 1em;">' +
                 '                <div id="searchUser" style="margin-left: 1em;height: 2em;margin-bottom: 1em;">' +
-                '                    <span><input type="text" class="form-control" placeholder="请输入电话号码"/></span>' +
-                '                    <span><input type="text" class="form-control" placeholder="请输入姓名"/></span>' +
-                '                    <span><input type="text" class="form-control" placeholder="请输入报备时间" id="fromReport"/></span>' +
+                '                    <span><input id="userName" type="text" class="form-control" placeholder="请输入姓名"/></span>' +
+                '                    <span><input id="userTel" type="text" class="form-control" placeholder="请输入电话号码"/></span>' +
+                '                    <span><input  type="text" class="form-control" placeholder="请输入报备时间" id="fromReport"/></span>' +
                 '                    <span style="width: 2em;line-height: 30px;margin-right: 1em;">至</span>' +
-                '                    <span><input type="text" class="form-control" placeholder="请输入报备时间" id="toReport"/></span>' +
+                '                    <span><input  type="text" class="form-control" placeholder="请输入报备时间" id="toReport"/></span>' +
                 '                </div>' +
                 '                <div class="table-responsive">' +
                 '                    <table id="rightTable" class="table text-nowrap">' +
@@ -412,6 +451,7 @@ function userManage() {
             $(".main-right").html(userHtml);
             if (role == "管理员") {
                 $("#searchUser").append('<button id="addUser" class="btn btn-primary" type="button" style="float: right;margin-right: 20px">添加</button>');
+                $("#searchUser").append('<button id="findUser" class="btn btn-primary" type="button" style="float: right;margin-right: 480px">查询人员</button>');
             }
             $("#fromReport,#toReport").datetimepicker({
                 format: 'yyyy-mm-dd',//显示格式
@@ -426,10 +466,28 @@ function userManage() {
             var role = $('#userManage>li').eq(index).text();
             getUserByRole(role);
             addUser();
+            findUser();
         })
     })
 }
-
+//条件查询用户find
+function findUser() {
+    $("#findUser").on("click",function () {
+        var data ={
+            usertel:$("#userTel").val(),
+            username:$("#userName").val(),
+            starttime:$("#fromReport").val(),
+            endtime:$("#toReport").val()
+        };
+        if(!data.endtime&&!data.starttime&&data.endtime==startTime){
+            layer.msg("起始时间和终止时间不能相同",{icon:2});
+            return false;
+        }
+        $.post("/backApp/user/findUser",data,function (res) {
+            console.log(res)
+        })
+    })
+}
 //添加管理员用户
 function addUser() {
     $("#addUser").on("click", function () {

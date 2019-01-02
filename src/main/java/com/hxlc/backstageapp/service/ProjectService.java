@@ -16,4 +16,6 @@ public interface ProjectService {
     List<Media> getProMediaByProId(Integer projectId);
 
     List<Map> getRecommendPro();
+
+    List<Project> findProjectByProjectName(String projectName);
 }

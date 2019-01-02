@@ -1,9 +1,11 @@
 package com.hxlc.backstageapp.service.impl;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.hxlc.backstageapp.mapper.CustomerMapper;
 import com.hxlc.backstageapp.mapper.UserMapper;
 import com.hxlc.backstageapp.pojo.Customer;
+import com.hxlc.backstageapp.pojo.Project;
 import com.hxlc.backstageapp.pojo.User;
 import com.hxlc.backstageapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +69,20 @@ public class UserServiceImpl implements UserService {
         user.setPassword(password);
         user.setTel(tel);
         return userMapper.updateById(user);
+    }
+
+    @Override
+    public List<User> findUserByCondition(Map map) {
+        //拼接查询条件，如果只有起始时间则条件为大于起始时间的所有用户（终止时间则，小于所有的终止时间），
+        String username = map.get("username").toString();
+        String usertel = map.get("usertel").toString();
+        String starttime = map.get("starttime").toString();
+        String endtime = map.get("endtime").toString();
+        //比较起始时间和终止时间，若起始时间大于终止时间，则互换位置
+
+        EntityWrapper<User> u = new EntityWrapper<>();
+
+        return userMapper.selectList(u);
     }
 
     @Override

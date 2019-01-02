@@ -43,4 +43,11 @@ public class ProjectServiceImpl implements ProjectService {
     public List<Map> getRecommendPro() {
         return projectMapper.findRecommendPro();
     }
+
+    @Override
+    public List<Project> findProjectByProjectName(String projectName) {
+        return projectMapper.selectList(new EntityWrapper<Project>().like("name",projectName));
+    }
+
+
 }
