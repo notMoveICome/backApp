@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.ParseException;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -29,7 +31,7 @@ public class UserController {
     }
 
     @RequestMapping("/addUser")
-    public SysObject addUser(String username, String password, String tel) {
+    public SysObject addUser(String username, String password, String tel,String role) {
         //判断用户名和手机号是否存在
         User user = userService.findUserByUsername(username);
         User user1 = userService.findUserByTel(tel);
@@ -39,7 +41,7 @@ public class UserController {
         if(user1!=null){
             return new SysObject(201, "该手机号已存在", null);
         }
-        Integer result = userService.addUser(username, password, tel);
+        Integer result = userService.addUser(username, password, tel,role);
         System.out.println(result);
         if (result > 0) {
             return new SysObject(200, "添加成功", null);
@@ -75,7 +77,12 @@ public class UserController {
     }
 
     @RequestMapping("/findUser")
-    public SysObject findUser(@RequestParam Map map){
+    public SysObject findUser(@RequestParam Map map) throws ParseException {
+        List<User> list = userService.findUserByCondition(map);
+        if(list==null){
+
+            return new SysObject(201,"查询失败",null);
+        }
         return new SysObject(userService.findUserByCondition(map));
     }
 }

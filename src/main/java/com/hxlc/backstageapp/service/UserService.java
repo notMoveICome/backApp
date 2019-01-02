@@ -5,6 +5,7 @@ import com.hxlc.backstageapp.pojo.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Update;
 
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +19,7 @@ public interface UserService {
     User findUser(String username,String password);
     Object getCustomerInfoBySale(String customerName, Integer saleId);
 
-    Integer addUser(String username, String password, String tel);
+    Integer addUser(String username, String password, String tel,String role);
 
     User findUserByUsername(String username);
 
@@ -32,7 +33,8 @@ public interface UserService {
 
     Integer updateUser(Integer gid, String username, String password, String tel);
 
-    List<User> findUserByCondition(Map map);
+    List<User> findUserByCondition(Map map) throws ParseException;
+
 
     User findSaleByTelAndPwd(String tel, String pwd);
 }

@@ -435,9 +435,9 @@ function userManage() {
                 '                <div id="searchUser" style="margin-left: 1em;height: 2em;margin-bottom: 1em;">' +
                 '                    <span><input id="userName" type="text" class="form-control" placeholder="请输入姓名"/></span>' +
                 '                    <span><input id="userTel" type="text" class="form-control" placeholder="请输入电话号码"/></span>' +
-                '                    <span><input  type="text" class="form-control" placeholder="请输入报备时间" id="fromReport"/></span>' +
+                '                    <span><input  type="text" class="form-control" placeholder="请选择起始报备时间" id="fromReport"/></span>' +
                 '                    <span style="width: 2em;line-height: 30px;margin-right: 1em;">至</span>' +
-                '                    <span><input  type="text" class="form-control" placeholder="请输入报备时间" id="toReport"/></span>' +
+                '                    <span><input  type="text" class="form-control" placeholder="请选择终止报备时间" id="toReport"/></span>' +
                 '                </div>' +
                 '                <div class="table-responsive">' +
                 '                    <table id="rightTable" class="table text-nowrap">' +
@@ -445,7 +445,7 @@ function userManage() {
                 '                </div>' +
                 '            </div>';
             $(".main-right").html(userHtml);
-            if (role == "管理员") {
+            if (role == "管理员"||role=="分销商") {
                 $("#searchUser").append('<button id="addUser" class="btn btn-primary" type="button" style="float: right;margin-right: 20px">添加</button>');
                 $("#searchUser").append('<button id="findUser" class="btn btn-primary" type="button" style="float: right;margin-right: 480px">查询人员</button>');
             }
@@ -459,33 +459,68 @@ function userManage() {
                 showMeridian: 1,
                 autoclose: 1//选择后自动关闭
             });
-            var role = $('#userManage>li').eq(index).text();
+            var role =$("#userManage").find(".active").find("a").eq(0).text();
             getUserByRole(role);
-            addUser();
-            findUser();
+            addUser(role);
+            findUser(role);
         })
     })
 }
 //条件查询用户find
-function findUser() {
+function findUser(role) {
     $("#findUser").on("click",function () {
         var data ={
             usertel:$("#userTel").val(),
             username:$("#userName").val(),
             starttime:$("#fromReport").val(),
-            endtime:$("#toReport").val()
+            endtime:$("#toReport").val(),
+            role:role
         };
-        if(!data.endtime&&!data.starttime&&data.endtime==startTime){
+        if(data.endtime!=""&&data.starttime!=""&&data.endtime==data.starttime){
             layer.msg("起始时间和终止时间不能相同",{icon:2});
             return false;
         }
         $.post("/backApp/user/findUser",data,function (res) {
-            console.log(res)
+            if (res.status == 200) {
+                var columns = [];
+                for (var attr in res.data[0]) {
+                    if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1) {
+                        continue;
+                    }
+                    var titles;
+                    if (role == "客户") {
+                        titles = user_fields.customer;
+                    } else {
+                        titles = user_fields.user;
+                    }
+                    var column = {
+                        field: attr,
+                        title: titles[attr],
+                        valign: "middle",
+                        align: "center",
+                        visible: true
+                    };
+                    columns.push(column);
+                }
+                if (role == "管理员" || role == "分销商" || role == "业务员") {
+                    columns.push({
+                        field: 'operate',
+                        title: '操作',
+                        valign: "middle",
+                        align: 'center',
+                        events: userOperateEvents,
+                        formatter: userOperateFormatter
+                    });
+                }
+                initTable(columns, res.data);
+            }else{
+                layer.msg(res.msg,{icon:1});
+            }
         })
     })
 }
 //添加管理员用户
-function addUser() {
+function addUser(role) {
     $("#addUser").on("click", function () {
         var $form = $('<form id="userForm" class="layui-form" style="padding: 20px 30px 10px 0;"></form>');
             $form.append($('<div class="layui-form-item"></div>')
@@ -546,11 +581,12 @@ function addUser() {
                         username:$("#username").val(),
                         password:$("#password").val(),
                         tel:$("#tel").val(),
+                        role:role
                     },
                     $.post("/backApp/user/addUser",data,function (res) {
                         if(res.status==200){
                             layer.msg("添加管理员成功",{icon:1});
-                            getUserByRole("管理员");
+                            getUserByRole(role);
                             layer.close(index)
                         }else{
                             layer.msg(res.msg,{icon:2});
@@ -669,6 +705,7 @@ function projectOperateFormatter_Dis(value, row, index) {
 
 window.userOperateEvents = {
     'click .RoleOfedit': function (e, value, row, index) {
+        var role =$("#userManage").find(".active").find("a").eq(0).text();
         var $form = $('<form id="userForm" class="layui-form" style="padding: 20px 30px 10px 0;"></form>');
         $form.append($('<div class="layui-form-item"></div>')
             .append($('<label class="layui-form-label" style="width: 107px">用户姓名:</label>'))
@@ -711,7 +748,7 @@ window.userOperateEvents = {
                 $.post("/backApp/user/updateUser",data,function (res) {
                       if(res.status==200){
                           layer.msg(res.msg,{icon:1});
-                          getUserByRole("管理员");
+                          getUserByRole(role);
                           layer.close(index)
                       }else{
                           layer.msg(res.msg,{icon:2});
@@ -726,10 +763,11 @@ window.userOperateEvents = {
         $("#updateconfirmPassword").val(row.password);
     },
     'click .RoleOfdisable': function (e, value, row, index) {
+        var role =$("#userManage").find(".active").find("a").eq(0).text();
         $.post("/backApp/user/changeState",{gid:row.gid,state:row.state},function (res) {
             if(res.status==200){
                 layer.msg(res.msg,{icon:1});
-                getUserByRole("管理员");
+                getUserByRole(role);
                 layer.close(index)
             }else{
                 layer.msg(res.msg,{icon:2});
@@ -737,12 +775,13 @@ window.userOperateEvents = {
         })
     },
     'click .RoleOfdelete': function (e, value, row, index) {
+        var role =$("#userManage").find(".active").find("a").eq(0).text()
         layer.confirm('是否删除此用户？', {
             btn: ['删除','取消'] //按钮
         }, function(){
             $.post("/backApp/user/delUser",{gid:row.gid},function (res) {
                 layer.msg(res.msg,{icon:1});
-                getUserByRole("管理员");
+                getUserByRole(role);
             })
         }, function(){
 
