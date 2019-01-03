@@ -114,13 +114,15 @@ public class UserServiceImpl implements UserService {
                 return userMapper.selectList(u);
             }
         }
-
-
         if(StringUtils.isNotEmpty(starttime)&&StringUtils.isEmpty(endtime)){
+            utilDate = sdf.parse(starttime);
+            date = new java.sql.Date(utilDate.getTime());
             u.eq("role_id",type).like("name",username).like("tel",usertel).ge("create_time",date);
             return userMapper.selectList(u);
         }
         if(StringUtils.isNotEmpty(endtime)&&StringUtils.isEmpty(starttime)){
+            utilDate1 = sdf.parse(endtime);
+            date1 = new java.sql.Date(utilDate1.getTime());
             u.eq("role_id",type).like("name",username).like("tel",usertel).le("create_time",date1);
             return userMapper.selectList(u);
         }
