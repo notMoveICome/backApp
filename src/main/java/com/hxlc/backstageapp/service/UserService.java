@@ -37,4 +37,7 @@ public interface UserService {
 
 
     User findSaleByTelAndPwd(String tel, String pwd);
+
+
+    List<Customer> findCustomerByCondition(Map map) throws ParseException;
 }

@@ -1,6 +1,7 @@
 package com.hxlc.backstageapp.controller;
 
 import com.hxlc.backstageapp.common.SysObject;
+import com.hxlc.backstageapp.pojo.Customer;
 import com.hxlc.backstageapp.pojo.User;
 import com.hxlc.backstageapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,11 +79,22 @@ public class UserController {
 
     @RequestMapping("/findUser")
     public SysObject findUser(@RequestParam Map map) throws ParseException {
+        String role = map.get("role").toString();
         List<User> list = userService.findUserByCondition(map);
         if(list==null){
-
             return new SysObject(201,"查询失败",null);
         }
         return new SysObject(userService.findUserByCondition(map));
+    }
+
+    @RequestMapping("/findCustomer")
+    public SysObject findCustomer(@RequestParam Map map) throws ParseException {
+
+
+        List<Customer> list = userService.findCustomerByCondition(map);
+        if(list==null){
+            return new SysObject(201,"查询失败",null);
+        }
+        return new SysObject(userService.findCustomerByCondition(map));
     }
 }

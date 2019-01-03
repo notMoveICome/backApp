@@ -430,14 +430,15 @@ function paramsMatter(value, row, index) {
 function userManage() {
     $('#userManage>li').each(function (index) {
         $(this).on('click', function () {
-            var role = $('#userManage>li').eq(index).text();
+            // var role = $('#userManage>li').eq(index).text();
+            var role =$("#userManage").find(".active").find("a").eq(0).text();
             var userHtml = '<div style="background-color: #fff;height: 100%;padding-top: 1em;">' +
                 '                <div id="searchUser" style="margin-left: 1em;height: 2em;margin-bottom: 1em;">' +
-                '                    <span><input id="userName" type="text" class="form-control" placeholder="请输入姓名"/></span>' +
-                '                    <span><input id="userTel" type="text" class="form-control" placeholder="请输入电话号码"/></span>' +
-                '                    <span><input  type="text" class="form-control" placeholder="请选择起始报备时间" id="fromReport"/></span>' +
-                '                    <span style="width: 2em;line-height: 30px;margin-right: 1em;">至</span>' +
-                '                    <span><input  type="text" class="form-control" placeholder="请选择终止报备时间" id="toReport"/></span>' +
+                // '                    <span><input id="userName" type="text" class="form-control" placeholder="请输入姓名"/></span>' +
+                // '                    <span><input id="userTel" type="text" class="form-control" placeholder="请输入电话号码"/></span>' +
+                // '                    <span><input  type="text" class="form-control" placeholder="请选择起始报备时间" id="fromReport"/></span>' +
+                // '                    <span style="width: 2em;line-height: 30px;margin-right: 1em;">至</span>' +
+                // '                    <span><input  type="text" class="form-control" placeholder="请选择终止报备时间" id="toReport"/></span>' +
                 '                </div>' +
                 '                <div class="table-responsive">' +
                 '                    <table id="rightTable" class="table text-nowrap">' +
@@ -446,9 +447,27 @@ function userManage() {
                 '            </div>';
             $(".main-right").html(userHtml);
             if (role == "管理员"||role=="分销商") {
+                $("#searchUser").append('<span><input id="userName" type="text" class="form-control" placeholder="请输入姓名"/>' +
+                    '</span><span><input id="userTel" type="text" class="form-control" placeholder="请输入电话号码"/></span>' +
+                    '<span><input  type="text" class="form-control" placeholder="请选择起始报备时间" id="fromReport"/></span>' +
+                    '<span style="width: 2em;line-height: 30px;margin-right: 1em;">至</span>' +
+                    '<span><input  type="text" class="form-control" placeholder="请选择终止报备时间" id="toReport"/></span>')
                 $("#searchUser").append('<button id="addUser" class="btn btn-primary" type="button" style="float: right;margin-right: 20px">添加</button>');
                 $("#searchUser").append('<button id="findUser" class="btn btn-primary" type="button" style="float: right;margin-right: 480px">查询人员</button>');
+                addUser(role);
+                findUser(role)
             }
+            if(role=="客户"){
+                $("#searchUser").append('<span><input id="proName" type="text" class="form-control" placeholder="请输入项目名称"/></span>' +
+                    '<span><input id="userName" type="text" class="form-control" placeholder="请输入分销商姓名"/></span>' +
+                    '<span><input id="userTel" type="text" class="form-control" placeholder="请输入电话号码"/></span>' +
+                    '<span><input  type="text" class="form-control" placeholder="请选择起始报备时间" id="fromReport"/></span>' +
+                    '<span style="width: 2em;line-height: 30px;margin-right: 1em;">至</span>' +
+                    '<span><input  type="text" class="form-control" placeholder="请选择终止报备时间" id="toReport"/></span>')
+                $("#searchUser").append('<button id="findUser" class="btn btn-primary" type="button">查询</button>');
+                findCustomer();
+            }
+
             $("#fromReport,#toReport").datetimepicker({
                 format: 'yyyy-mm-dd',//显示格式
                 todayHighlight: 1,//今天高亮
@@ -459,14 +478,11 @@ function userManage() {
                 showMeridian: 1,
                 autoclose: 1//选择后自动关闭
             });
-            var role =$("#userManage").find(".active").find("a").eq(0).text();
             getUserByRole(role);
-            addUser(role);
-            findUser(role);
         })
     })
 }
-//条件查询用户find
+//条件查询用户
 function findUser(role) {
     $("#findUser").on("click",function () {
         var data ={
@@ -519,6 +535,48 @@ function findUser(role) {
         })
     })
 }
+
+
+function findCustomer() {
+    $("#findUser").on("click",function () {
+        var data ={
+            usertel:$("#userTel").val(),
+            proname:$("#proName").val(),
+            username:$("#userName").val(),
+            starttime:$("#fromReport").val(),
+            endtime:$("#toReport").val()
+        };
+        if(data.endtime!=""&&data.starttime!=""&&data.endtime==data.starttime){
+            layer.msg("起始时间和终止时间不能相同",{icon:2});
+            return false;
+        }
+        $.post("/backApp/user/findCustomer",data,function (res) {
+            if (res.status == 200) {
+                var columns = [];
+                for (var attr in res.data[0]) {
+                    if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1) {
+                        continue;
+                    }
+                    var titles;
+
+                    titles = user_fields.customer;
+
+                    var column = {
+                        field: attr,
+                        title: titles[attr],
+                        valign: "middle",
+                        align: "center",
+                        visible: true
+                    };
+                    columns.push(column);
+                }
+                initTable(columns, res.data);
+            }else{
+                layer.msg(res.msg,{icon:1});
+            }
+        })
+    })
+}
 //添加管理员用户
 function addUser(role) {
     $("#addUser").on("click", function () {
@@ -563,7 +621,8 @@ function addUser(role) {
                        layer.msg("用户名不符合规范",{icon:2});
                        return false;
                    }
-                    var telpass =/0?(13|14|15|18|17)[0-9]{9}/;
+                    // var telpass =/0?(13|14|15|18|17)[0-9]{9}/;
+                   var telpass =/^1([38]\d|5[0-35-9]|7[3678])\d{8}$/;
                     if(!telpass.test($("#tel").val())){
                         layer.msg("请输入正确的手机号",{icon:2});
                         return false;

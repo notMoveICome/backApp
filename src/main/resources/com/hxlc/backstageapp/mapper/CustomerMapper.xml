@@ -48,4 +48,11 @@
 		WHERE
 			d.distrition_id = uu.gid
     </select>
+	<select id="findCustomerByCondition" resultType="com.hxlc.backstageapp.pojo.Customer">
+			SELECT * from customer_info c
+			<if test="proname!=null">
+
+			</if>
+	</select>>
+
 </mapper>

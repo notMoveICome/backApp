@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@SuppressWarnings("all")
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -139,6 +140,56 @@ public class UserServiceImpl implements UserService {
         user.setTel(tel);
         user.setPassword(pwd);
         return userMapper.selectOne(user);
+    }
+
+    @Override
+    public List<Customer> findCustomerByCondition(Map map) throws ParseException {
+
+//        //拼接查询条件，如果只有起始时间则条件为大于起始时间的所有用户（终止时间则，小于所有的终止时间），
+        String username = map.get("username").toString();
+        String proname = map.get("proname").toString();
+        String usertel = map.get("usertel").toString();
+        String starttime = map.get("starttime").toString();
+        String endtime = map.get("endtime").toString();
+        java.util.Date utilDate=null;
+        java.util.Date utilDate1=null;
+        java.util.Date date =null;
+        java.util.Date date1 =null;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        EntityWrapper<Customer> u = new EntityWrapper<>();
+
+        if(StringUtils.isNotEmpty(starttime)&&StringUtils.isNotEmpty(endtime)){
+            utilDate = sdf.parse(starttime);
+            utilDate1 = sdf.parse(endtime);
+            date = new java.sql.Date(utilDate.getTime());
+            date1 = new java.sql.Date(utilDate1.getTime());
+            int i = Integer.parseInt(starttime.replace("-", ""));
+            int i1 = Integer.parseInt(endtime.replace("-", ""));
+            if(i1<1){
+                u.like("name",username).like("tel",usertel).between("back_time",date1,date);
+                return customerMapper.selectList(u);
+            }else{
+                u.like("name",username).like("tel",usertel).between("back_time",date,date1);
+                return customerMapper.selectList(u);
+            }
+        }
+        if(StringUtils.isNotEmpty(starttime)&&StringUtils.isEmpty(endtime)){
+            utilDate = sdf.parse(starttime);
+            date = new java.sql.Date(utilDate.getTime());
+            u.like("name",username).like("tel",usertel).ge("back_time",date);
+            return customerMapper.selectList(u);
+        }
+        if(StringUtils.isNotEmpty(endtime)&&StringUtils.isEmpty(starttime)){
+            utilDate1 = sdf.parse(endtime);
+            date1 = new java.sql.Date(utilDate1.getTime());
+            u.like("name",username).like("tel",usertel).le("back_time",date1);
+            return customerMapper.selectList(u);
+        }
+        if(StringUtils.isEmpty(starttime)&&StringUtils.isEmpty(endtime)){
+            u.like("name",username).like("tel",usertel);
+            return customerMapper.selectList(u);
+        }
+        return customerMapper.selectList(new EntityWrapper<Customer>());
     }
 
     @Override

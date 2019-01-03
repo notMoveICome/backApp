@@ -23,4 +23,5 @@ public interface CustomerMapper extends BaseMapper<Customer> {
      */
     List<Customer> findCustomerInfoBySale(@Param("saleId") Integer saleId);
 
+
 }
