@@ -5,10 +5,7 @@ import com.hxlc.backstageapp.pojo.Customer;
 import com.hxlc.backstageapp.pojo.User;
 import com.hxlc.backstageapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.util.List;
@@ -96,5 +93,30 @@ public class UserController {
             return new SysObject(201,"查询失败",null);
         }
         return new SysObject(userService.findCustomerByCondition(map));
+    }
+
+    @RequestMapping("/validateTel")
+    public SysObject validateTel(String tel){
+        Integer rows = userService.validateTel(tel);
+        if (rows == 0){
+            return new SysObject(200,"改手机号可以使用!",null);
+        }else {
+            return new SysObject(201,"改手机号已被使用!",null);
+        }
+    }
+
+    /**
+     * 分销商注册
+     * @param map
+     * @return
+     */
+    @RequestMapping(value = "/registerUser",method = RequestMethod.POST)
+    public SysObject registerUser(@RequestParam Map map){
+        Integer rows = userService.registerUser(map);
+        if (rows == 1){
+            return new SysObject(200,"注册成功!",null);
+        }else {
+            return new SysObject(201,"注册失败!",null);
+        }
     }
 }

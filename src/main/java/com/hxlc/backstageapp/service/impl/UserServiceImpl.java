@@ -107,7 +107,7 @@ public class UserServiceImpl implements UserService {
             date1 = new java.sql.Date(utilDate1.getTime());
             int i = Integer.parseInt(starttime.replace("-", ""));
             int i1 = Integer.parseInt(endtime.replace("-", ""));
-            if(i1<1){
+            if(i1<i){
                 u.eq("role_id",type).like("name",username).like("tel",usertel).between("create_time",date1,date);
                 return userMapper.selectList(u);
             }else{
@@ -190,6 +190,27 @@ public class UserServiceImpl implements UserService {
             return customerMapper.selectList(u);
         }
         return customerMapper.selectList(new EntityWrapper<Customer>());
+    }
+
+    @Override
+    public Integer validateTel(String tel) {
+        return userMapper.selectList(new EntityWrapper<User>().eq("tel",tel)).size();
+    }
+
+    @Override
+    public Integer registerUser(Map map) {
+        String tel = (String) map.get("tel");
+        String pwd = (String) map.get("pwd");
+        String company = (String) map.get("company");
+        String size = (String) map.get("size");
+        String attache = (String) map.get("attache");
+
+        User user = new User();
+        user.setName(company);
+        user.setPassword(pwd);
+        user.setTel(tel);
+        Integer row1 = userMapper.insert(user);
+        return null;
     }
 
     @Override

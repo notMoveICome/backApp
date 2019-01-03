@@ -74,4 +74,24 @@ public class ProjectController {
     public SysObject  queryPro(String projectName){
         return SysObject.ok(projectService.findProjectByProjectName(projectName));
     }
+
+    /**
+     * 根据ID删除项目
+     * @param proId
+     * @return
+     */
+    @RequestMapping("/deleteProById")
+    public SysObject deleteProById(Integer proId){
+        Integer rows = projectService.deleteProById(proId);
+        if (rows == 1){
+            return new SysObject(200,"删除成功!",null);
+        }else {
+            return new SysObject(201,"删除失败!",null);
+        }
+    }
+
+    @RequestMapping("/addProject")
+    public SysObject addProject(){
+        return null;
+    }
 }

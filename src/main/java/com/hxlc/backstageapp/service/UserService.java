@@ -13,13 +13,13 @@ public interface UserService {
 
     Object getUserByRole(String role);
 
-
-
     List<Customer> getCustomerInfoBySale(Integer saleId);
-    User findUser(String username,String password);
+
+    User findUser(String username, String password);
+
     Object getCustomerInfoBySale(String customerName, Integer saleId);
 
-    Integer addUser(String username, String password, String tel,String role);
+    Integer addUser(String username, String password, String tel, String role);
 
     User findUserByUsername(String username);
 
@@ -27,16 +27,17 @@ public interface UserService {
 
     Integer delUser(Integer gid);
 
-
     Integer changeState(Integer gid, String state);
-
 
     Integer updateUser(Integer gid, String username, String password, String tel);
 
     List<User> findUserByCondition(Map map) throws ParseException;
 
-
     User findSaleByTelAndPwd(String tel, String pwd);
+
+    Integer validateTel(String tel);
+
+    Integer registerUser(Map map);
 
 
     List<Customer> findCustomerByCondition(Map map) throws ParseException;

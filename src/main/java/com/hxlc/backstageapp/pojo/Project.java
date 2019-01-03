@@ -1,5 +1,6 @@
 package com.hxlc.backstageapp.pojo;
 
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
@@ -12,6 +13,8 @@ public class Project {
     private Integer gid;
     private String name;
     private Integer disnum;
+    @TableField(exist = false)
+    private Integer reportNum;
     private String desc;
     private String develop;
     private String keyword;
@@ -161,5 +164,13 @@ public class Project {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public Integer getReportNum() {
+        return reportNum;
+    }
+
+    public void setReportNum(Integer reportNum) {
+        this.reportNum = reportNum;
     }
 }

@@ -1,8 +1,10 @@
 package com.hxlc.backstageapp.service.impl;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.hxlc.backstageapp.mapper.CustomerMapper;
 import com.hxlc.backstageapp.mapper.MediaMapper;
 import com.hxlc.backstageapp.mapper.ProjectMapper;
+import com.hxlc.backstageapp.pojo.Customer;
 import com.hxlc.backstageapp.pojo.Media;
 import com.hxlc.backstageapp.pojo.Project;
 import com.hxlc.backstageapp.service.ProjectService;
@@ -19,9 +21,18 @@ public class ProjectServiceImpl implements ProjectService {
     private ProjectMapper projectMapper;
     @Autowired
     private MediaMapper mediaMapper;
+    @Autowired
+    private CustomerMapper customerMapper;
+
     @Override
     public List<Project> findProjectList() {
-        return projectMapper.selectList(new EntityWrapper<Project>());
+        List<Project> projectList = projectMapper.selectList(new EntityWrapper<Project>());
+        for (int i = 0;i < projectList.size();i++){
+            projectList.get(i).setDisnum(projectList.get(i).getDisnum() + 80);//分销商数技术80
+            Integer count = customerMapper.selectCount(new EntityWrapper<Customer>().eq("project_id", projectList.get(i).getGid()));
+            projectList.get(i).setReportNum(count);
+        }
+        return projectList;
     }
 
     @Override
@@ -46,8 +57,17 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public List<Project> findProjectByProjectName(String projectName) {
-        return projectMapper.selectList(new EntityWrapper<Project>().like("name",projectName));
+        List<Project> projectList = projectMapper.selectList(new EntityWrapper<Project>().like("name", projectName));
+        for (int i = 0;i < projectList.size();i++){
+            projectList.get(i).setDisnum(projectList.get(i).getDisnum() + 80);//分销商数技术80
+            Integer count = customerMapper.selectCount(new EntityWrapper<Customer>().eq("project_id", projectList.get(i).getGid()));
+            projectList.get(i).setReportNum(count);
+        }
+        return projectList;
     }
 
-
+    @Override
+    public Integer deleteProById(Integer proId) {
+        return projectMapper.delete(new EntityWrapper<Project>().eq("gid",proId));
+    }
 }

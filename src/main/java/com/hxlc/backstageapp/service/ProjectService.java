@@ -18,4 +18,6 @@ public interface ProjectService {
     List<Map> getRecommendPro();
 
     List<Project> findProjectByProjectName(String projectName);
+
+    Integer deleteProById(Integer proId);
 }
