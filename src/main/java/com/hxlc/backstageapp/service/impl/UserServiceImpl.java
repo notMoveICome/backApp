@@ -29,20 +29,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Object getUserByRole(String role) {
-         if ("客户".equals(role)){
-             List<Customer> customerList = customerMapper.findAllCustomerInfo();
-             return customerList;
-         }else {
-             Integer roleId;
-             if ("管理员".equals(role)){
-                 roleId = 3;
-             }else if ("分销商".equals(role)){
-                 roleId = 2;
-             }else {
-                 roleId = 1;
-             }
-             return userMapper.selectList(new EntityWrapper<User>().eq("role_id",roleId));
-         }
+        if ("客户".equals(role)) {
+            List<Customer> customerList = customerMapper.findAllCustomerInfo();
+            return customerList;
+        } else {
+            Integer roleId;
+            if ("管理员".equals(role)) {
+                roleId = 3;
+            } else if ("分销商".equals(role)) {
+                roleId = 2;
+            } else {
+                roleId = 1;
+            }
+            return userMapper.selectList(new EntityWrapper<User>().eq("role_id", roleId));
+        }
     }
 
     @Override
@@ -51,14 +51,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Integer addUser(String username, String password, String tel,String role) {
+    public Integer addUser(String username, String password, String tel, String role) {
         Date date = new Date(new java.util.Date().getTime());
-        if("管理员".equals(role)){
-            User user = new User(null,username,password,tel,3,"正常",date,null);
+        if ("管理员".equals(role)) {
+            User user = new User(null, username, password, tel, 3, "正常", date, null);
             return userMapper.insert(user);
         }
-        if("分销商".equals(role)){
-            User user = new User(null,username,password,tel,2,"正常",date,null);
+        if ("分销商".equals(role)) {
+            User user = new User(null, username, password, tel, 2, "正常", date, null);
             return userMapper.insert(user);
         }
         return null;
@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
     public Integer changeState(Integer gid, String state) {
         User user = new User();
         user.setGID(gid);
-        user.setState("正常".equals(state)?"非正常":"正常");
+        user.setState("正常".equals(state) ? "非正常" : "正常");
         return userMapper.updateById(user);
     }
 
@@ -90,48 +90,48 @@ public class UserServiceImpl implements UserService {
         String starttime = map.get("starttime").toString();
         String endtime = map.get("endtime").toString();
         String role = map.get("role").toString();
-        int type=2;
-        if("管理员".equals(role)){
-            type=3;
+        int type = 2;
+        if ("管理员".equals(role)) {
+            type = 3;
         }
-        java.util.Date utilDate=null;
-        java.util.Date utilDate1=null;
-        java.util.Date date =null;
-        java.util.Date date1 =null;
+        java.util.Date utilDate = null;
+        java.util.Date utilDate1 = null;
+        java.util.Date date = null;
+        java.util.Date date1 = null;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         EntityWrapper<User> u = new EntityWrapper<>();
-        if(StringUtils.isNotEmpty(starttime)&&StringUtils.isNotEmpty(endtime)){
+        if (StringUtils.isNotEmpty(starttime) && StringUtils.isNotEmpty(endtime)) {
             utilDate = sdf.parse(starttime);
             utilDate1 = sdf.parse(endtime);
             date = new java.sql.Date(utilDate.getTime());
             date1 = new java.sql.Date(utilDate1.getTime());
             int i = Integer.parseInt(starttime.replace("-", ""));
             int i1 = Integer.parseInt(endtime.replace("-", ""));
-            if(i1<i){
-                u.eq("role_id",type).like("name",username).like("tel",usertel).between("create_time",date1,date);
+            if (i1 < i) {
+                u.eq("role_id", type).like("name", username).like("tel", usertel).between("create_time", date1, date);
                 return userMapper.selectList(u);
-            }else{
-                u.eq("role_id",type).like("name",username).like("tel",usertel).between("create_time",date,date1);
+            } else {
+                u.eq("role_id", type).like("name", username).like("tel", usertel).between("create_time", date, date1);
                 return userMapper.selectList(u);
             }
         }
-        if(StringUtils.isNotEmpty(starttime)&&StringUtils.isEmpty(endtime)){
+        if (StringUtils.isNotEmpty(starttime) && StringUtils.isEmpty(endtime)) {
             utilDate = sdf.parse(starttime);
             date = new java.sql.Date(utilDate.getTime());
-            u.eq("role_id",type).like("name",username).like("tel",usertel).ge("create_time",date);
+            u.eq("role_id", type).like("name", username).like("tel", usertel).ge("create_time", date);
             return userMapper.selectList(u);
         }
-        if(StringUtils.isNotEmpty(endtime)&&StringUtils.isEmpty(starttime)){
+        if (StringUtils.isNotEmpty(endtime) && StringUtils.isEmpty(starttime)) {
             utilDate1 = sdf.parse(endtime);
             date1 = new java.sql.Date(utilDate1.getTime());
-            u.eq("role_id",type).like("name",username).like("tel",usertel).le("create_time",date1);
+            u.eq("role_id", type).like("name", username).like("tel", usertel).le("create_time", date1);
             return userMapper.selectList(u);
         }
-        if(StringUtils.isEmpty(starttime)&&StringUtils.isEmpty(endtime)){
-            u.eq("role_id",type).like("name",username).like("tel",usertel);
+        if (StringUtils.isEmpty(starttime) && StringUtils.isEmpty(endtime)) {
+            u.eq("role_id", type).like("name", username).like("tel", usertel);
             return userMapper.selectList(u);
         }
-        return userMapper.selectList(new EntityWrapper<User>().eq("role_id",type));
+        return userMapper.selectList(new EntityWrapper<User>().eq("role_id", type));
     }
 
     @Override
@@ -144,57 +144,28 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<Customer> findCustomerByCondition(Map map) throws ParseException {
-
-//        //拼接查询条件，如果只有起始时间则条件为大于起始时间的所有用户（终止时间则，小于所有的终止时间），
+        //拼接查询条件，如果只有起始时间则条件为大于起始时间的所有用户（终止时间则，小于所有的终止时间），
         String username = map.get("username").toString();
         String proname = map.get("proname").toString();
         String usertel = map.get("usertel").toString();
         String starttime = map.get("starttime").toString();
         String endtime = map.get("endtime").toString();
-        java.util.Date utilDate=null;
-        java.util.Date utilDate1=null;
-        java.util.Date date =null;
-        java.util.Date date1 =null;
+        if(StringUtils.isEmpty(starttime)){
+            starttime="2000-1-1";
+        }
+        if(StringUtils.isEmpty(endtime)){
+            endtime="2100-12-30";
+        }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        EntityWrapper<Customer> u = new EntityWrapper<>();
+        java.util.Date beginDate = new java.sql.Date(sdf.parse(starttime).getTime());
+        java.util.Date endDate =new java.sql.Date(sdf.parse(endtime).getTime());
 
-        if(StringUtils.isNotEmpty(starttime)&&StringUtils.isNotEmpty(endtime)){
-            utilDate = sdf.parse(starttime);
-            utilDate1 = sdf.parse(endtime);
-            date = new java.sql.Date(utilDate.getTime());
-            date1 = new java.sql.Date(utilDate1.getTime());
-            int i = Integer.parseInt(starttime.replace("-", ""));
-            int i1 = Integer.parseInt(endtime.replace("-", ""));
-            if(i1<1){
-                u.like("name",username).like("tel",usertel).between("back_time",date1,date);
-                return customerMapper.selectList(u);
-            }else{
-                u.like("name",username).like("tel",usertel).between("back_time",date,date1);
-                return customerMapper.selectList(u);
-            }
-        }
-        if(StringUtils.isNotEmpty(starttime)&&StringUtils.isEmpty(endtime)){
-            utilDate = sdf.parse(starttime);
-            date = new java.sql.Date(utilDate.getTime());
-            u.like("name",username).like("tel",usertel).ge("back_time",date);
-            return customerMapper.selectList(u);
-        }
-        if(StringUtils.isNotEmpty(endtime)&&StringUtils.isEmpty(starttime)){
-            utilDate1 = sdf.parse(endtime);
-            date1 = new java.sql.Date(utilDate1.getTime());
-            u.like("name",username).like("tel",usertel).le("back_time",date1);
-            return customerMapper.selectList(u);
-        }
-        if(StringUtils.isEmpty(starttime)&&StringUtils.isEmpty(endtime)){
-            u.like("name",username).like("tel",usertel);
-            return customerMapper.selectList(u);
-        }
-        return customerMapper.selectList(new EntityWrapper<Customer>());
+        return customerMapper.findCustomerByCondition(username,proname,usertel,beginDate,endDate) ;
     }
 
     @Override
     public Integer validateTel(String tel) {
-        return userMapper.selectList(new EntityWrapper<User>().eq("tel",tel)).size();
+        return userMapper.selectList(new EntityWrapper<User>().eq("tel", tel)).size();
     }
 
     @Override

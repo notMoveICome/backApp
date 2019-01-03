@@ -620,7 +620,7 @@ function findUserByOptions(role){
                     title: '操作',
                     valign: "middle",
                     align: 'center',
-                    events: customerOperateEvents,
+                    // events: customerOperateEvents,
                     formatter: customerOperateFormatter
                 });
             }
@@ -653,9 +653,7 @@ function findCustomer() {
                         continue;
                     }
                     var titles;
-
                     titles = user_fields.customer;
-
                     var column = {
                         field: attr,
                         title: titles[attr],
@@ -961,6 +959,7 @@ window.userOperateEvents = {
     'click .RoleOfdelete': function (e, value, row, index) {
         var role =$("#userManage").find(".active").find("a").eq(0).text()
         layer.confirm('是否删除此用户？', {
+            title:"删除用户",
             btn: ['删除','取消'] //按钮
         }, function(){
             $.post("/backApp/user/delUser",{gid:row.gid},function (res) {

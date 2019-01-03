@@ -5,6 +5,7 @@ import com.hxlc.backstageapp.pojo.Customer;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -24,4 +25,9 @@ public interface CustomerMapper extends BaseMapper<Customer> {
     List<Customer> findCustomerInfoBySale(@Param("saleId") Integer saleId);
 
 
+    List<Customer> findCustomerByCondition(@Param("username")String username,
+                                           @Param("proname")String proname,
+                                           @Param("usertel") String usertel,
+                                           @Param("beginDate") Date beginDate,
+                                           @Param("endDate") Date endDate);
 }
