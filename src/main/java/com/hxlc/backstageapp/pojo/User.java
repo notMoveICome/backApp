@@ -10,37 +10,42 @@ import java.sql.Date;
 
 @TableName("user_info")
 public class User implements Serializable {
-    @TableId(value="gid",type= IdType.AUTO)
+    @TableId(value = "gid", type = IdType.AUTO)
     private Integer gid;
     private String name;
     private String password;
     private String tel;
     private Integer roleId;
     private String state;
+    private String checkState;
     private Date createTime;
+    private String channelComm;
     private String remark;
     @TableField(exist = false)
     private Integer count;
-    public User(){
 
+    public User() {
     }
-    public User(Integer gid, String name, String password, String tel, Integer roleId, String state, Date createTime, String remark) {
+
+    public User(Integer gid, String name, String password, String tel, Integer roleId, String state, String checkState, Date createTime, String remark, String channelComm) {
         this.gid = gid;
         this.name = name;
         this.password = password;
         this.tel = tel;
         this.roleId = roleId;
         this.state = state;
+        this.checkState = checkState;
         this.createTime = createTime;
         this.remark = remark;
+        this.channelComm = channelComm;
     }
 
-    public Integer getGID() {
+    public Integer getGid() {
         return gid;
     }
 
-    public void setGID(Integer GID) {
-        this.gid = GID;
+    public void setGid(Integer gid) {
+        this.gid = gid;
     }
 
     public String getName() {
@@ -99,10 +104,24 @@ public class User implements Serializable {
         this.remark = remark;
     }
 
+    public String getChannelComm() {
+        return channelComm;
+    }
     public Integer getCount() {
         return count;
     }
 
+    public void setChannelComm(String channelComm) {
+        this.channelComm = channelComm;
+    }
+
+    public String getCheckState() {
+        return checkState;
+    }
+
+    public void setCheckState(String checkState) {
+        this.checkState = checkState;
+    }
     public void setCount(Integer count) {
         this.count = count;
     }

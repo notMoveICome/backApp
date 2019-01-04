@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
             List<Customer> customerList = customerMapper.findAllCustomerInfo();
             return customerList;
         } else {
-            Integer roleId=3;
+            Integer roleId = 3;
 
             if ("管理员".equals(role)) {
                 roleId = 3;
@@ -54,11 +54,11 @@ public class UserServiceImpl implements UserService {
     public Integer addUser(String username, String password, String tel, String role) {
         Date date = new Date(new java.util.Date().getTime());
         if ("管理员".equals(role)) {
-            User user = new User(null, username, password, tel, 3, "正常", date, null);
+            User user = new User(null, username, password, tel, 3, "正常", null, date, null, null);
             return userMapper.insert(user);
         }
         if ("分销商".equals(role)) {
-            User user = new User(null, username, password, tel, 2, "正常", date, null);
+            User user = new User(null, username, password, tel, 2, "正常", "待审核", date, null, null);
             return userMapper.insert(user);
         }
         return null;
@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Integer changeState(Integer gid, String state) {
         User user = new User();
-        user.setGID(gid);
+        user.setGid(gid);
         user.setState("正常".equals(state) ? "非正常" : "正常");
         return userMapper.updateById(user);
     }
@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Integer updateUser(Integer gid, String username, String password, String tel) {
         User user = new User();
-        user.setGID(gid);
+        user.setGid(gid);
         user.setName(username);
         user.setPassword(password);
         user.setTel(tel);
@@ -91,23 +91,23 @@ public class UserServiceImpl implements UserService {
         String endtime = map.get("endtime").toString();
         String role = map.get("role").toString();
         //如果用户没有选择查询的时间，则时间段2000-2100，以表示查询所有时间段内
-        if(StringUtils.isEmpty(starttime)){
-            starttime="2000-1-1";
+        if (StringUtils.isEmpty(starttime)) {
+            starttime = "2000-1-1";
         }
-        if(StringUtils.isEmpty(endtime)){
-            endtime="2100-12-30";
+        if (StringUtils.isEmpty(endtime)) {
+            endtime = "2100-12-30";
         }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         java.util.Date beginDate = new java.sql.Date(sdf.parse(starttime).getTime());
-        java.util.Date endDate =new java.sql.Date(sdf.parse(endtime).getTime());
+        java.util.Date endDate = new java.sql.Date(sdf.parse(endtime).getTime());
         EntityWrapper<User> u = new EntityWrapper<>();
         if ("管理员".equals(role)) {
-         //管理员的role_id的type值为3
-         int tpye =3;
-         return  userMapper.selectList(new EntityWrapper<User>().eq("role_id",3).like("name",username).like("tel",usertel).between("create_time",beginDate,endDate));
+            //管理员的role_id的type值为3
+            int tpye = 3;
+            return userMapper.selectList(new EntityWrapper<User>().eq("role_id", 3).like("name", username).like("tel", usertel).between("create_time", beginDate, endDate));
 
-        }else{
-              return userMapper.findUserByCondition(username,usertel,beginDate,endDate);
+        } else {
+            return userMapper.findUserByCondition(username, usertel, beginDate, endDate);
         }
 
     }
@@ -128,17 +128,17 @@ public class UserServiceImpl implements UserService {
         String usertel = map.get("usertel").toString();
         String starttime = map.get("starttime").toString();
         String endtime = map.get("endtime").toString();
-        if(StringUtils.isEmpty(starttime)){
-            starttime="2000-1-1";
+        if (StringUtils.isEmpty(starttime)) {
+            starttime = "2000-1-1";
         }
-        if(StringUtils.isEmpty(endtime)){
-            endtime="2100-12-30";
+        if (StringUtils.isEmpty(endtime)) {
+            endtime = "2100-12-30";
         }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         java.util.Date beginDate = new java.sql.Date(sdf.parse(starttime).getTime());
-        java.util.Date endDate =new java.sql.Date(sdf.parse(endtime).getTime());
+        java.util.Date endDate = new java.sql.Date(sdf.parse(endtime).getTime());
 
-        return customerMapper.findCustomerByCondition(username,proname,usertel,beginDate,endDate) ;
+        return customerMapper.findCustomerByCondition(username, proname, usertel, beginDate, endDate);
     }
 
     @Override

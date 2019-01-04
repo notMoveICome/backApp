@@ -9,10 +9,15 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/project")
@@ -69,6 +74,20 @@ public class ProjectController {
         return SysObject.ok(projectService.getRecommendPro());
     }
 
+    @RequestMapping("/queryRecommendPro")
+    public SysObject queryRecommendPro(){
+        return SysObject.ok(projectService.queryRecommendPro());
+    }
+
+    @RequestMapping("/addProjectRecomm")
+    public SysObject addProjectRecomm(Integer proId){
+        Integer row = projectService.addProjectRecomm(proId);
+        if (row == 1){
+            return new SysObject(200,"添加成功!",null);
+        }
+        return new SysObject(201,"添加失败!",null);
+    }
+
     //项目查询
     @RequestMapping("/queryPro")
     public SysObject  queryPro(String projectName){
@@ -90,8 +109,8 @@ public class ProjectController {
         }
     }
 
-    @RequestMapping("/addProject")
-    public SysObject addProject(){
-        return null;
+    @RequestMapping(value = "/addProject",method = RequestMethod.POST)
+    public SysObject addProject(@RequestParam(value = "file")MultipartFile file, HttpServletRequest request){
+        return SysObject.ok();
     }
 }

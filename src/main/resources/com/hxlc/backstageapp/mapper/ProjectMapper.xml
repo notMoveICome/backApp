@@ -31,4 +31,5 @@
 		WHERE
 			A .project_id = b.gid
 	</select>
+
 </mapper>

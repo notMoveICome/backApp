@@ -20,4 +20,8 @@ public interface ProjectService {
     List<Project> findProjectByProjectName(String projectName);
 
     Integer deleteProById(Integer proId);
+
+    List<Project> queryRecommendPro();
+
+    Integer addProjectRecomm(Integer proId);
 }

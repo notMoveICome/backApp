@@ -1,9 +1,11 @@
 package com.hxlc.backstageapp.service.impl;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.hxlc.backstageapp.mapper.AppFaceMapper;
 import com.hxlc.backstageapp.mapper.CustomerMapper;
 import com.hxlc.backstageapp.mapper.MediaMapper;
 import com.hxlc.backstageapp.mapper.ProjectMapper;
+import com.hxlc.backstageapp.pojo.AppFace;
 import com.hxlc.backstageapp.pojo.Customer;
 import com.hxlc.backstageapp.pojo.Media;
 import com.hxlc.backstageapp.pojo.Project;
@@ -11,6 +13,7 @@ import com.hxlc.backstageapp.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +26,8 @@ public class ProjectServiceImpl implements ProjectService {
     private MediaMapper mediaMapper;
     @Autowired
     private CustomerMapper customerMapper;
+    @Autowired
+    private AppFaceMapper appFaceMapper;
 
     @Override
     public List<Project> findProjectList() {
@@ -70,4 +75,49 @@ public class ProjectServiceImpl implements ProjectService {
     public Integer deleteProById(Integer proId) {
         return projectMapper.delete(new EntityWrapper<Project>().eq("gid",proId));
     }
+
+    @Override
+    public List<Project> queryRecommendPro() {
+        List<AppFace> faces = appFaceMapper.selectList(new EntityWrapper<AppFace>());
+        List<Project> projects = projectMapper.selectList(new EntityWrapper<Project>());
+        for (int i = 0;i < faces.size();i++){
+            for (int j = 0;j < projects.size();j++){
+                if (faces.get(i).getProjectId() == projects.get(j).getGid()){
+                    projects.remove(j);
+                }
+            }
+        }
+        return projects;
+    }
+
+    @Override
+    public Integer addProjectRecomm(Integer proId) {
+        Project project = new Project();
+        project.setGid(proId);
+        Project pro = projectMapper.selectOne(project);
+        Integer count = appFaceMapper.selectCount(new EntityWrapper<AppFace>());
+        AppFace appFace = new AppFace();
+        appFace.setProjectId(proId);
+        appFace.setIndex(count + 1);
+        appFace.setPrice(pro.getPrice() / 1000); // 待定
+        appFace.setPublishTime("6月-12月");// 待定
+        Integer row = appFaceMapper.insert(appFace);
+        return row;
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

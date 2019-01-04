@@ -76,7 +76,6 @@ public class UserController {
 
     @RequestMapping("/findUser")
     public SysObject findUser(@RequestParam Map map) throws ParseException {
-        String role = map.get("role").toString();
         List<User> list = userService.findUserByCondition(map);
         if(list==null){
             return new SysObject(201,"查询失败",null);
