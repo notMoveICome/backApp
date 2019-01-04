@@ -613,6 +613,13 @@ function findUserByOptions(role) {
                 } else {
                     titles = user_fields.distributor;
                 }
+                if (role == "分销商") {
+                    for (var i = 0; i < res.data.length; i++) {
+                        if (res.data[i].count == null) {
+                            res.data[i].count = 0;
+                        }
+                    }
+                }
                 var column = {
                     field: attr,
                     title: titles[attr],
@@ -792,6 +799,13 @@ function getUserByRole(role) {
                     titles = user_fields.user;
                 } else {
                     titles = user_fields.distributor;
+                }
+                if (role == "分销商") {
+                    for (var i = 0; i < res.data.length; i++) {
+                        if (res.data[i].count == null) {
+                            res.data[i].count = 0;
+                        }
+                    }
                 }
                 var column = {
                     field: attr,
