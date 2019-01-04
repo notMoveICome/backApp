@@ -4,6 +4,8 @@ var user_fields = {
         name: "姓名",
         password: "密码",
         tel: "电话",
+        count:"报备数量",
+        reportNum:"总报备数",
         state: "状态",
         createTime: "创建时间",
         remark: "备注"
@@ -764,6 +766,9 @@ function getUserByRole(role) {
                 if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1) {
                     continue;
                 }
+                if(role=="管理员"&&attr.indexOf("count") > -1 ){
+                    continue;
+                }
                 var titles;
                 if (role == "客户") {
                     titles = user_fields.customer;
@@ -794,16 +799,6 @@ function getUserByRole(role) {
                     formatter: userOperateFormatter
                 });
             }
-            // else {
-            //     columns.push({
-            //         field: 'operate',
-            //         title: '操作',
-            //         valign: "middle",
-            //         align: 'center',
-            //         events: customerOperateEvents,
-            //         formatter: customerOperateFormatter
-            //     });
-            // }
             initTable(columns, res.data);
         }
     })

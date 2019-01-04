@@ -25,7 +25,7 @@ public class Project {
     private String header;
     private String tel;
     private Date backTime;
-    private Integer state;
+    private String state;
     private Integer captionId;
     private Integer questionId;
     private String remark;
@@ -134,11 +134,11 @@ public class Project {
         this.backTime = backTime;
     }
 
-    public Integer getState() {
+    public String getState() {
         return state;
     }
 
-    public void setState(Integer state) {
+    public void setState(String state) {
         this.state = state;
     }
 

@@ -19,6 +19,8 @@ public class User implements Serializable {
     private String state;
     private Date createTime;
     private String remark;
+    @TableField(exist = false)
+    private Integer count;
     public User(){
 
     }
@@ -97,5 +99,11 @@ public class User implements Serializable {
         this.remark = remark;
     }
 
+    public Integer getCount() {
+        return count;
+    }
 
+    public void setCount(Integer count) {
+        this.count = count;
+    }
 }

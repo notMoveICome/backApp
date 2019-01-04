@@ -33,14 +33,14 @@ public class UserServiceImpl implements UserService {
             List<Customer> customerList = customerMapper.findAllCustomerInfo();
             return customerList;
         } else {
-            Integer roleId;
+            Integer roleId=3;
+
             if ("管理员".equals(role)) {
                 roleId = 3;
             } else if ("分销商".equals(role)) {
-                roleId = 2;
-            } else {
-                roleId = 1;
+                return userMapper.selectAllUser();
             }
+
             return userMapper.selectList(new EntityWrapper<User>().eq("role_id", roleId));
         }
     }
@@ -90,48 +90,26 @@ public class UserServiceImpl implements UserService {
         String starttime = map.get("starttime").toString();
         String endtime = map.get("endtime").toString();
         String role = map.get("role").toString();
-        int type = 2;
-        if ("管理员".equals(role)) {
-            type = 3;
+        //如果用户没有选择查询的时间，则时间段2000-2100，以表示查询所有时间段内
+        if(StringUtils.isEmpty(starttime)){
+            starttime="2000-1-1";
         }
-        java.util.Date utilDate = null;
-        java.util.Date utilDate1 = null;
-        java.util.Date date = null;
-        java.util.Date date1 = null;
+        if(StringUtils.isEmpty(endtime)){
+            endtime="2100-12-30";
+        }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        java.util.Date beginDate = new java.sql.Date(sdf.parse(starttime).getTime());
+        java.util.Date endDate =new java.sql.Date(sdf.parse(endtime).getTime());
         EntityWrapper<User> u = new EntityWrapper<>();
-        if (StringUtils.isNotEmpty(starttime) && StringUtils.isNotEmpty(endtime)) {
-            utilDate = sdf.parse(starttime);
-            utilDate1 = sdf.parse(endtime);
-            date = new java.sql.Date(utilDate.getTime());
-            date1 = new java.sql.Date(utilDate1.getTime());
-            int i = Integer.parseInt(starttime.replace("-", ""));
-            int i1 = Integer.parseInt(endtime.replace("-", ""));
-            if (i1 < i) {
-                u.eq("role_id", type).like("name", username).like("tel", usertel).between("create_time", date1, date);
-                return userMapper.selectList(u);
-            } else {
-                u.eq("role_id", type).like("name", username).like("tel", usertel).between("create_time", date, date1);
-                return userMapper.selectList(u);
-            }
+        if ("管理员".equals(role)) {
+         //管理员的role_id的type值为3
+         int tpye =3;
+         return  userMapper.selectList(new EntityWrapper<User>().eq("role_id",3).like("name",username).like("tel",usertel).between("create_time",beginDate,endDate));
+
+        }else{
+              return userMapper.findUserByCondition(username,usertel,beginDate,endDate);
         }
-        if (StringUtils.isNotEmpty(starttime) && StringUtils.isEmpty(endtime)) {
-            utilDate = sdf.parse(starttime);
-            date = new java.sql.Date(utilDate.getTime());
-            u.eq("role_id", type).like("name", username).like("tel", usertel).ge("create_time", date);
-            return userMapper.selectList(u);
-        }
-        if (StringUtils.isNotEmpty(endtime) && StringUtils.isEmpty(starttime)) {
-            utilDate1 = sdf.parse(endtime);
-            date1 = new java.sql.Date(utilDate1.getTime());
-            u.eq("role_id", type).like("name", username).like("tel", usertel).le("create_time", date1);
-            return userMapper.selectList(u);
-        }
-        if (StringUtils.isEmpty(starttime) && StringUtils.isEmpty(endtime)) {
-            u.eq("role_id", type).like("name", username).like("tel", usertel);
-            return userMapper.selectList(u);
-        }
-        return userMapper.selectList(new EntityWrapper<User>().eq("role_id", type));
+
     }
 
     @Override
