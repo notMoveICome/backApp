@@ -539,8 +539,9 @@ function userManage() {
                     '<span><input  type="text" class="form-control" placeholder="请选择起始报备时间" id="fromReport"/></span>' +
                     '<span style="width: 2em;line-height: 30px;margin-right: 1em;">至</span>' +
                     '<span><input  type="text" class="form-control" placeholder="请选择终止报备时间" id="toReport"/></span>');
+                $("#searchUser").append('<button id="downExcel" class="btn btn-primary" type="button" style="float: right;margin-right: 20px">导出</button>');
                 $("#searchUser").append('<button id="addUser" class="btn btn-primary" type="button" style="float: right;margin-right: 20px">添加</button>');
-                $("#searchUser").append('<button id="findUser" class="btn btn-primary" type="button" style="float: right;margin-right: 480px">查询人员</button>');
+                $("#searchUser").append('<button id="findUser" class="btn btn-primary" type="button" style="float: right;margin-right: 400px">查询人员</button>');
                 addUser(role);
             }
             if (role == "客户") {
@@ -550,8 +551,9 @@ function userManage() {
                     '<span><input  type="text" class="form-control" placeholder="请选择起始报备时间" id="fromReport"/></span>' +
                     '<span style="width: 2em;line-height: 30px;margin-right: 1em;">至</span>' +
                     '<span><input  type="text" class="form-control" placeholder="请选择终止报备时间" id="toReport"/></span>');
+                $("#searchUser").append('<button id="downExcel" class="btn btn-primary" type="button" style="float: right;margin-right: 20px">导出</button>');
                 $("#searchUser").append('<button id="findUser" class="btn btn-primary" type="button">查询</button>');
-                $("#searchUser").append('<button id="findUser" class="btn btn-primary" type="button" style="margin-left: 18em;">批量报备</button>');
+                $("#searchUser").append('<button id="findUser" class="btn btn-primary" type="button" style="margin-left: 12em;">批量报备</button>');
                 findCustomer();
             }
 
@@ -567,6 +569,7 @@ function userManage() {
             });
             // var role =$("#userManage").find(".active").find("a").eq(0).text();
             getUserByRole(role);
+            downExcel(role);
             $("#userName,#userTel,#fromReport,#toReport").on('keypress', function (e) {
                 if (e.keyCode == "13") {
                     findUserByOptions(role);
@@ -576,6 +579,42 @@ function userManage() {
                 findUserByOptions(role);
             })
         })
+    })
+}
+
+function downExcel(role) {
+    $('#downExcel').on("click", function () {
+        var data = $("#rightTable").bootstrapTable("getData");
+        var dataStr = JSON.stringify(data);
+        // var url = "/backApp/downloadExcel?role="+role+"&data="+encodeURIComponent(dataStr);
+        var url = "/backApp/downloadExcel";
+        $('<form id="excelForm" method="post" action="' + url + '" style="display: none">' +
+            '<input name="role" value="' + role + '">' +
+            '<input name="data" value="' + encodeURIComponent(dataStr) + '">' +
+            '</form>').appendTo('body').submit().remove();
+
+        // window.open(url);
+
+        // $.ajax({
+        //     url: url,
+        //     type: "post",
+        //     dataType: "json",
+        //     contentType: "application/json",
+        //     data:JSON.stringify({'role':role,'data':data}),
+        //     success: function (res) {
+        //         // if (res.status=201) {
+        //         //     $.ajax({
+        //         //         url:"/backApp/download",
+        //         //         type: "post"
+        //         //     })
+        //         // } else {
+        //         //     alert("下载失败!");
+        //         // }
+        //     },
+        //     error: function (err) {
+        //         alert("下载失败");
+        //     }
+        // });
     })
 }
 
@@ -884,6 +923,8 @@ function initTable(columns, data) {
         // showToggle: true,                    //是否显示详细视图和列表视图的切换按钮
         cardView: false,                    //是否显示详细视图
         detailView: false,                   //是否显示父子表
+        // showExport: true,
+        // exportDataType: "all",
         data: data,
         columns: columns
     });
