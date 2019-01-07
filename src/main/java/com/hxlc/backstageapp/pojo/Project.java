@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
 
 import java.sql.Date;
+import java.util.Arrays;
 
 @TableName("project_info")
 public class Project {
@@ -15,9 +16,10 @@ public class Project {
     private Integer disnum;
     @TableField(exist = false)
     private Integer reportNum;
-    private String desc;
+    private String description;
     private String develop;
     private String keyword;
+    private String type;
     private byte[] descPic;
     private Float price;
     private String address;
@@ -26,9 +28,13 @@ public class Project {
     private String tel;
     private Date backTime;
     private String state;
+    private Integer reportLimit;
     private Integer captionId;
     private Integer questionId;
+    private Date biddingBegin;
+    private Date biddingEnd;
     private String remark;
+
 
     public Integer getGid() {
         return gid;
@@ -54,12 +60,20 @@ public class Project {
         this.disnum = disnum;
     }
 
-    public String getDesc() {
-        return desc;
+    public Integer getReportNum() {
+        return reportNum;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setReportNum(Integer reportNum) {
+        this.reportNum = reportNum;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getDevelop() {
@@ -76,6 +90,14 @@ public class Project {
 
     public void setKeyword(String keyword) {
         this.keyword = keyword;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public byte[] getDescPic() {
@@ -142,6 +164,14 @@ public class Project {
         this.state = state;
     }
 
+    public Integer getReportLimit() {
+        return reportLimit;
+    }
+
+    public void setReportLimit(Integer reportLimit) {
+        this.reportLimit = reportLimit;
+    }
+
     public Integer getCaptionId() {
         return captionId;
     }
@@ -158,6 +188,22 @@ public class Project {
         this.questionId = questionId;
     }
 
+    public Date getBiddingBegin() {
+        return biddingBegin;
+    }
+
+    public void setBiddingBegin(Date biddingBegin) {
+        this.biddingBegin = biddingBegin;
+    }
+
+    public Date getBiddingEnd() {
+        return biddingEnd;
+    }
+
+    public void setBiddingEnd(Date biddingEnd) {
+        this.biddingEnd = biddingEnd;
+    }
+
     public String getRemark() {
         return remark;
     }
@@ -166,11 +212,31 @@ public class Project {
         this.remark = remark;
     }
 
-    public Integer getReportNum() {
-        return reportNum;
-    }
-
-    public void setReportNum(Integer reportNum) {
-        this.reportNum = reportNum;
+    @Override
+    public String toString() {
+        return "Project{" +
+                "gid=" + gid +
+                ", name='" + name + '\'' +
+                ", disnum=" + disnum +
+                ", reportNum=" + reportNum +
+                ", description='" + description + '\'' +
+                ", develop='" + develop + '\'' +
+                ", keyword='" + keyword + '\'' +
+                ", type='" + type + '\'' +
+                ", descPic=" + Arrays.toString(descPic) +
+                ", price=" + price +
+                ", address='" + address + '\'' +
+                ", commission=" + commission +
+                ", header='" + header + '\'' +
+                ", tel='" + tel + '\'' +
+                ", backTime=" + backTime +
+                ", state='" + state + '\'' +
+                ", reportLimit=" + reportLimit +
+                ", captionId=" + captionId +
+                ", questionId=" + questionId +
+                ", biddingBegin=" + biddingBegin +
+                ", biddingEnd=" + biddingEnd +
+                ", remark='" + remark + '\'' +
+                '}';
     }
 }

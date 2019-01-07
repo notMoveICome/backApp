@@ -37,8 +37,12 @@ public interface UserService {
 
     Integer validateTel(String tel);
 
+    /**
+     * 分销商注册
+     * @param map
+     * @return
+     */
     Integer registerUser(Map map);
-
 
     List<Customer> findCustomerByCondition(Map map) throws ParseException;
 }

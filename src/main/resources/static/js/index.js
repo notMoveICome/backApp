@@ -37,10 +37,11 @@ var project_fields = {
     gid: "ID",
     name: "项目名称",
     disnum: "分销商数",
-    reportNum: "总报备次数",
-    desc: "描述",
+    reportNum: "总报备数",
+    description: "描述",
     develop: "开发商",
     keyword: "关键字",
+    type: "房型",
     price: "项目单价",
     address: "项目地址",
     commission: "佣金",
@@ -327,37 +328,80 @@ function projectPublish() {
             '            </div>' +
             '            <div id="projectPublishDiv">' +
             '                <div>' +
-            '                    <form id="proForm" action="#" onsubmit="return false" method="post" enctype="multipart/form-data">' +
-            '                        <table style="border-collapse:separate; border-spacing:0.5em;margin: auto;">' +
-            '                            <tr>' +
-            '                                <td><b>项目名称：</b><input type="text" name="proName"></td>' +
-            '                                <td><b>开发商：</b><input type="text" name="develop"></td>' +
-            '                                <td><b>详细地址：</b><input type="text" name="address"></td>' +
-            '                            </tr>' +
-            '                            <tr>' +
-            '                                <td><b>合作时间：</b><input type="text" id="fromTime" name="startTime"><b> 至 </b><input type="text" id="toTime" name="endTime"></td>' +
-            '                                <td><b>允许报备次数：</b><input type="text" name="disnum"></td>' +
-            '                                <td><b>佣金设置：</b><input type="text" name="commission"></td>' +
-            '                            </tr>' +
-            '                            <tr>' +
-            '                                <td><b>上传资料：</b><input type="file" name="file" style="display: inline;line-height: normal;"></td>' +
-            '                                <td><b>关键字：</b><input type="text" name="keyword"></td>' +
-            '                                <td><b>项目单价：</b><input type="text" name="price"></td>' +
-            '                            </tr>' +
-            '                            <tr>' +
-            '                                <td colspan="2"><b>项目描述：</b><textarea name="desc" placeholder="请输入内容" style="width: 25em;height: 5em;"></textarea></td>' +
-            '                                <td></td>' +
-            '                            </tr>' +
-            '                        </table>' +
-            '                        <span>' +
-            '                            <button class="btn btn-primary btn-sm" onclick="addProject()" style="width: 16em;height: 3em;font-size: 16px;">发布</button>' +
-            // '                            <input id="submit_form" type="submit" class="btn btn-primary btn-sm" style="width: 16em;height: 3em;font-size: 16px;color: #fff;background-color: #337ab7;border-color: #2e6da4;" value="发布"/>' +
-            '                        </span>' +
+            '                    <form id="proForm" method="post" enctype="multipart/form-data">' +
+            // '                      <button class="btn btn-primary btn-sm" onclick="addProject()" style="width: 16em;height: 3em;font-size: 16px;">发布</button>' +
             '                    </form>' +
+            '                    <button class="btn btn-primary btn-sm" onclick="addProject()" style="width: 16em;height: 3em;font-size: 16px;">发布</button>' +  // 放在form里面会页面跳转
             '                </div>' +
             '            </div>';
         $(".main-right").html(publishHtml);
-        $("#fromTime,#toTime").datetimepicker({
+        var tableHtml = '<table id="addProjectTable" style="border-collapse:separate;margin: auto;">' +
+            '            <tr>' +
+            '                <td><b>项目名称:</b></td>' +
+            '                <td><input type="text" name="name"/></td>' +
+            '                <td><b>开发商:</b></td>' +
+            '                <td><input type="text" name="develop"/></td>' +
+            '                <td><b>分销商数:</b></td>' +
+            '                <td><input type="text" name="disnum"/></td>' +
+            '            </tr>' +
+            '            <tr>' +
+            '                <td><b>允许报备次数:</b></td>' +
+            '                <td><input type="text" name="reportLimit"/></td>' +
+            '                <td><b>项目单价:</b></td>' +
+            '                <td><input type="text" name="price"/></td>' +
+            '                <td><b>佣金:</b></td>' +
+            '                <td><input type="text" name="commission"/></td>' +
+            '            </tr>' +
+            '            <tr>' +
+            '                <td><b>地址:</b></td>' +
+            '                <td><input type="text" name="address"/></td>' +
+            '                <td><b>关键字:</b></td>' +
+            '                <td><input type="text" name="keyword"/></td>' +
+            '                <td><b>房型:</b></td>' +
+            '                <td>' +
+            '                    <select id="proType" name="type">' +
+            '                        <option value="住宅">住宅</option>' +
+            '                        <option value="商铺">商铺</option>' +
+            '                        <option value="写字楼">写字楼</option>' +
+            '                        <option value="公寓">公寓</option>' +
+            '                        <option value="二手房">二手房</option>' +
+            '                        <option value="其他项目">其他项目</option>' +
+            '                    </select>' +
+            '                </td>' +
+            '            </tr>' +
+            '            <tr>' +
+            '                <td><b>负责人:</b></td>' +
+            '                <td><input type="text" name="header"/></td>' +
+            '                <td><b>电话:</b></td>' +
+            '                <td><input type="text" name="tel"/></td>' +
+            '                <td><b>合作时间:</b></td>' +
+            '                <td><input type="text" id="fromTime" name="biddingBegin"><b> 至 </b><input type="text" id="toTime" name="biddingEnd"></td>' +
+            '            </tr>' +
+            '            <tr>' +
+            '                <td><b>沙盘解说:</b></td>' +
+            '                <td><input type="file" name="spjs" onchange="fileChange(this);"/></td>' +
+            '                <td><b>销售问答:</b></td>' +
+            '                <td><input type="file" name="xswd" onchange="fileChange(this);"/></td>' +
+            '                <td><b>户型图:</b></td>' +
+            '                <td><input type="file" name="hxt" onchange="fileChange(this);"/></td>' +
+            '            </tr>' +
+            '            <tr>' +
+            '                <td><b>效果图:</b></td>' +
+            '                <td><input type="file" name="xgt" onchange="fileChange(this);"/></td>' +
+            '                <td><b>其他:</b></td>' +
+            '                <td><input type="file" name="other" onchange="fileChange(this);"/></td>' +
+            '                <td><b>项目状态:</b></td>' +
+            '                <td><input type="radio" name="state" value="在售"/>在售<input type="radio" name="state" value="暂停"/>暂停<input type="radio" name="state" value="售罄"/>售罄</td>' +
+            '            </tr>' +
+            '            <tr>' +
+            // '                <td><b>报备时间:</b></td>' +
+            // '                <td><input type="text" name="backTime" id="startReportTime"/></td>' +
+            '                <td><b>项目描述:</b></td>' +
+            '                <td><textarea name="description" style="width: 20em;height: 4em;"></textarea></td>' +
+            '            </tr>' +
+            '        </table>';
+        $("#proForm").html(tableHtml);
+        $("#fromTime,#toTime,#startReportTime").datetimepicker({
             format: 'yyyy-mm-dd',//显示格式
             todayHighlight: 1,//今天高亮
             minView: "month",//设置只显示到月份
@@ -371,27 +415,99 @@ function projectPublish() {
 }
 
 function addProject() {
-    var form = new FormData($("#proForm"));
+    var form = new FormData(document.getElementById("proForm"));
+    /**
+     * ajax提交表单(带文件)
+     */
     $.ajax({
         //几个参数需要注意一下
         type: "POST",//方法类型
         dataType: "json",//预期服务器返回的数据类型
-        contentType: "multipart/form-data",
-        processData: false,
+        cache: false,    //上传文件不需缓存
+        contentType: false,//需设置为false，因为是FormData对象，且已经声明了属性enctype="multipart/form-data"
+        processData: false,//需设置为false，因为data值是FormData对象，不需要对数据做处理
+        async:true,
         url: "/backApp/project/addProject",//url
-        data: $('#proForm').serialize(),
-        success: function (result) {
-            console.log(result);//打印服务端返回的数据(调试用)
-            if (result.state == 200) {
+        data: form,
+        success: function (res) {
+            // console.log(res);//打印服务端返回的数据(调试用)
+            if (res.status == 200) {
                 alert("SUCCESS");
             }
-            ;
         },
         error: function () {
             alert("异常！");
         }
     });
 }
+
+/**
+ * 限制上传文件类型及大小
+ * @param target
+ * @param id
+ * @returns {boolean}
+ */
+function fileChange(target,id) {
+    var inputName = target.name;
+    // var filetypes =[".jpg",".png",".rar",".txt",".zip",".doc",".ppt",".xls",".pdf",".docx",".xlsx"];
+    var filetypes;
+    var msg;
+    if (inputName == "spjs" || inputName == "xswd"){
+        filetypes =[".doc",".docx",".pdf"];
+        msg = "Word或Pdf文件";
+    }else {
+        filetypes =[".zip"];
+        msg = "zip压缩文件";
+    }
+    var isIE = /msie/i.test(navigator.userAgent) && !window.opera;
+    var fileSize = 0;
+    var filepath = target.value;
+    var filemaxsize = 1024*10;//2M
+    if(filepath){
+        var isnext = false;
+        var fileend = filepath.substring(filepath.lastIndexOf("."));
+        if(filetypes && filetypes.length>0){
+            for(var i =0; i<filetypes.length;i++){
+                if(filetypes[i]==fileend){
+                    isnext = true;
+                    break;
+                }
+            }
+        }
+        if(!isnext){
+            layer.msg("不接受此文件类型,请选择"+ msg +"!",{icon:2});
+            target.value ="";
+            return false;
+        }
+    }else{
+        return false;
+    }
+    if (isIE && !target.files) {
+        var filePath = target.value;
+        var fileSystem = new ActiveXObject("Scripting.FileSystemObject");
+        if(!fileSystem.FileExists(filePath)){
+            layer.msg("附件不存在，请重新输入!",{icon:2});
+            return false;
+        }
+        var file = fileSystem.GetFile (filePath);
+        fileSize = file.Size;
+    } else {
+        fileSize = target.files[0].size;
+    }
+
+    var size = fileSize / 1024;
+    if(size>filemaxsize){
+        layer.msg("附件大小不能大于"+filemaxsize/1024+"M!",{icon:2});
+        target.value ="";
+        return false;
+    }
+    if(size<=0){
+        layer.msg("附件大小不能为0M!",{icon:2});
+        target.value ="";
+        return false;
+    }
+}
+
 
 /*项目管理_管理员*/
 function projectManage() {
@@ -425,7 +541,7 @@ function queryProByName() {
         if (res.status == 200) {
             var columns = [];
             for (var attr in res.data[0]) {
-                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr.indexOf("desc") > -1 || attr == "keyword" || attr == "address" || attr == "remark") {
+                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr == "description" || attr.indexOf("bidding") > -1 || attr == "reportLimit" || attr == "keyword" || attr == "address" || attr == "remark") {
                     continue;
                 }
                 var column = {
@@ -433,6 +549,7 @@ function queryProByName() {
                     title: project_fields[attr],
                     valign: "middle",
                     align: "center",
+                    // sortable: true,
                     visible: true,
                     formatter: paramsMatter
                 };
@@ -470,7 +587,7 @@ function projectList() {
         if (res.status == 200) {
             var columns = [];
             for (var attr in res.data[0]) {
-                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr.indexOf("desc") > -1 || attr == "keyword" || attr == "address" || attr == "remark") {
+                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr.indexOf == "description" || attr.indexOf("bidding") > -1 || attr == "reportLimit" || attr == "keyword" || attr == "address" || attr == "remark") {
                     continue;
                 }
                 var column = {
@@ -478,6 +595,7 @@ function projectList() {
                     title: project_fields[attr],
                     valign: "middle",
                     align: "center",
+                    // sortable: true,
                     visible: true,
                     formatter: paramsMatter
                 };
@@ -489,7 +607,7 @@ function projectList() {
                     title: '操作',
                     valign: "middle",
                     align: 'center',
-                    width: '250',
+                    width: '210',
                     events: projectOperateEvents,
                     formatter: projectOperateFormatter
                 });
@@ -543,6 +661,14 @@ function userManage() {
                 $("#searchUser").append('<button id="addUser" class="btn btn-primary" type="button" style="float: right;margin-right: 20px">添加</button>');
                 $("#searchUser").append('<button id="findUser" class="btn btn-primary" type="button" style="float: right;margin-right: 400px">查询人员</button>');
                 addUser(role);
+                $("#userName,#userTel,#fromReport,#toReport").on('keypress', function (e) {
+                    if (e.keyCode == "13") {
+                        findUserByOptions(role);
+                    }
+                });
+                $("#findUser").on("click", function () {
+                    findUserByOptions(role);
+                })
             }
             if (role == "客户") {
                 $("#searchUser").append('<span><input id="proName" type="text" class="form-control" placeholder="请输入项目名称"/></span>' +
@@ -553,6 +679,15 @@ function userManage() {
                     '<span><input  type="text" class="form-control" placeholder="请选择终止报备时间" id="toReport"/></span>');
                 $("#searchUser").append('<button id="downExcel" class="btn btn-primary" type="button" style="float: right;margin-right: 20px">导出</button>');
                 $("#searchUser").append('<button id="findUser" class="btn btn-primary" type="button">查询</button>');
+                $("#searchUser").append('<button id="exportCustomer" class="btn btn-primary" type="button" style="margin-left: 18em;">批量报备</button>');
+                $("#proName,#userName,#userTel,#fromReport,#toReport").on('keypress', function (e) {
+                    if (e.keyCode == "13") {
+                        findCustomer(role);
+                    }
+                });
+                $("#findUser").on("click", function () {
+                    findCustomer(role);
+                })
                 $("#searchUser").append('<button id="findUser" class="btn btn-primary" type="button" style="margin-left: 12em;">批量报备</button>');
                 findCustomer();
             }
@@ -567,7 +702,6 @@ function userManage() {
                 showMeridian: 1,
                 autoclose: 1//选择后自动关闭
             });
-            // var role =$("#userManage").find(".active").find("a").eq(0).text();
             getUserByRole(role);
             downExcel(role);
             $("#userName,#userTel,#fromReport,#toReport").on('keypress', function (e) {
@@ -635,7 +769,7 @@ function findUserByOptions(role) {
         if (res.status == 200) {
             var columns = [];
             for (var attr in res.data[0]) {
-                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1) {
+                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr == "size") {
                     continue;
                 }
                 if (role == "管理员" && attr.indexOf("count") > -1) {
@@ -664,16 +798,28 @@ function findUserByOptions(role) {
                     title: titles[attr],
                     valign: "middle",
                     align: "center",
+                    sortable: true,
                     visible: true
                 };
                 columns.push(column);
             }
-            if (role == "管理员" || role == "分销商" || role == "业务员") {
+            if (role == "管理员") {
                 columns.push({
                     field: 'operate',
                     title: '操作',
                     valign: "middle",
                     align: 'center',
+                    events: userOperateEvents,
+                    formatter: userOperateFormatter
+                });
+            }
+            if (role == "分销商" || role == "业务员") {
+                columns.push({
+                    field: 'operate',
+                    title: '操作',
+                    valign: "middle",
+                    align: 'center',
+                    width: "320",
                     events: userOperateEvents,
                     formatter: userOperateFormatter
                 });
@@ -697,40 +843,39 @@ function findUserByOptions(role) {
 
 
 function findCustomer() {
-    $("#findUser").on("click", function () {
-        var data = {
-            usertel: $("#userTel").val(),
-            proname: $("#proName").val(),
-            username: $("#userName").val(),
-            starttime: $("#fromReport").val(),
-            endtime: $("#toReport").val()
-        };
-        if (data.endtime != "" && data.starttime != "" && data.endtime == data.starttime) {
-            layer.msg("起始时间和终止时间不能相同", {icon: 2});
-            return false;
-        }
-        $.post("/backApp/user/findCustomer", data, function (res) {
-            if (res.status == 200) {
-                var columns = [];
-                for (var attr in res.data[0]) {
-                    if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1) {
-                        continue;
-                    }
-                    var titles = user_fields.customer;
-                    var column = {
-                        field: attr,
-                        title: titles[attr],
-                        valign: "middle",
-                        align: "center",
-                        visible: true
-                    };
-                    columns.push(column);
+    var data = {
+        usertel: $("#userTel").val(),
+        proname: $("#proName").val(),
+        username: $("#userName").val(),
+        starttime: $("#fromReport").val(),
+        endtime: $("#toReport").val()
+    };
+    if (data.endtime != "" && data.starttime != "" && data.endtime == data.starttime) {
+        layer.msg("起始时间和终止时间不能相同", {icon: 2});
+        return false;
+    }
+    $.post("/backApp/user/findCustomer", data, function (res) {
+        if (res.status == 200) {
+            var columns = [];
+            for (var attr in res.data[0]) {
+                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1) {
+                    continue;
                 }
-                initTable(columns, res.data);
-            } else {
-                layer.msg(res.msg, {icon: 1});
+                var titles = user_fields.customer;
+                var column = {
+                    field: attr,
+                    title: titles[attr],
+                    valign: "middle",
+                    align: "center",
+                    sortable: true,
+                    visible: true
+                };
+                columns.push(column);
             }
-        })
+            initTable(columns, res.data);
+        } else {
+            layer.msg(res.msg, {icon: 1});
+        }
     })
 }
 
@@ -822,7 +967,7 @@ function getUserByRole(role) {
         if (res.status == 200) {
             var columns = [];
             for (var attr in res.data[0]) {
-                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1) {
+                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr == "size") {
                     continue;
                 }
                 if (role == "管理员" && attr.indexOf("count") > -1) {
@@ -877,8 +1022,8 @@ function getUserByRole(role) {
                     valign: "middle",
                     align: 'center',
                     width: "320",
-                    events: distributorOperateEvents,
-                    formatter: distributorOperateFormatter
+                    events: userOperateEvents,
+                    formatter: userOperateFormatter
                 });
             }
             // else {
@@ -931,36 +1076,22 @@ function initTable(columns, data) {
 }
 
 function userOperateFormatter(value, row, index) {
-    if (row.state == "正常") {
-        return [
-            '<button type="button" class="RoleOfedit btn btn-primary  btn-sm" style="margin-right:15px;">修改</button>',
-            '<button type="button" class="RoleOfdisable btn btn-primary  btn-sm" style="margin-right:15px;">禁用</button>',
-            '<button type="button" class="RoleOfdelete btn btn-primary  btn-sm" style="margin-right:15px;">删除</button>'
-        ].join('');
-    } else {
-        return [
-            '<button type="button" class="RoleOfedit btn btn-primary  btn-sm" style="margin-right:15px;">修改</button>',
-            '<button type="button" class="RoleOfdisable btn btn-primary  btn-sm" style="margin-right:15px;">启用</button>',
-            '<button type="button" class="RoleOfdelete btn btn-primary  btn-sm" style="margin-right:15px;">删除</button>'
-        ].join('');
-    }
-}
-
-function distributorOperateFormatter(value, row, index) {
     var btns = [];
-    btns.push('<button type="button" class="disOfwatch btn btn-primary  btn-sm" style="margin-right:15px;">查看</button>');
-    if (row.checkState == "已过审") {
-        btns.push('<button type="button" class="disOfaudit btn btn-primary  btn-sm" style="margin-right:15px;" disabled="true">审核</button>');
-    } else {
-        btns.push('<button type="button" class="disOfaudit btn btn-primary  btn-sm" style="margin-right:15px;">审核</button>');
+    if (row.roleId != 3) {
+        btns.push('<button type="button" class="RoleOfwatch btn btn-primary  btn-sm" style="margin-right:15px;">查看</button>');
+        if (row.checkState == "已过审") {
+            btns.push('<button type="button" class="RoleOfaudit btn btn-primary  btn-sm" style="margin-right:15px;" disabled="true">审核</button>');
+        } else {
+            btns.push('<button type="button" class="RoleOfaudit btn btn-primary  btn-sm" style="margin-right:15px;">审核</button>');
+        }
     }
-    btns.push('<button type="button" class="disOfedit btn btn-primary  btn-sm" style="margin-right:15px;">修改</button>');
+    btns.push('<button type="button" class="RoleOfedit btn btn-primary  btn-sm" style="margin-right:15px;">修改</button>');
     if (row.state == "正常") {
-        btns.push('<button type="button" class="disOfdisable btn btn-primary  btn-sm" style="margin-right:15px;">禁用</button>');
+        btns.push('<button type="button" class="RoleOfdisable btn btn-primary  btn-sm" style="margin-right:15px;">禁用</button>');
     } else {
-        btns.push('<button type="button" class="disOfdisable btn btn-primary  btn-sm" style="margin-right:15px;">启用</button>');
+        btns.push('<button type="button" class="RoleOfdisable btn btn-primary  btn-sm" style="margin-right:15px;">启用</button>');
     }
-    btns.push('<button type="button" class="disOfdelete btn btn-primary  btn-sm" style="margin-right:15px;">删除</button>');
+    btns.push('<button type="button" class="RoleOfdelete btn btn-primary  btn-sm" style="margin-right:15px;">删除</button>');
     return btns.join('');
 }
 
@@ -993,6 +1124,15 @@ function projectOperateFormatter_Dis(value, row, index) {
 }
 
 window.userOperateEvents = {
+    'click .RoleOfwatch': function (e, value, row, index) {
+        console.log(row);
+        console.log(index);
+        // $("#editModal").modal('show');
+    },
+    'click .RoleOfaudit': function (e, value, row, index) {
+        console.log(row);
+        console.log(index);
+    },
     'click .RoleOfedit': function (e, value, row, index) {
         var role = $("#userManage").find(".active").find("a").eq(0).text();
         var $form = $('<form id="userForm" class="layui-form" style="padding: 20px 30px 10px 0;"></form>');
@@ -1064,17 +1204,20 @@ window.userOperateEvents = {
         })
     },
     'click .RoleOfdelete': function (e, value, row, index) {
-        var role = $("#userManage").find(".active").find("a").eq(0).text()
+        var role = $("#userManage").find(".active").find("a").eq(0).text();
         layer.confirm('是否删除此用户？', {
             title: "删除用户",
             btn: ['删除', '取消'] //按钮
         }, function () {
             $.post("/backApp/user/delUser", {gid: row.gid}, function (res) {
-                layer.msg(res.msg, {icon: 1});
-                getUserByRole(role);
+                if (res.status == 200) {
+                    layer.msg(res.msg, {icon: 1});
+                    getUserByRole(role);
+                }else {
+                    layer.msg(res.msg, {icon: 2});
+                }
+                layer.close(index);
             })
-        }, function () {
-
         });
     }
 };
@@ -1085,29 +1228,6 @@ window.userOperateEvents = {
 //         // $("#editModal").modal('show');
 //     }
 // };
-window.distributorOperateEvents = {
-    'click .disOfwatch': function (e, value, row, index) {
-        console.log(row);
-        console.log(index);
-        // $("#editModal").modal('show');
-    },
-    'click .disOfaudit': function (e, value, row, index) {
-        console.log(row);
-        console.log(index);
-    },
-    'click .disOfedit': function (e, value, row, index) {
-        console.log(row);
-        console.log(index);
-    },
-    'click .disOfdisable': function (e, value, row, index) {
-        console.log(row);
-        console.log(index);
-    },
-    'click .disOfdelete': function (e, value, row, index) {
-        console.log(row);
-        console.log(index);
-    }
-};
 window.recommOperateEvents = {
     'click .recommOfedit': function (e, value, row, index) {
         console.log(row);
@@ -1130,24 +1250,112 @@ window.projectOperateEvents = {
     },
     'click .ProOfedit': function (e, value, row, index) {
         var div = $('<div id="editpro"></div>');
-        var html = '';
+        var html = '<form id="editForm" action="#" method="post" name="editProForm">' +
+                '        <table style="border-collapse:separate; border-spacing:0.5em;margin: auto;">' +
+                '            <tr>' +
+                '                <td>项目名称:</td>' +
+                '                <td><input type="text" name="name" value="'+row.name+'"/></td>' +
+                '                <td>分销商数:</td>' +
+                '                <td><input type="text" name="disnum" value="'+row.disnum+'"/></td>' +
+                '            </tr>' +
+                '            <tr>' +
+                '                <td>项目单价:</td>' +
+                '                <td><input type="text" name="price" value="'+row.price+'"/></td>' +
+                '                <td>佣金:</td>' +
+                '                <td><input type="text" name="commission" value="'+row.commission+'"/></td>' +
+                '            </tr>' +
+                '            <tr>' +
+                '                <td>地址:</td>' +
+                '                <td><input type="text" name="address" value="'+row.address+'"/></td>' +
+                '                <td>关键字:</td>' +
+                '                <td></span><input type="text" name="keyword" value="'+row.keyword+'"/></td>' +
+                '            </tr>' +
+                '            <tr>' +
+                '                <td>负责人:</td>' +
+                '                <td><input type="text" name="header" value="'+row.header+'"/></td>' +
+                '                <td>电话:</td>' +
+                '                <td><input type="text" name="tel" value="'+row.tel+'"/></td>' +
+                '            </tr>' +
+                '            <tr>' +
+                '                <td>报备时间:</td>' +
+                '                <td><input type="text" name="backTime" id="startReportTime" value="'+row.backTime+'"/></td>' +
+                '                <td>项目状态:</td>' +
+                '                <td><input type="radio" name="state" value="在售"/>在售<input type="radio" name="state" value="暂停"/>暂停<input type="radio" name="state" value="售罄"/>售罄</td>' +
+                '            </tr>' +
+                '            <tr>' +
+                '                <td>房型:</td>' +
+                '                <td>' +
+                '                    <select id="proType" name="type">' +
+                '                       <option value="住宅">住宅</option>' +
+                '                       <option value="商铺">商铺</option>' +
+                '                       <option value="写字楼">写字楼</option>' +
+                '                       <option value="公寓">公寓</option>' +
+                '                       <option value="二手房">二手房</option>' +
+                '                       <option value="其他项目">其他项目</option>' +
+                '                    </select>' +
+                '                </td>' +
+                '                <td>报备次数限制:</td>' +
+                '                <td><input name="reportLimit" value="'+row.reportLimit+'"/></td>' +
+                '            </tr>' +
+                '            <tr>' +
+                '                <td>开发商:</td>' +
+                '                <td><input type="text" name="develop" value="'+row.develop+'"/></td>' +
+                '                <td>项目描述:</td>' +
+                '                <td><textarea name="description">'+row.desc+'</textarea></td>' +
+                '            </tr>' +
+                '        </table>' +
+                '        <input type="hidden" name="gid" value="'+row.gid+'"/>' +
+                '    </form>';
+        div.html(html);
         layer.open({
-            type: 1, offset: '250px', area: '650px', title: '项目修改',
-            content: '<div id=""></div>',
+            type: 1, offset: '250px', area: '800px', title: '项目修改',
+            content: '<div id="editContent"></div>',
             btn: ['确认', '取消'],
             yes: function (index, layero) {
-                var val = $("#proSelect option:selected").val();
-                $.post("/backApp/project/addProjectRecomm", {proId: val}, function (res) {
-                    if (res.status == 200) {
-                        layer.msg(res.msg, {icon: 1});
-                        $("#indexManage").click();
-                        layer.close(index)
-                    } else {
-                        layer.msg(res.msg, {icon: 2});
+                $.ajax({
+                    type: "POST",                  //提交方式
+                    dataType: "json",              //预期服务器返回的数据类型
+                    url: "/backApp/project/editProjectInfo" ,          //目标url
+                    data: $('#editForm').serialize(), //提交的数据
+                    success: function (res) {
+                        if (res.status == 200) {
+                            layer.msg(res.msg, {icon: 1});
+                            projectList();
+                        }else {
+                            layer.msg(res.msg, {icon: 2});
+                        }
+                        layer.close(index);
                     }
-                })
+                });
             }
         });
+        $("#editContent").append(div);
+        $("#startReportTime").datetimepicker({
+            format: 'yyyy-mm-dd',//显示格式
+            todayHighlight: 1,//今天高亮
+            minView: "month",//设置只显示到月份
+            startView: 2,
+            forceParse: 0,
+            language: "zh-CN", //语言设置
+            showMeridian: 1,
+            autoclose: 1//选择后自动关闭
+        });
+        var radios = $("#editpro").find("input:radio");
+        for (var i = 0;i < radios.length;i++){
+            var radio = $(radios[i]);
+            if (radio.val() == row.state){
+                radio.attr("checked","true");
+                break;
+            }
+        }
+        var options = $("#proType").find("option");
+        for (var i = 0;i< options.length;i++){
+            var option = $(options[i]);
+            if (option.val() == row.type){
+                option.attr("selected","selected");
+                break;
+            }
+        }
     },
     'click .ProOfdelete': function (e, value, row, index) {
         layer.confirm('确认要删除吗？', {
@@ -1161,7 +1369,7 @@ window.projectOperateEvents = {
                 } else {
                     layer.msg(res.msg, {icon: 2});
                 }
-
+                layer.close(index);
             });
         });
     }

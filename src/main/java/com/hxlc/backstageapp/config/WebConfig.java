@@ -2,22 +2,26 @@ package com.hxlc.backstageapp.config;
 
 import com.hxlc.backstageapp.Interceptor.LoginInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
+import javax.servlet.MultipartConfigElement;
+
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
-    //@Autowired
-    //LogInterceptor logInterceptor;
 
     @Autowired
     LoginInterceptor loginInterceptor;
+
+    @Value("${fileDir.projectFile}")
+    private String projectFile;
+    @Value("${fileDir.tempFile}")
+    private String tempFile;
 
     /**
      * 不需要登录拦截的url:登录注册和验证码
@@ -45,6 +49,16 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         super.addViewControllers(registry);
     }
 
+    /**
+     * 项目文件路径地址
+     * @param registry
+     */
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/public/**").addResourceLocations("classpath:/public/");
+        registry.addResourceHandler("/resources/**").addResourceLocations("file:"+projectFile+"/");// ??
+        super.addResourceHandlers(registry);
+    }
 
     @Bean
     public InternalResourceViewResolver viewResolver() {
@@ -55,5 +69,14 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         return resolver;
     }
 
-
+    /**
+     * 文件上传临时路径
+     * @return
+     */
+    @Bean
+    MultipartConfigElement multipartConfigElement() {
+        MultipartConfigFactory factory = new MultipartConfigFactory();
+        factory.setLocation(tempFile);
+        return factory.createMultipartConfig();
+    }
 }

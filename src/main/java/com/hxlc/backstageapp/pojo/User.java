@@ -20,6 +20,7 @@ public class User implements Serializable {
     private String checkState;
     private Date createTime;
     private String channelComm;
+    private String size;
     private String remark;
     @TableField(exist = false)
     private Integer count;
@@ -124,5 +125,13 @@ public class User implements Serializable {
     }
     public void setCount(Integer count) {
         this.count = count;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
     }
 }

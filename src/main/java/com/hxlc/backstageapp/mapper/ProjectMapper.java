@@ -3,6 +3,7 @@ package com.hxlc.backstageapp.mapper;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.hxlc.backstageapp.pojo.Media;
 import com.hxlc.backstageapp.pojo.Project;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -23,4 +24,5 @@ public interface ProjectMapper extends BaseMapper<Project> {
      */
     List<Map> findRecommendPro();
 
+    Integer addProject(@Param("project") Project project);
 }

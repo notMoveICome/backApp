@@ -116,7 +116,7 @@ public class UserServiceImpl implements UserService {
     public User findSaleByTelAndPwd(String tel, String pwd) {
         User user = new User();
         user.setTel(tel);
-        user.setPassword(pwd);
+        user.setPassword(pwd);// ????
         return userMapper.selectOne(user);
     }
 
@@ -158,8 +158,15 @@ public class UserServiceImpl implements UserService {
         user.setName(company);
         user.setPassword(pwd);
         user.setTel(tel);
-        Integer row1 = userMapper.insert(user);
-        return null;
+        user.setRoleId(2);
+        user.setState("正常");
+        user.setCheckState("未过审");
+        Date date = new Date(System.currentTimeMillis());
+        user.setCreateTime(date);
+        user.setChannelComm(attache);
+        user.setSize(size);
+        Integer row = userMapper.insert(user);
+        return row;
     }
 
     @Override

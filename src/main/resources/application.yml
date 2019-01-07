@@ -29,11 +29,9 @@ mybatis:
   mapUnderscoreToCamelCase: true
   typeAliasesPackage: com.hxlc.backstageapp.pojo
   mapperLocations: classpath:com/hxlc/backstageapp/mapper/**/*.xml
-
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
-
 logging:
   level:
     com.hxlc.backstageapp.mapper: debug
@@ -42,4 +40,7 @@ security:
   intercept: "/*.html"
   successUrl: "/index.html"
   logoutSuccessUrl: "/login.html"
+fileDir:
+  projectFile: "E:/ifamily/resources"   # 项目文件资料
+  tempFile: "E:/ifamily/temp" # 文件上传临时目录
 

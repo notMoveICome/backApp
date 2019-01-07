@@ -20,7 +20,7 @@
 		OR A .gid = b.question_id
     </select>
 
-	<select id="findRecommendPro" resultType="map">
+    <select id="findRecommendPro" resultType="map">
 		SELECT
 			A .*, b.develop,
 			b. NAME project_name,
@@ -31,5 +31,30 @@
 		WHERE
 			A .project_id = b.gid
 	</select>
+
+    <!-- keyProperty:对象属性,若要得到返回的主键,须得类名点
+          keyColumn:表中字段
+     -->
+    <insert id="addProject" parameterType="com.hxlc.backstageapp.pojo.Project" useGeneratedKeys="true"
+            keyProperty="project.gid" keyColumn="gid">
+		insert into
+			project_info
+				(	name,disnum,description,
+					develop,keyword,price,
+					address,commission,header,
+					tel,back_time,state,
+					remark,type,report_limit,
+					bidding_begin,bidding_end
+				)
+		values
+			(	#{project.name},#{project.disnum},#{project.description},
+				#{project.develop},#{project.keyword},#{project.price},
+				#{project.address},#{project.commission},#{project.header},
+				#{project.tel},#{project.backTime},#{project.state},
+				#{project.remark},#{project.type},#{project.reportLimit},
+				#{project.biddingBegin},#{project.biddingEnd}
+			)
+	</insert>
+
 
 </mapper>

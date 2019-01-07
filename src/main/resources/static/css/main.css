@@ -246,10 +246,10 @@ input[type=checkbox]:focus, input[type=checkbox]:active {
 }
 .main-right #projectPublishDiv{
     width: 85em;
-    height: 25em;
-    margin-top: 16em;
+    height: 26.5em;
+    margin-top: 15.5em;
     background-color: #fff;
-    padding-top: 1em;
+    /* padding-top: 1em; */
     text-align: center;
 }
 #projectPublishDiv table th, .main-right table td{
@@ -257,12 +257,19 @@ input[type=checkbox]:focus, input[type=checkbox]:active {
 }
 #projectPublishDiv table th, .main-right table td b{
     font-weight: normal;
-    font-size: 1.2em;
+    font-size: 1em;
 }
 #projectPublishDiv input{
     background-color: #e9edf3;
     height: 2em;
     border: none;
+}
+#projectPublishDiv input[type=file]{
+    line-height: normal;
+    padding-top: 3px;
+}
+#projectPublishDiv input[type=radio]{
+    height: auto;
 }
 #searchUser span{
     float: left;

@@ -38,7 +38,8 @@ LEFT JOIN (
 
     <select id="findUserByCondition" resultType="com.hxlc.backstageapp.pojo.User">
 	SELECT
-	c.gid,c.NAME,c.PASSWORD,c.tel,c.role_id,c.state,c.create_time,B.count
+-- 	c.gid,c.NAME,c.PASSWORD,c.tel,c.role_id,c.state,c.create_time,B.count
+	c.*
 FROM
 	(
 		SELECT
