@@ -338,25 +338,25 @@ function projectPublish() {
         var tableHtml = '<table id="addProjectTable" style="border-collapse:separate;margin: auto;">' +
             '            <tr>' +
             '                <td><b>项目名称:</b></td>' +
-            '                <td><input type="text" name="name"/></td>' +
+            '                <td><input type="text" name="name" id ="pro_name"/></td>' +
             '                <td><b>开发商:</b></td>' +
-            '                <td><input type="text" name="develop"/></td>' +
+            '                <td><input type="text" name="develop" id="pro_develop"/></td>' +
             '                <td><b>分销商数:</b></td>' +
-            '                <td><input type="text" name="disnum"/></td>' +
+            '                <td><input type="text" name="disnum" id="pro_disnum" /></td>' +
             '            </tr>' +
             '            <tr>' +
             '                <td><b>允许报备次数:</b></td>' +
-            '                <td><input type="text" name="reportLimit"/></td>' +
+            '                <td><input type="text" name="reportLimit" id="pro_reportLimit"/></td>' +
             '                <td><b>项目单价:</b></td>' +
-            '                <td><input type="text" name="price"/></td>' +
+            '                <td><input type="text" name="price" id="pro_price"/></td>' +
             '                <td><b>佣金:</b></td>' +
-            '                <td><input type="text" name="commission"/></td>' +
+            '                <td><input type="text" name="commission" id="pro_commission"/></td>' +
             '            </tr>' +
             '            <tr>' +
             '                <td><b>地址:</b></td>' +
-            '                <td><input type="text" name="address"/></td>' +
+            '                <td><input type="text" name="address" id="pro_address"/></td>' +
             '                <td><b>关键字:</b></td>' +
-            '                <td><input type="text" name="keyword"/></td>' +
+            '                <td><input type="text" name="keyword" id="pro_keyword"/></td>' +
             '                <td><b>房型:</b></td>' +
             '                <td>' +
             '                    <select id="proType" name="type">' +
@@ -371,25 +371,25 @@ function projectPublish() {
             '            </tr>' +
             '            <tr>' +
             '                <td><b>负责人:</b></td>' +
-            '                <td><input type="text" name="header"/></td>' +
+            '                <td><input type="text" name="header" id="pro_header"/></td>' +
             '                <td><b>电话:</b></td>' +
-            '                <td><input type="text" name="tel"/></td>' +
+            '                <td><input type="text" name="tel" id="pro_tel"/></td>' +
             '                <td><b>合作时间:</b></td>' +
             '                <td><input type="text" id="fromTime" name="biddingBegin"><b> 至 </b><input type="text" id="toTime" name="biddingEnd"></td>' +
             '            </tr>' +
             '            <tr>' +
             '                <td><b>沙盘解说:</b></td>' +
-            '                <td><input type="file" name="spjs" onchange="fileChange(this);"/></td>' +
+            '                <td><input type="file" name="spjs" onchange="fileChange(this);" id="pro_spjs"/></td>' +
             '                <td><b>销售问答:</b></td>' +
-            '                <td><input type="file" name="xswd" onchange="fileChange(this);"/></td>' +
+            '                <td><input type="file" name="xswd" onchange="fileChange(this);" id="pro_xswd"/></td>' +
             '                <td><b>户型图:</b></td>' +
-            '                <td><input type="file" name="hxt" onchange="fileChange(this);"/></td>' +
+            '                <td><input type="file" name="hxt" onchange="fileChange(this);" id="pro_hxt"/></td>' +
             '            </tr>' +
             '            <tr>' +
             '                <td><b>效果图:</b></td>' +
-            '                <td><input type="file" name="xgt" onchange="fileChange(this);"/></td>' +
+            '                <td><input type="file" name="xgt" onchange="fileChange(this);" id="pro_xgt"/></td>' +
             '                <td><b>其他:</b></td>' +
-            '                <td><input type="file" name="other" onchange="fileChange(this);"/></td>' +
+            '                <td><input type="file" name="other" onchange="fileChange(this);" id="pro_other"/></td>' +
             '                <td><b>项目状态:</b></td>' +
             '                <td><input type="radio" name="state" value="在售"/>在售<input type="radio" name="state" value="暂停"/>暂停<input type="radio" name="state" value="售罄"/>售罄</td>' +
             '            </tr>' +
@@ -416,6 +416,108 @@ function projectPublish() {
 
 function addProject() {
     var form = new FormData(document.getElementById("proForm"));
+    var pro_name =$("#pro_name").val();
+    var reg =  /^$| /;
+    if(reg.test(pro_name)){
+        layer.msg("请输入项目名,不能有空格",{icon:2});
+        return false;
+    }else{
+        $.ajaxSettings.async = false;
+        $.post("/backApp/project/existPro",{pro_name:pro_name},function (res) {
+            if(res.status==201){
+                layer.msg(res.msg,{icon:2});
+                return false;
+            }
+        })
+        $.ajaxSettings.async = true;
+    }
+    if(reg.test($("#pro_develop").val())){
+        layer.msg("请输入开发商信息",{icon:2});
+        return false;
+    }
+    //输入的数字只能为数字，且不能以0开头
+
+    var regex = /^\d+(\d+)?$/;
+    if(!regex.test($("#pro_disnum").val())){
+        layer.msg("分销商数必须是正整数",{icon:2});
+        return false;
+    }
+
+    if(!regex.test($("#pro_reportLimit").val())){
+        layer.msg("允许报备次数必须是正整数",{icon:2});
+        return false;
+    }
+
+    if(!regex.test($("#pro_price").val())){
+        layer.msg("输入的项目单价必须是正整数",{icon:2});
+        return false;
+    }
+
+    if(!regex.test($("#pro_commission").val())){
+        layer.msg("输入的佣金必须是正整数",{icon:2});
+        return false;
+    }
+
+    if(reg.test($("#pro_address").val())){
+        layer.msg("请输入地址,不能有空格",{icon:2});
+        return false;
+    }
+
+    if(reg.test($("#pro_keyword").val())){
+        layer.msg("请输入关键字,不能有空格",{icon:2});
+        return false;
+    }
+
+    if(reg.test($("#pro_header").val())){
+        layer.msg("请输入负责人,不能有空格",{icon:2});
+        return false;
+    }
+    //用户手机号正则表达式
+    var telpass = /^1([38]\d|5[0-35-9]|7[3678])\d{8}$/;
+    if(!telpass.test($("#pro_tel").val())){
+        layer.msg("请输入正确的手机号",{icon:2});
+        return false;
+    }
+
+    if(reg.test($("#fromTime").val())){
+        layer.msg("请选择合作的开始时间",{icon:2});
+        return false;
+    }
+
+    if(reg.test($("#toTime").val())){
+        layer.msg("请选择合作的结束时间",{icon:2});
+        return false;
+    }
+
+    if(reg.test($("#pro_spjs").val())){
+        layer.msg("请上传沙盘解说文件",{icon:2});
+        return false;
+    }
+
+    if(reg.test($("#pro_xswd").val())){
+        layer.msg("请上传销售文件",{icon:2});
+        return false;
+    }
+
+    if(reg.test($("#pro_hxt").val())){
+        layer.msg("请上传户型图文件",{icon:2});
+        return false;
+    }
+
+    if(reg.test($("#pro_xgt").val())){
+        layer.msg("请上传效果图文件",{icon:2});
+        return false;
+    }
+
+    if(reg.test($("#pro_other").val())){
+        layer.msg("请上传其他文件",{icon:2});
+        return false;
+    }
+    var state=$('input:radio[name="state"]:checked').val();
+    if(state==null){
+        layer.msg("请选择项目状态",{icon:2});
+        return false;
+    }
     /**
      * ajax提交表单(带文件)
      */

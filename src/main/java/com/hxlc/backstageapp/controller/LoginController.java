@@ -29,6 +29,7 @@ public class LoginController {
                if (("正常").equals(user.getState())){
                    user.setPassword(null);
                    session.setAttribute("user",user);
+                   session.setMaxInactiveInterval(8*60*60);  //先将session过起时间设置为8小时
                    Cookie cookie1 = new Cookie("iframe_user",user.getName());
                    Cookie cookie2 = new Cookie("iframe_userRole",user.getRoleId().toString());
                    cookie1.setPath("/backApp");

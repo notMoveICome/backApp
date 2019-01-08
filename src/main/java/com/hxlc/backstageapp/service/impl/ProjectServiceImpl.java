@@ -147,6 +147,11 @@ public class ProjectServiceImpl implements ProjectService {
         projectMapper.updateById(pro);
     }
 
+    @Override
+    public List<Project> existPro(String pro_name) {
+        return projectMapper.selectList(new EntityWrapper<Project>().eq("name",pro_name));
+    }
+
     /**
      * 将MultipartFile文件保存到本地
      * @param filecontent
