@@ -4,6 +4,7 @@ import com.hxlc.backstageapp.pojo.Customer;
 import com.hxlc.backstageapp.pojo.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Update;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.text.ParseException;
 import java.util.List;
@@ -45,4 +46,6 @@ public interface UserService {
     Integer registerUser(Map map);
 
     List<Customer> findCustomerByCondition(Map map) throws ParseException;
+
+    Map<String,Object> batchExportCus(String dis, MultipartFile cusExcel);
 }

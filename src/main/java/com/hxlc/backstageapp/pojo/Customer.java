@@ -22,8 +22,8 @@ public class Customer {
     @TableField(exist=false)
     private String  distritionName;
     private Integer saleId;
-    @TableField(exist=false)
-    private String  saleName;
+//    @TableField(exist=false)
+//    private String  saleName;
     private String state;
     private Date backTime;
     private Date expireTime;
@@ -93,13 +93,13 @@ public class Customer {
         this.saleId = saleId;
     }
 
-    public String getSaleName() {
-        return saleName;
-    }
-
-    public void setSaleName(String saleName) {
-        this.saleName = saleName;
-    }
+//    public String getSaleName() {
+//        return saleName;
+//    }
+//
+//    public void setSaleName(String saleName) {
+//        this.saleName = saleName;
+//    }
 
     public String getState() {
         return state;

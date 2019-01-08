@@ -136,7 +136,12 @@ public class ProjectController {
                                 @RequestParam(value = "other") MultipartFile other,
                                 HttpServletRequest request) {
 
-        projectService.projectService(project,spjs,xswd,hxt,xgt,other);
-        return SysObject.ok();
+        try {
+            projectService.addProject(project,spjs,xswd,hxt,xgt,other);
+            return new SysObject(200,"发布成功!",null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new SysObject(200,"发布失败!",null);
     }
 }

@@ -3,18 +3,28 @@ package com.hxlc.backstageapp.service.impl;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.hxlc.backstageapp.mapper.CustomerMapper;
+import com.hxlc.backstageapp.mapper.ProjectMapper;
 import com.hxlc.backstageapp.mapper.UserMapper;
 import com.hxlc.backstageapp.pojo.Customer;
 import com.hxlc.backstageapp.pojo.Project;
 import com.hxlc.backstageapp.pojo.User;
 import com.hxlc.backstageapp.service.UserService;
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +36,8 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
     @Autowired
     private CustomerMapper customerMapper;
+    @Autowired
+    private ProjectMapper projectMapper;
 
     @Override
     public Object getUserByRole(String role) {
@@ -34,13 +46,11 @@ public class UserServiceImpl implements UserService {
             return customerList;
         } else {
             Integer roleId = 3;
-
             if ("管理员".equals(role)) {
                 roleId = 3;
             } else if ("分销商".equals(role)) {
                 return userMapper.selectAllUser();
             }
-
             return userMapper.selectList(new EntityWrapper<User>().eq("role_id", roleId));
         }
     }
@@ -139,6 +149,118 @@ public class UserServiceImpl implements UserService {
         java.util.Date endDate = new java.sql.Date(sdf.parse(endtime).getTime());
 
         return customerMapper.findCustomerByCondition(username, proname, usertel, beginDate, endDate);
+    }
+
+    @Override
+    public Map<String,Object> batchExportCus(String dis, MultipartFile cusExcel) {
+        User user = new User();
+        user.setName(dis);
+        User disUser = userMapper.selectOne(user);
+        Map<String,Object> map = parseExcel(disUser.getGid(), cusExcel);
+        return map;
+    }
+
+    private Map<String,Object> parseExcel(Integer disId, MultipartFile cusExcel) {
+        //读取Excel里面客户的信息
+        List<Customer> customerList = new ArrayList<>();
+        Map<String,Object> map = new HashMap<>();
+        //初始化输入流
+        InputStream is = null;
+        Workbook wb = null;
+        try {
+            // .xls与.xlsx都支持
+            wb = WorkbookFactory.create(cusExcel.getInputStream());
+            /** 得到第一个shell */
+            Sheet sheet = wb.getSheetAt(0);
+            /** 得到Excel的行数 */
+            int totalRows = sheet.getPhysicalNumberOfRows();
+            /** 得到Excel的列数 */
+            int totalCells = 0;
+            if (totalRows >= 1 && sheet.getRow(0) != null) {
+                totalCells = sheet.getRow(0).getPhysicalNumberOfCells();
+            }
+            /** 循环Excel的行 */
+            int m = 0;
+            for (int r = 1; r < totalRows; r++) {
+                Row row = sheet.getRow(r);
+                if (row == null) {
+                    continue;
+                }
+                /** 循环Excel的列 */
+                List<String> list = getRowList(row, totalCells);
+                boolean flag = true;
+                for (String s : list) {
+                    if (org.apache.commons.lang3.StringUtils.isBlank(s)) {
+                        flag = false;
+                        break;
+                    }
+                }
+                if (flag) {
+                    // 根据项目名查项目--
+                    Project project = new Project();
+                    project.setName(list.get(2));
+                    Project proRes = projectMapper.selectOne(project);
+                    // 查该项目下的该用户报备次数
+                    Integer count = customerMapper.selectCount(new EntityWrapper<Customer>().eq("tel", list.get(1)).and().eq("project_id", proRes.getGid()));
+                    // 超过报备次数限制的用户不予报备
+                    if (count >= proRes.getReportLimit()) {
+                        Customer c = new Customer();
+                        c.setName(list.get(0));
+                        c.setTel(list.get(1));
+                        c.setProjectName(list.get(2));
+                        customerList.add(c);
+                        continue;
+                    }
+                    java.util.Date date = new java.util.Date();
+                    Customer customer = new Customer();
+                    customer.setName(list.get(0));
+                    customer.setTel(list.get(1));
+                    customer.setSaleId(disId);
+                    customer.setProjectId(proRes.getGid());
+                    customer.setState("正常");
+                    customer.setBackTime(new Date(date.getTime()));
+                    customer.setExpireTime(new Date(date.getTime() + 3600*24*7*1000));// 七天时间
+                    customerMapper.insert(customer);
+                    m++;
+                }else {
+                    Customer c = new Customer();
+                    c.setName(list.get(0));
+                    c.setTel(list.get(1));
+                    c.setProjectName(list.get(2));
+                    customerList.add(c);
+                }
+            }
+            map.put("success",m);
+            map.put("fail",customerList);
+            is.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    is = null;
+                    e.printStackTrace();
+                }
+            }
+        }
+        return map;
+    }
+
+    public List<String> getRowList(Row row, int totalCells) {
+        List<String> list = new ArrayList();
+        for (int c = 0; c < totalCells; c++) {
+            Cell cell = row.getCell(c);
+            if (null != cell && cell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
+                list.add(cell.getStringCellValue());
+            } else if (null != cell && cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
+                list.add(String.valueOf(cell.getNumericCellValue()));
+            } else {
+                list.add(null);
+            }
+        }
+        return list;
     }
 
     @Override

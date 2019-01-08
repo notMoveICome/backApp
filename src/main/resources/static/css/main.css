@@ -276,5 +276,7 @@ input[type=checkbox]:focus, input[type=checkbox]:active {
     width: 10em;
     margin-right: 2em;
 }
-
+#exportCusForm table td{
+    padding: 0 0.5em !important;
+}
 

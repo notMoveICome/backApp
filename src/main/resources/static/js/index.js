@@ -432,11 +432,13 @@ function addProject() {
         success: function (res) {
             // console.log(res);//打印服务端返回的数据(调试用)
             if (res.status == 200) {
-                alert("SUCCESS");
+                layer.msg(res.msg,{icon:1});
+            }else {
+                layer.msg(res.msg,{icon:2});
             }
         },
         error: function () {
-            alert("异常！");
+            layer.msg("上传接口异常!",{icon:2});
         }
     });
 }
@@ -455,6 +457,9 @@ function fileChange(target,id) {
     if (inputName == "spjs" || inputName == "xswd"){
         filetypes =[".doc",".docx",".pdf"];
         msg = "Word或Pdf文件";
+    }else if(inputName == "cusExcel"){
+        filetypes = [".xls",".xlsx"];
+        msg = "Excel文件";
     }else {
         filetypes =[".zip"];
         msg = "zip压缩文件";
@@ -462,7 +467,7 @@ function fileChange(target,id) {
     var isIE = /msie/i.test(navigator.userAgent) && !window.opera;
     var fileSize = 0;
     var filepath = target.value;
-    var filemaxsize = 1024*10;//2M
+    var filemaxsize = 1024*24;//24M
     if(filepath){
         var isnext = false;
         var fileend = filepath.substring(filepath.lastIndexOf("."));
@@ -541,7 +546,7 @@ function queryProByName() {
         if (res.status == 200) {
             var columns = [];
             for (var attr in res.data[0]) {
-                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr == "description" || attr.indexOf("bidding") > -1 || attr == "reportLimit" || attr == "keyword" || attr == "address" || attr == "remark") {
+                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr.indexOf("desc") > -1 || attr.indexOf("bidding") > -1 || attr == "reportLimit" || attr == "keyword" || attr == "address" || attr == "remark") {
                     continue;
                 }
                 var column = {
@@ -587,7 +592,7 @@ function projectList() {
         if (res.status == 200) {
             var columns = [];
             for (var attr in res.data[0]) {
-                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr.indexOf == "description" || attr.indexOf("bidding") > -1 || attr == "reportLimit" || attr == "keyword" || attr == "address" || attr == "remark") {
+                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr.indexOf("desc") > -1 || attr.indexOf("bidding") > -1 || attr == "reportLimit" || attr == "keyword" || attr == "address" || attr == "remark") {
                     continue;
                 }
                 var column = {
@@ -677,9 +682,9 @@ function userManage() {
                     '<span><input  type="text" class="form-control" placeholder="请选择起始报备时间" id="fromReport"/></span>' +
                     '<span style="width: 2em;line-height: 30px;margin-right: 1em;">至</span>' +
                     '<span><input  type="text" class="form-control" placeholder="请选择终止报备时间" id="toReport"/></span>');
-                $("#searchUser").append('<button id="downExcel" class="btn btn-primary" type="button" style="float: right;margin-right: 20px">导出</button>');
-                $("#searchUser").append('<button id="findUser" class="btn btn-primary" type="button">查询</button>');
-                $("#searchUser").append('<button id="exportCustomer" class="btn btn-primary" type="button" style="margin-left: 18em;">批量报备</button>');
+                $("#searchUser").append('<button id="findUser" class="btn btn-primary" type="button" style="margin-right: 2em;">查询</button>');
+                $("#searchUser").append('<button id="downExcel" class="btn btn-primary" type="button" style="float: right;margin-right: 2em;">导出</button>');
+                $("#searchUser").append('<button id="exportCustomer" class="btn btn-primary" type="button" style="float: right;margin-right: 2em;">批量报备</button>');
                 $("#proName,#userName,#userTel,#fromReport,#toReport").on('keypress', function (e) {
                     if (e.keyCode == "13") {
                         findCustomer(role);
@@ -687,9 +692,10 @@ function userManage() {
                 });
                 $("#findUser").on("click", function () {
                     findCustomer(role);
-                })
-                $("#searchUser").append('<button id="findUser" class="btn btn-primary" type="button" style="margin-left: 12em;">批量报备</button>');
-                findCustomer();
+                });
+                $("#exportCustomer").on('click',function () {
+                    batchExportCustomer();
+                });
             }
 
             $("#fromReport,#toReport").datetimepicker({
@@ -704,18 +710,14 @@ function userManage() {
             });
             getUserByRole(role);
             downExcel(role);
-            $("#userName,#userTel,#fromReport,#toReport").on('keypress', function (e) {
-                if (e.keyCode == "13") {
-                    findUserByOptions(role);
-                }
-            });
-            $("#findUser").on("click", function () {
-                findUserByOptions(role);
-            })
         })
     })
 }
 
+/**
+ * 导出Excel表格
+ * @param role
+ */
 function downExcel(role) {
     $('#downExcel').on("click", function () {
         var data = $("#rightTable").bootstrapTable("getData");
@@ -750,6 +752,73 @@ function downExcel(role) {
         //     }
         // });
     })
+}
+
+/**
+ * 批量导入客户
+ */
+function batchExportCustomer(){
+    var div = $("<div style='margin-top: 1em;'></div>");
+    var formHtml = '<form id="exportCusForm" method="post",enctype="multipart/form-data">' +
+        '            <table style="border-collapse:separate;border-spacing: 10px;margin: auto;">' +
+        '                <tr>' +
+        '                    <td><b>分销商:</b></td>' +
+        '                    <td><select id="disSelect" name="dis"></select></td>' +
+        '                </tr>' +
+        '                <tr>' +
+        '                    <td><b>Excel文件:</b></td>' +
+        '                    <td><input type="file" name="cusExcel" onchange="fileChange(this)"></td>' +
+        '                </tr>' +
+        '            </table>' +
+        '        </form>';
+    div.append(formHtml);
+    $.get('/backApp/user/getUserByRole',{role:"分销商"},function (res) {
+        if (res.status == 200){
+            var data = res.data;
+            var disSelect = $("#disSelect");
+            for (var i = 0;i < data.length;i++){
+                var name = data[i].name;
+                disSelect.append('<option value="'+name+'">'+name+'</option>');
+            }
+        }
+    });
+    layer.open({
+        type: 1, offset: '250px', area: '650px', title: '批量导入',
+        content: '<div id="batchExportCustomer"></div>',
+        btn: ['确认'],
+        yes: function (index, layero) {
+            var form = new FormData(document.getElementById("exportCusForm"));
+            /**
+             * ajax提交表单(带文件)
+             */
+            $.ajax({
+                //几个参数需要注意一下
+                type: "POST",//方法类型
+                dataType: "json",//预期服务器返回的数据类型
+                cache: false,    //上传文件不需缓存
+                contentType: false,//需设置为false，因为是FormData对象，且已经声明了属性enctype="multipart/form-data"
+                processData: false,//需设置为false，因为data值是FormData对象，不需要对数据做处理
+                async:true,
+                url: "/backApp/user/batchExportCus",//url
+                data: form,
+                success: function (res) {
+                    // console.log(res);//打印服务端返回的数据(调试用)
+                    if (res.status == 200) {
+                        var success = res.data.success;
+                        var fail = res.data.fail;
+                        layer.msg(res.msg,{icon:1});
+                    }else {
+                        layer.msg(res.msg,{icon:2});
+                    }
+                    layer.close(index);
+                },
+                error: function () {
+                    layer.msg("上传接口异常!",{icon:2});
+                }
+            });
+        }
+    });
+    $("#batchExportCustomer").append(div);
 }
 
 /*条件查询用户find*/
@@ -948,7 +1017,7 @@ function addUser(role) {
                         if (res.status == 200) {
                             layer.msg("添加管理员成功", {icon: 1});
                             getUserByRole(role);
-                            layer.close(index)
+                            layer.close(index);
                         } else {
                             layer.msg(res.msg, {icon: 2});
                         }

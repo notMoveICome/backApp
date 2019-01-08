@@ -120,7 +120,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public void projectService(Project project, MultipartFile spjs, MultipartFile xswd, MultipartFile hxt, MultipartFile xgt, MultipartFile other) {
+    public void addProject(Project project, MultipartFile spjs, MultipartFile xswd, MultipartFile hxt, MultipartFile xgt, MultipartFile other) {
         Date date = new Date();
         project.setBackTime(new java.sql.Date(date.getTime()));
         projectMapper.addProject(project);
@@ -135,11 +135,16 @@ public class ProjectServiceImpl implements ProjectService {
         String fileDir = project.getName() + format + "_" + round;
         File parentFile = new File(projectFile + "/" + fileDir);
         parentFile.mkdirs();
-        approvalFile(spjs,parentFile.getPath(),gid);
-        approvalFile(xswd,parentFile.getPath(),gid);
+        Integer spjsId = approvalFile(spjs, parentFile.getPath(), gid);
+        Integer xswdId = approvalFile(xswd, parentFile.getPath(), gid);
         approvalFile(hxt,parentFile.getPath(),gid);
         approvalFile(xgt,parentFile.getPath(),gid);
         approvalFile(other,parentFile.getPath(),gid);
+        Project pro = new Project();
+        pro.setGid(gid);
+        pro.setCaptionId(spjsId);
+        pro.setQuestionId(xswdId);
+        projectMapper.updateById(pro);
     }
 
     /**
@@ -147,7 +152,7 @@ public class ProjectServiceImpl implements ProjectService {
      * @param filecontent
      * @param savePath
      */
-    public void approvalFile( MultipartFile filecontent,String savePath,Integer gid){
+    public Integer approvalFile( MultipartFile filecontent,String savePath,Integer gid){
         OutputStream os = null;
         InputStream inputStream = null;
         String fileName = null;
@@ -197,7 +202,7 @@ public class ProjectServiceImpl implements ProjectService {
                 }
                 zFile.close();
                 System.out.println("zip压缩文件解压成功");
-                return;
+                return 0;
             }
             // 若是rar文件就进行解压
 //            if (fileName.substring(fileName.lastIndexOf("."),fileName.length()).equals(".rar")){
@@ -236,7 +241,8 @@ public class ProjectServiceImpl implements ProjectService {
 //                    e.printStackTrace();
 //                }
 //            }
-            addMedia(filecontent.getName(),savePath,fileName,gid);
+            Integer mediaId = addMedia(filecontent.getName(), savePath, fileName, gid);
+            return mediaId;
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -248,9 +254,10 @@ public class ProjectServiceImpl implements ProjectService {
                 e.printStackTrace();
             }
         }
+        return null;
     }
 
-    private void addMedia(String name, String savePath, String fileName, Integer gid) {
+    private Integer addMedia(String name, String savePath, String fileName, Integer gid) {
         String type = "";
         if ("spjs".equals(name)){
             type = "沙盘解说";
@@ -273,7 +280,8 @@ public class ProjectServiceImpl implements ProjectService {
         media.setProjectId(gid);
         media.setType(type);
         media.setUrl(url);
-        mediaMapper.insert(media);
+        mediaMapper.addMedia(media);
+        return media.getGid();
     }
 
 }

@@ -3,7 +3,8 @@
 <mapper namespace="com.hxlc.backstageapp.mapper.CustomerMapper">
 
     <select id="findAllCustomerInfo" resultType="com.hxlc.backstageapp.pojo.Customer">
-        SELECT
+-- 有业务员
+        /*SELECT
 			d.*, uu. NAME distrition_name
 		FROM
 			(
@@ -23,7 +24,19 @@
 			) d,
 			user_info uu
 		WHERE
-			d.distrition_id = uu.gid
+			d.distrition_id = uu.gid*/
+
+-- 	无业务员
+		SELECT
+			A .*, u. NAME distrition_name,
+			C . NAME project_name
+		FROM
+			(SELECT * FROM customer_info) A,
+			project_info C,
+			user_info u
+		WHERE
+			A .sale_id = u.gid
+		AND A .project_id = C .gid
     </select>
     <select id="findCustomerInfoBySale" resultType="com.hxlc.backstageapp.pojo.Customer">
         SELECT

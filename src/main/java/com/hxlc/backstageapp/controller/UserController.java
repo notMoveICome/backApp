@@ -6,6 +6,7 @@ import com.hxlc.backstageapp.pojo.User;
 import com.hxlc.backstageapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.text.ParseException;
 import java.util.List;
@@ -117,5 +118,22 @@ public class UserController {
         }else {
             return new SysObject(201,"注册失败!",null);
         }
+    }
+
+    /**
+     * 批量导入用户
+     * @param dis   分销商
+     * @param cusExcel  Excel文件
+     * @return
+     */
+    @RequestMapping(value = "/batchExportCus",method = RequestMethod.POST)
+    public SysObject batchExportCus(String dis, @RequestParam(value = "cusExcel") MultipartFile cusExcel) {
+        try {
+            Map<String, Object> map = userService.batchExportCus(dis, cusExcel);
+            return new SysObject(200, "报备成功!", map);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new SysObject(201, "报备异常,请检查Excel文件!", null);
     }
 }

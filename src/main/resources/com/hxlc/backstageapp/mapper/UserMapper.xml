@@ -4,35 +4,35 @@
     <select id="selectAllUser" resultType="com.hxlc.backstageapp.pojo.User">
     SELECT
 	*
-FROM
-	(
-		SELECT
-			*
-		FROM
-			user_info u
-		WHERE
-			u.role_id = 1
-		OR u.role_id = 2
-	) C
-LEFT JOIN (
-	SELECT
-		A .sale_id,
-		COUNT (A . NAME)
 	FROM
 		(
 			SELECT
-				ui.*,
-				ci.sale_id
+				*
 			FROM
-				user_info ui,
-				customer_info ci
+				user_info u
 			WHERE
-				(ui.role_id = 1 OR ui.role_id = 2)
-			AND ui.gid = ci.sale_id
-		) A
-	GROUP BY
-		A .sale_id
-) B ON C .gid = B.sale_id
+				u.role_id = 1
+			OR u.role_id = 2
+		) C
+	LEFT JOIN (
+		SELECT
+			A .sale_id,
+			COUNT (A . NAME)
+		FROM
+			(
+				SELECT
+					ui.*,
+					ci.sale_id
+				FROM
+					user_info ui,
+					customer_info ci
+				WHERE
+					(ui.role_id = 1 OR ui.role_id = 2)
+				AND ui.gid = ci.sale_id
+			) A
+		GROUP BY
+			A .sale_id
+	) B ON C .gid = B.sale_id
     </select>
 
 
