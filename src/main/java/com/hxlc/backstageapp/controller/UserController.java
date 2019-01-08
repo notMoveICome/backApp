@@ -25,22 +25,22 @@ public class UserController {
     }
 
     @RequestMapping("/getCustomerInfoBySaleId")
-    public  SysObject getCustomerInfoBySale(Integer saleId){
+    public SysObject getCustomerInfoBySale(Integer saleId) {
         return new SysObject(userService.getCustomerInfoBySale(saleId));
     }
 
     @RequestMapping("/addUser")
-    public SysObject addUser(String username, String password, String tel,String role) {
+    public SysObject addUser(String username, String password, String tel, String role) {
         //判断用户名和手机号是否存在
         User user = userService.findUserByUsername(username);
         User user1 = userService.findUserByTel(tel);
         if (user != null) {
             return new SysObject(201, "用户名已存在", null);
         }
-        if(user1!=null){
+        if (user1 != null) {
             return new SysObject(201, "该手机号已存在", null);
         }
-        Integer result = userService.addUser(username, password, tel,role);
+        Integer result = userService.addUser(username, password, tel, role);
         System.out.println(result);
         if (result > 0) {
             return new SysObject(200, "添加成功", null);
@@ -49,27 +49,27 @@ public class UserController {
     }
 
     @RequestMapping("/delUser")
-    public SysObject delUser(Integer gid){
+    public SysObject delUser(Integer gid) {
         Integer result = userService.delUser(gid);
-        if(result>0){
+        if (result > 0) {
             return new SysObject(200, "删除用户成功", null);
         }
         return new SysObject(201, "删除失败", null);
     }
 
     @RequestMapping("/changeState")
-    public SysObject changeState(Integer gid,String state){
+    public SysObject changeState(Integer gid, String state) {
         Integer result = userService.changeState(gid, state);
-        if(result>0){
+        if (result > 0) {
             return new SysObject(200, "修改状态成功", null);
         }
         return new SysObject(201, "修改状态失败", null);
     }
 
     @RequestMapping("/updateUser")
-    public SysObject updateUser(Integer gid,String username,String password,String tel){
-        Integer result = userService.updateUser(gid,username,password,tel);
-        if(result>0){
+    public SysObject updateUser(Integer gid, String username, String password, String tel) {
+        Integer result = userService.updateUser(gid, username, password, tel);
+        if (result > 0) {
             return new SysObject(200, "修改用户成功", null);
         }
         return new SysObject(201, "修改用户失败", null);
@@ -78,55 +78,55 @@ public class UserController {
     @RequestMapping("/findUser")
     public SysObject findUser(@RequestParam Map map) throws ParseException {
         List<User> list = userService.findUserByCondition(map);
-        if(list==null){
-            return new SysObject(201,"查询失败",null);
+        if (list == null || list.size() == 0) {
+            return new SysObject(201, "查询失败", null);
         }
         return new SysObject(userService.findUserByCondition(map));
     }
 
     @RequestMapping("/findCustomer")
     public SysObject findCustomer(@RequestParam Map map) throws ParseException {
-
-
         List<Customer> list = userService.findCustomerByCondition(map);
-        if(list==null){
-            return new SysObject(201,"查询失败",null);
+        if (list == null || list.size() == 0) {
+            return new SysObject(201, "查询失败", null);
         }
         return new SysObject(userService.findCustomerByCondition(map));
     }
 
     @RequestMapping("/validateTel")
-    public SysObject validateTel(String tel){
+    public SysObject validateTel(String tel) {
         Integer rows = userService.validateTel(tel);
-        if (rows == 0){
-            return new SysObject(200,"改手机号可以使用!",null);
-        }else {
-            return new SysObject(201,"改手机号已被使用!",null);
+        if (rows == 0) {
+            return new SysObject(200, "改手机号可以使用!", null);
+        } else {
+            return new SysObject(201, "改手机号已被使用!", null);
         }
     }
 
     /**
      * 分销商注册
+     *
      * @param map
      * @return
      */
-    @RequestMapping(value = "/registerUser",method = RequestMethod.POST)
-    public SysObject registerUser(@RequestParam Map map){
+    @RequestMapping(value = "/registerUser", method = RequestMethod.POST)
+    public SysObject registerUser(@RequestParam Map map) {
         Integer rows = userService.registerUser(map);
-        if (rows == 1){
-            return new SysObject(200,"注册成功!",null);
-        }else {
-            return new SysObject(201,"注册失败!",null);
+        if (rows == 1) {
+            return new SysObject(200, "注册成功!", null);
+        } else {
+            return new SysObject(201, "注册失败!", null);
         }
     }
 
     /**
      * 批量导入用户
-     * @param dis   分销商
-     * @param cusExcel  Excel文件
+     *
+     * @param dis      分销商
+     * @param cusExcel Excel文件
      * @return
      */
-    @RequestMapping(value = "/batchExportCus",method = RequestMethod.POST)
+    @RequestMapping(value = "/batchExportCus", method = RequestMethod.POST)
     public SysObject batchExportCus(String dis, @RequestParam(value = "cusExcel") MultipartFile cusExcel) {
         try {
             Map<String, Object> map = userService.batchExportCus(dis, cusExcel);

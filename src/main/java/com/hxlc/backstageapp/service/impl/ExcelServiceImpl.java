@@ -26,7 +26,7 @@ public class ExcelServiceImpl implements ExcelService {
     @Override
     public void load(String role, String data, HttpServletResponse response) throws IOException {
         //获取用户选择的信息进行生成excel导出
-        String decode = URLDecoder.decode(data);
+        String decode = URLDecoder.decode(data,"UTF-8");
         JSONArray jsonArray = JSONArray.parseArray(decode);
         HSSFWorkbook workbook = null;
         workbook = new HSSFWorkbook();

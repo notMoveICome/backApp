@@ -34,14 +34,12 @@ import java.util.Map;
 
 @RequestMapping()
 @RestController
-public class excelController {
+public class ExcelController {
     @Autowired
     private ExcelService excelService;
 
     @RequestMapping(value = "/downloadExcel")
     public SysObject downLoadExcel(String role, String data, HttpServletResponse response) throws IOException {
-        String decode = URLDecoder.decode(data);
-        JSONArray jsonArray = JSONArray.parseArray(decode);
         excelService.load(role, data, response);
         return new SysObject(201, null, null);
     }
