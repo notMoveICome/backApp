@@ -38,7 +38,8 @@
 			A .sale_id = u.gid
 		AND A .project_id = C .gid
     </select>
-    <select id="findCustomerInfoBySale" resultType="com.hxlc.backstageapp.pojo.Customer">
+
+	<!--/*有业务员
         SELECT
 			d.*, uu. NAME distrition_name
 		FROM
@@ -59,31 +60,49 @@
 			) d,
 			user_info uu
 		WHERE
-			d.distrition_id = uu.gid
-    </select>
-    <select id="findCustomerByCondition" resultType="com.hxlc.backstageapp.pojo.Customer">
-			SELECT
-			d.*, uu. NAME distrition_name
+			d.distrition_id = uu.gid*/-->
+    <select id="findCustomerInfoBySale" resultType="com.hxlc.backstageapp.pojo.Customer">
+-- 无业务员
+		SELECT
+			A .*, u. NAME sale_name,
+			C . NAME project_name
 		FROM
 			(
 				SELECT
-					A .*, u. NAME sale_name,
-					C . NAME project_name,
-					b.distrition_id
+					*
 				FROM
-					(SELECT * FROM customer_info WHERE tel LIKE '${usertel}%' AND back_time BETWEEN #{beginDate} AND #{endDate}) A,
-					sale_relate b,
-					project_info C,
-					user_info u
+					customer_info
 				WHERE
-					C . NAME LIKE '%${proname}%'
-				AND A .sale_id = u.gid
-				AND A .project_id = C .gid
-				AND A .sale_id = b.sale_id
-			) d,
-			user_info uu
+					sale_id = #{saleId}
+			) A,
+			project_info C,
+			user_info u
 		WHERE
-			uu. NAME LIKE '%${username}%'
-		AND d.distrition_id = uu.gid
+			A .sale_id = u.gid
+		AND A .project_id = C .gid
+    </select>
+
+    <select id="findCustomerByCondition" resultType="com.hxlc.backstageapp.pojo.Customer">
+		SELECT
+			A .*, u. NAME distrition_name,
+			C . NAME project_name
+		FROM
+			(
+				SELECT
+					*
+				FROM
+					customer_info
+				WHERE
+					tel LIKE '%${usertel}%'
+				AND back_time BETWEEN #{beginDate}
+				AND #{endDate}
+			) A,
+			project_info C,
+			user_info u
+		WHERE
+			C . NAME LIKE '%${proname}%'
+		AND A .sale_id = u.gid
+		AND A .project_id = C .gid
+		AND u. NAME LIKE '%${username}%'
 	</select>
 </mapper>

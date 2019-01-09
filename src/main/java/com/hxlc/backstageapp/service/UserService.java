@@ -32,7 +32,7 @@ public interface UserService {
 
     Integer updateUser(Integer gid, String username, String password, String tel);
 
-    List<User> findUserByCondition(Map map) throws ParseException;
+    Object findUserByCondition(Map map) throws ParseException;
 
     User findSaleByTelAndPwd(String tel, String pwd);
 
@@ -48,4 +48,8 @@ public interface UserService {
     List<Customer> findCustomerByCondition(Map map) throws ParseException;
 
     Map<String,Object> batchExportCus(String dis, MultipartFile cusExcel);
+
+    Integer reportCustomer(Customer customer);
+
+    boolean checkDistributorState(Integer saleId);
 }

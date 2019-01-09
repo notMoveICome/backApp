@@ -77,7 +77,7 @@ public class UserController {
 
     @RequestMapping("/findUser")
     public SysObject findUser(@RequestParam Map map) throws ParseException {
-        List<User> list = userService.findUserByCondition(map);
+        List<Object> list = (List<Object>) userService.findUserByCondition(map);
         if (list == null || list.size() == 0) {
             return new SysObject(201, "查询失败", null);
         }
@@ -105,7 +105,6 @@ public class UserController {
 
     /**
      * 分销商注册
-     *
      * @param map
      * @return
      */
@@ -121,7 +120,6 @@ public class UserController {
 
     /**
      * 批量导入用户
-     *
      * @param dis      分销商
      * @param cusExcel Excel文件
      * @return
@@ -130,12 +128,62 @@ public class UserController {
     public SysObject batchExportCus(String dis, @RequestParam(value = "cusExcel") MultipartFile cusExcel) {
         try {
             Map<String, Object> map = userService.batchExportCus(dis, cusExcel);
-            if (map != null){
+            if (map != null) {
                 return new SysObject(200, "报备成功!", map);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return new SysObject(201, "报备异常,请检查Excel文件!", null);
+    }
+
+    /**
+     * 上传营业执照
+     * @param licensePic 照片
+     * @param company   公司名称
+     * @param linkman   联系人
+     * @param linkTel   联系电话
+     * @return
+     */
+    @RequestMapping(value = "/uploadLicense",method = RequestMethod.POST)
+    public SysObject uploadLicense(@RequestParam(value = "licensePic") MultipartFile licensePic,String company,String linkman,Integer linkTel) {
+        String picName = licensePic.getOriginalFilename();
+        System.out.println(picName);
+        System.out.println(company);
+        System.out.println(linkman);
+        System.out.println(linkTel);
+        return null;
+    }
+
+    /**
+     * 分销商报备客户
+     * @param saleId        分销商ID
+     * @param name          客户名字
+     * @param tel           客户电话
+     * @param projectName   项目名称
+     * @param cusArea       客户区域
+     * @param acreage       意向面积
+     * @param money         投资额
+     * @param remark        客户备注
+     * @return
+     */
+    @RequestMapping(value = "/reportCustomer",method = RequestMethod.POST)
+    public SysObject reportCustomer(Customer customer){
+        try {
+            boolean flag = userService.checkDistributorState(customer.getSaleId());
+            if (flag){
+                Integer row = userService.reportCustomer(customer);
+                if (row == -1){
+                    return new SysObject(201,"该客户报备该项目已超过报备次数!",null);
+                }else {
+                    return new SysObject(200,"报备成功!",null);
+                }
+
+            }
+            return new SysObject(201,"权限不足,请先完成营业许可证审核!",null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new SysObject(201,"报备异常!",null);
     }
 }

@@ -30,7 +30,10 @@ var user_fields = {
         state: "状态",
         backTime: "报备时间",
         expireTime: "过期时间",
-        remark: "备注"
+        remark: "备注",
+        cusArea: "客户区域",
+        acreage: "意向面积",
+        money: "投资额"
     }
 };
 var project_fields = {
@@ -735,6 +738,9 @@ function projectList() {
 }
 
 function paramsMatter(value, row, index) {
+    if (value == null || value == "null"){
+        value = "-";
+    }
     return "<span title=" + value + ">" + value + "</span>";
 }
 
@@ -1043,7 +1049,7 @@ function findUserByOptions(role) {
         if (res.status == 200) {
             var columns = [];
             for (var attr in res.data[0]) {
-                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr == "size") {
+                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr == "size" || attr == "license" || attr == "remark") {
                     continue;
                 }
                 if (role == "管理员" && attr.indexOf("count") > -1) {
@@ -1073,7 +1079,8 @@ function findUserByOptions(role) {
                     valign: "middle",
                     align: "center",
                     sortable: true,
-                    visible: true
+                    visible: true,
+                    formatter: paramsMatter
                 };
                 columns.push(column);
             }
@@ -1132,7 +1139,7 @@ function findCustomer() {
         if (res.status == 200) {
             var columns = [];
             for (var attr in res.data[0]) {
-                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1) {
+                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr == "remark") {
                     continue;
                 }
                 var titles = user_fields.customer;
@@ -1142,7 +1149,8 @@ function findCustomer() {
                     valign: "middle",
                     align: "center",
                     sortable: true,
-                    visible: true
+                    visible: true,
+                    formatter: paramsMatter
                 };
                 columns.push(column);
             }
@@ -1241,7 +1249,7 @@ function getUserByRole(role) {
         if (res.status == 200) {
             var columns = [];
             for (var attr in res.data[0]) {
-                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr == "size") {
+                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr == "size" || attr == "license" || attr == "remark") {
                     continue;
                 }
                 if (role == "管理员" && attr.indexOf("count") > -1) {
@@ -1271,7 +1279,8 @@ function getUserByRole(role) {
                     valign: "middle",
                     align: "center",
                     sortable: true,
-                    visible: true
+                    visible: true,
+                    formatter: paramsMatter
                 };
                 // if (attr == "gid"){
                 //     column.visible = false;

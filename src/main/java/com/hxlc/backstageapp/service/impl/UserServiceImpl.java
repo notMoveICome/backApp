@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
             if ("管理员".equals(role)) {
                 roleId = 3;
             } else if ("分销商".equals(role)) {
-                List<Map> users = userMapper.selectAllUser();
+                List<DistributorInfo> users = userMapper.selectAllUser();
                 return users;
             }
             return userMapper.selectList(new EntityWrapper<User>().eq("role_id", roleId));
@@ -116,7 +116,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findUserByCondition(Map map) throws ParseException {
+    public Object findUserByCondition(Map map) throws ParseException {
         //拼接查询条件，如果只有起始时间则条件为大于起始时间的所有用户（终止时间则，小于所有的终止时间），
         String username = map.get("username").toString();
         String usertel = map.get("usertel").toString();
@@ -182,6 +182,34 @@ public class UserServiceImpl implements UserService {
         User disUser = userMapper.selectOne(user);
         Map<String,Object> map = parseExcel(disUser.getGid(), cusExcel);
         return map;
+    }
+
+    @Override
+    public Integer reportCustomer(Customer customer) {
+        // 根据项目名查找项目
+        String projectName = customer.getProjectName();
+        Project project = new Project();
+        project.setName(projectName);
+        Project pro = projectMapper.selectOne(project);
+        // 查该项目下的该用户报备次数
+        Integer count = customerMapper.selectCount(new EntityWrapper<Customer>().eq("tel", customer.getTel()).and().eq("project_id", pro.getGid()));
+        // 超过报备次数限制的用户不予报备
+        if (count >= pro.getReportLimit()){
+            return -1;
+        }else {
+            customer.setProjectId(pro.getGid());
+            customer.setState("正常");
+            java.util.Date date = new java.util.Date();
+            customer.setBackTime(new Date(date.getTime()));
+            customer.setExpireTime(new Date(date.getTime() + 3600*24*7*1000));
+            return customerMapper.insert(customer);
+        }
+    }
+
+    @Override
+    public boolean checkDistributorState(Integer saleId) {
+        String state = userMapper.queryDisStateById(saleId);
+        return state == "已过审" ? true : false;
     }
 
     private Map<String,Object> parseExcel(Integer disId, MultipartFile cusExcel) {

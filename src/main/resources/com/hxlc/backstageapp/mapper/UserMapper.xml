@@ -39,25 +39,29 @@
 	) B ON C .gid = B.sale_id
     </select>
 
-
-    <select id="findUserByCondition" resultType="com.hxlc.backstageapp.pojo.User">
+    <select id="findUserByCondition" resultType="com.hxlc.backstageapp.pojo.DistributorInfo">
 	SELECT
 -- 	c.gid,c.NAME,c.PASSWORD,c.tel,c.role_id,c.state,c.create_time,B.count
-		c.*
+		c.*,B.count
 	FROM
 		(
 			SELECT
-				*
+				u.*, di.dis_id,
+				di.check_state,
+				di.channel_comm,
+				di. SIZE,
+				di.license
 			FROM
-				user_info u
+				user_info u,
+				distributor_info di
 			WHERE
-				(u.role_id = 1
-			OR u.role_id = 2) and name like '${username}%' and tel like '${usertel}%' and create_time BETWEEN #{beginDate} and #{endDate}
+				di.dis_id = u.gid
+			AND u.role_id IN (1, 2) AND name LIKE '${username}%' AND tel LIKE '${usertel}%' AND create_time BETWEEN #{beginDate} AND #{endDate}
 		) C
 	LEFT JOIN (
 		SELECT
 			A .sale_id,
-			COUNT (A . NAME)
+			COUNT (A . tel)
 		FROM
 			(
 				SELECT

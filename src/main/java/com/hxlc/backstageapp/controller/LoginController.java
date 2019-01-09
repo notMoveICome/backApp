@@ -67,7 +67,7 @@ public class LoginController {
     @RequestMapping(value = "/salesLogin",method = RequestMethod.POST)
     public SysObject salesLogin(String tel,String pwd){
         User user = userService.findSaleByTelAndPwd(tel, pwd);
-        if (user != null){
+        if (user != null && user.getRoleId() != 3 && user.getRoleId() != 4){
             if (("正常").equals(user.getState())){
                 user.setPassword(null);
                 return new SysObject(200, "业务员登录成功!", user);

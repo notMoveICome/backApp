@@ -1,11 +1,13 @@
 package com.hxlc.backstageapp.mapper;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.hxlc.backstageapp.pojo.DistributorInfo;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.hxlc.backstageapp.pojo.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -16,7 +18,7 @@ import java.util.Map;
 public interface UserMapper extends BaseMapper<User>{
 
 
-    List<Map> selectAllUser();
+    List<DistributorInfo> selectAllUser();
 
     List<User> findUserByCondition(@Param("username") String username,@Param("usertel") String usertel,@Param("beginDate") Date beginDate,@Param("endDate") Date endDate);
 
@@ -27,5 +29,8 @@ public interface UserMapper extends BaseMapper<User>{
             "VALUES(#{user.name},#{user.password},#{user.tel},#{user.roleId},#{user.state},#{user.createTime})")
     @Options(useGeneratedKeys = true,keyProperty = "user.gid",keyColumn = "gid")
     Integer addUser(@Param("user") User user);
+
+    @Select("SELECT check_state FROM distributor_info WHERE dis_id = #{saleId}")
+    String queryDisStateById(Integer saleId);
 
 }

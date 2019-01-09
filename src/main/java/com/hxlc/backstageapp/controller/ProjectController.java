@@ -148,9 +148,9 @@ public class ProjectController {
     @RequestMapping("/existPro")
     public SysObject existPro(String pro_name){
         List<Project> list = projectService.existPro(pro_name);
-        if(list.size()==0||list==null){
-            return new SysObject(200,"项目名可以使用",null);
+        if(list==null || list.size()==0){
+            return new SysObject(200,"项目名可以使用!",null);
         }
-        return new SysObject(201,"项目名已被占用",null);
+        return new SysObject(201,"项目名已被占用!",null);
     }
 }

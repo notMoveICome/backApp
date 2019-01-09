@@ -40,8 +40,13 @@ public class ExcelController {
 
     @RequestMapping(value = "/downloadExcel")
     public SysObject downLoadExcel(String role, String data, HttpServletResponse response) throws IOException {
-        excelService.load(role, data, response);
-        return new SysObject(201, null, null);
+        try {
+            excelService.load(role, data, response);
+            return new SysObject(200, "download success!", null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new SysObject(201, "download fail!", null);
     }
 
 }

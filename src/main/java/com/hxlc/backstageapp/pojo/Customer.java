@@ -18,17 +18,20 @@ public class Customer implements Serializable {
     // 表中不存在的字段
     @TableField(exist=false)
     private String  projectName;
-    @TableField(exist=false)
-    private Integer distritionId;
+//    @TableField(exist=false)
+//    private Integer distritionId;
     @TableField(exist=false)
     private String  distritionName;
     private Integer saleId;
 //    @TableField(exist=false)
 //    private String  saleName;
     private String state;
+    private String cusArea;
+    private String acreage;
+    private Float money;
+    private String remark;
     private Date backTime;
     private Date expireTime;
-    private String remark;
 
     public Integer getGid() {
         return gid;
@@ -70,13 +73,13 @@ public class Customer implements Serializable {
         this.projectName = projectName;
     }
 
-    public Integer getDistritionId() {
-        return distritionId;
-    }
-
-    public void setDistritionId(Integer distritionId) {
-        this.distritionId = distritionId;
-    }
+//    public Integer getDistritionId() {
+//        return distritionId;
+//    }
+//
+//    public void setDistritionId(Integer distritionId) {
+//        this.distritionId = distritionId;
+//    }
 
     public String getDistritionName() {
         return distritionName;
@@ -132,5 +135,29 @@ public class Customer implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public String getCusArea() {
+        return cusArea;
+    }
+
+    public void setCusArea(String cusArea) {
+        this.cusArea = cusArea;
+    }
+
+    public String getAcreage() {
+        return acreage;
+    }
+
+    public void setAcreage(String acreage) {
+        this.acreage = acreage;
+    }
+
+    public Float getMoney() {
+        return money;
+    }
+
+    public void setMoney(Float money) {
+        this.money = money;
     }
 }
