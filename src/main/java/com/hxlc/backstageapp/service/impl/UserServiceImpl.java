@@ -3,9 +3,11 @@ package com.hxlc.backstageapp.service.impl;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.hxlc.backstageapp.mapper.CustomerMapper;
+import com.hxlc.backstageapp.mapper.DistributorMapper;
 import com.hxlc.backstageapp.mapper.ProjectMapper;
 import com.hxlc.backstageapp.mapper.UserMapper;
 import com.hxlc.backstageapp.pojo.Customer;
+import com.hxlc.backstageapp.pojo.DistributorInfo;
 import com.hxlc.backstageapp.pojo.Project;
 import com.hxlc.backstageapp.pojo.User;
 import com.hxlc.backstageapp.service.UserService;
@@ -35,6 +37,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserMapper userMapper;
     @Autowired
+    private DistributorMapper distributorMapper;
+    @Autowired
     private CustomerMapper customerMapper;
     @Autowired
     private ProjectMapper projectMapper;
@@ -49,7 +53,8 @@ public class UserServiceImpl implements UserService {
             if ("管理员".equals(role)) {
                 roleId = 3;
             } else if ("分销商".equals(role)) {
-                return userMapper.selectAllUser();
+                List<Map> users = userMapper.selectAllUser();
+                return users;
             }
             return userMapper.selectList(new EntityWrapper<User>().eq("role_id", roleId));
         }
@@ -64,12 +69,30 @@ public class UserServiceImpl implements UserService {
     public Integer addUser(String username, String password, String tel, String role) {
         Date date = new Date(new java.util.Date().getTime());
         if ("管理员".equals(role)) {
-            User user = new User(null, username, password, tel, 3, "正常", null, date, null, null);
+            User user = new User();
+            user.setName(username);
+            user.setPassword(password);
+            user.setRoleId(3);
+            user.setTel(tel);
+            user.setState("正常");
+            user.setCreateTime(date);
             return userMapper.insert(user);
         }
         if ("分销商".equals(role)) {
-            User user = new User(null, username, password, tel, 2, "正常", "待审核", date, null, null);
-            return userMapper.insert(user);
+            User user = new User();
+            user.setName(username);
+            user.setPassword(password);
+            user.setRoleId(2);
+            user.setTel(tel);
+            user.setState("正常");
+            user.setCreateTime(date);
+            userMapper.addUser(user);
+
+            DistributorInfo dis = new DistributorInfo();
+            dis.setDisId(user.getGid());
+//            dis.setChannelComm("王五");
+            dis.setCheckState("未过审");
+            return distributorMapper.insert(dis);
         }
         return null;
     }
@@ -168,8 +191,9 @@ public class UserServiceImpl implements UserService {
         InputStream is = null;
         Workbook wb = null;
         try {
+            is = cusExcel.getInputStream();
             // .xls与.xlsx都支持
-            wb = WorkbookFactory.create(cusExcel.getInputStream());
+            wb = WorkbookFactory.create(is);
             /** 得到第一个shell */
             Sheet sheet = wb.getSheetAt(0);
             /** 得到Excel的行数 */
@@ -195,11 +219,11 @@ public class UserServiceImpl implements UserService {
                         break;
                     }
                 }
-                if (flag) {
-                    // 根据项目名查项目--
-                    Project project = new Project();
-                    project.setName(list.get(2));
-                    Project proRes = projectMapper.selectOne(project);
+                // 根据项目名查项目--
+                Project project = new Project();
+                project.setName(list.get(2));
+                Project proRes = projectMapper.selectOne(project);
+                if (flag && proRes != null) {
                     // 查该项目下的该用户报备次数
                     Integer count = customerMapper.selectCount(new EntityWrapper<Customer>().eq("tel", list.get(1)).and().eq("project_id", proRes.getGid()));
                     // 超过报备次数限制的用户不予报备
@@ -233,6 +257,7 @@ public class UserServiceImpl implements UserService {
             map.put("success",m);
             map.put("fail",customerList);
             is.close();
+            return map;
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -245,7 +270,7 @@ public class UserServiceImpl implements UserService {
                 }
             }
         }
-        return map;
+        return null;
     }
 
     public List<String> getRowList(Row row, int totalCells) {
@@ -282,13 +307,16 @@ public class UserServiceImpl implements UserService {
         user.setTel(tel);
         user.setRoleId(2);
         user.setState("正常");
-        user.setCheckState("未过审");
         Date date = new Date(System.currentTimeMillis());
         user.setCreateTime(date);
-        user.setChannelComm(attache);
-        user.setSize(size);
-        Integer row = userMapper.insert(user);
-        return row;
+        userMapper.addUser(user);// 返回自增逐渐ID
+
+        DistributorInfo dis = new DistributorInfo();
+        dis.setDisId(user.getGid());
+        dis.setChannelComm(attache);
+        dis.setCheckState("未过审");
+        dis.setSize(size);
+        return distributorMapper.insert(dis);
     }
 
     @Override

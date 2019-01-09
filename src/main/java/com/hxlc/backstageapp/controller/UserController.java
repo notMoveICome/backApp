@@ -97,9 +97,9 @@ public class UserController {
     public SysObject validateTel(String tel) {
         Integer rows = userService.validateTel(tel);
         if (rows == 0) {
-            return new SysObject(200, "改手机号可以使用!", null);
+            return new SysObject(200, "该手机号可以使用!", null);
         } else {
-            return new SysObject(201, "改手机号已被使用!", null);
+            return new SysObject(201, "该手机号已被使用!", null);
         }
     }
 
@@ -130,7 +130,9 @@ public class UserController {
     public SysObject batchExportCus(String dis, @RequestParam(value = "cusExcel") MultipartFile cusExcel) {
         try {
             Map<String, Object> map = userService.batchExportCus(dis, cusExcel);
-            return new SysObject(200, "报备成功!", map);
+            if (map != null){
+                return new SysObject(200, "报备成功!", map);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

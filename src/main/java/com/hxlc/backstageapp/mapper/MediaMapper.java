@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MediaMapper extends BaseMapper<Media> {
-    @Insert("insert into media_info(name,format,remark,project_id,type,url) " +
-            "values(#{media.name},#{media.format},#{media.remark},#{media.projectId},#{media.type},#{media.url})")
+    @Insert("INSERT INTO media_info(name,format,remark,project_id,type,url) " +
+            "VALUES(#{media.name},#{media.format},#{media.remark},#{media.projectId},#{media.type},#{media.url})")
     @Options(useGeneratedKeys = true, keyProperty = "media.gid", keyColumn = "gid")
     void addMedia(@Param("media") Media media);
 }

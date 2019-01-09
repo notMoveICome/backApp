@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
 
+import java.io.Serializable;
+
 @TableName("media_info")
-public class Media {
+public class Media implements Serializable {
     @TableId(value="gid",type= IdType.AUTO)
     private Integer gid;
     private String name;

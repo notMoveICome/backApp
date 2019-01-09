@@ -1,28 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.hxlc.backstageapp.mapper.UserMapper">
-    <select id="selectAllUser" resultType="com.hxlc.backstageapp.pojo.User">
+    <select id="selectAllUser" resultType="com.hxlc.backstageapp.pojo.DistributorInfo">
     SELECT
-	*
+		*
 	FROM
 		(
 			SELECT
-				*
+				u.*, di.dis_id,
+				di.check_state,
+				di.channel_comm,
+				di. SIZE,
+				di.license
 			FROM
-				user_info u
+				user_info u,
+				distributor_info di
 			WHERE
-				u.role_id = 1
-			OR u.role_id = 2
+				di.dis_id = u.gid
+			AND u.role_id IN (1, 2)
 		) C
 	LEFT JOIN (
 		SELECT
 			A .sale_id,
-			COUNT (A . NAME)
+			COUNT (A .tel)
 		FROM
 			(
 				SELECT
-					ui.*,
-					ci.sale_id
+					ui.*, ci.sale_id
 				FROM
 					user_info ui,
 					customer_info ci
@@ -39,34 +43,34 @@
     <select id="findUserByCondition" resultType="com.hxlc.backstageapp.pojo.User">
 	SELECT
 -- 	c.gid,c.NAME,c.PASSWORD,c.tel,c.role_id,c.state,c.create_time,B.count
-	c.*
-FROM
-	(
-		SELECT
-			*
-		FROM
-			user_info u
-		WHERE
-			(u.role_id = 1
-		OR u.role_id = 2) and name like '${username}%' and tel like '${usertel}%' and create_time BETWEEN #{beginDate} and #{endDate}
-	) C
-LEFT JOIN (
-	SELECT
-		A .sale_id,
-		COUNT (A . NAME)
+		c.*
 	FROM
 		(
 			SELECT
-				ui.*, ci.sale_id
+				*
 			FROM
-				user_info ui,
-				customer_info ci
+				user_info u
 			WHERE
-				(ui.role_id = 1 OR ui.role_id = 2)
-			AND ui.gid = ci.sale_id
-		) A
-	GROUP BY
-		A .sale_id
-) B ON C .gid = B.sale_id
+				(u.role_id = 1
+			OR u.role_id = 2) and name like '${username}%' and tel like '${usertel}%' and create_time BETWEEN #{beginDate} and #{endDate}
+		) C
+	LEFT JOIN (
+		SELECT
+			A .sale_id,
+			COUNT (A . NAME)
+		FROM
+			(
+				SELECT
+					ui.*, ci.sale_id
+				FROM
+					user_info ui,
+					customer_info ci
+				WHERE
+					(ui.role_id = 1 OR ui.role_id = 2)
+				AND ui.gid = ci.sale_id
+			) A
+		GROUP BY
+			A .sale_id
+	) B ON C .gid = B.sale_id
 	</select>
 </mapper>

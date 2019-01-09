@@ -908,7 +908,32 @@ function batchExportCustomer(){
                     if (res.status == 200) {
                         var success = res.data.success;
                         var fail = res.data.fail;
-                        layer.msg(res.msg,{icon:1});
+                        var text = "成功报备" +"<b style='color: blue'>"+success+"</b>" + "个客户,失败" + "<b style='color: red'>"+fail.length+"</b>" +
+                                   "个客户。<a href='javascript:void(0);' id='failList' style='color: blue;'>查看失败列表</a>";
+                        layer.open({
+                            title: '报备详情',
+                            type: 1,
+                            offset: 'auto' ,//具体配置参考：http://www.layui.com/doc/modules/layer.html#offset
+                            content: '<div style="padding-top: 20px;padding-left: 20px;">'+ text +'</div>',
+                            btn: '关闭',
+                            btnAlign: 'c', //按钮居中
+                            shade: 0 ,//不显示遮罩
+                            yes: function(){
+                                layer.closeAll();
+                            }
+                        });
+                        $("#failList").on('click',function(){
+                            var arr = [];
+                            for (var i = 0;i < fail.length;i++){
+                                var json = {
+                                    "姓名": fail[i].name,
+                                    "电话": fail[i].tel,
+                                    "项目": fail[i].projectName
+                                };
+                                arr.push(json);
+                            }
+                            JSONToExcelConvertor(arr,"未报备列表");
+                        })
                     }else {
                         layer.msg(res.msg,{icon:2});
                     }
@@ -921,6 +946,84 @@ function batchExportCustomer(){
         }
     });
     $("#batchExportCustomer").append(div);
+}
+
+
+//json数据转excel
+function JSONToExcelConvertor(JSONData, FileName) {
+        //先转化json
+        var arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData;
+        var excel = '<table>';
+        var row = "<tr>";
+        //设置表头
+        var keys = Object.keys(JSONData[0]);
+        keys.forEach(function (item) {
+            row += "<td>" + item + '</td>';
+        });
+        //换行
+        excel += row + "</tr>";
+        //设置数据
+        for (var i = 0; i < arrData.length; i++) {
+            var row = "<tr>";
+            for (var index in arrData[i]) {
+                console.log(arrData[i][index]);
+                //var value = arrData[i][index] === "." ? "" : arrData[i][index];
+                row += '<td>' + arrData[i][index] + '</td>';
+            }
+            excel += row + "</tr>";
+        }
+
+        excel += "</table>";
+
+        var excelFile = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:excel' xmlns='http://www.w3.org/TR/REC-html40'>";
+        excelFile += '<meta http-equiv="content-type" content="application/vnd.ms-excel; charset=UTF-8">';
+        excelFile += '<meta http-equiv="content-type" content="application/vnd.ms-excel';
+        excelFile += '; charset=UTF-8">';
+        excelFile += "<head>";
+        excelFile += "<!--[if gte mso 9]>";
+        excelFile += "<xml>";
+        excelFile += "<x:ExcelWorkbook>";
+        excelFile += "<x:ExcelWorksheets>";
+        excelFile += "<x:ExcelWorksheet>";
+        excelFile += "<x:Name>";
+        excelFile += "{worksheet}";
+        excelFile += "</x:Name>";
+        excelFile += "<x:WorksheetOptions>";
+        excelFile += "<x:DisplayGridlines/>";
+        excelFile += "</x:WorksheetOptions>";
+        excelFile += "</x:ExcelWorksheet>";
+        excelFile += "</x:ExcelWorksheets>";
+        excelFile += "</x:ExcelWorkbook>";
+        excelFile += "</xml>";
+        excelFile += "<![endif]-->";
+        excelFile += "</head>";
+        excelFile += "<body>";
+        excelFile += excel;
+        excelFile += "</body>";
+        excelFile += "</html>";
+
+        var uri = 'data:application/vnd.ms-excel;charset=utf-8,' + encodeURIComponent(excelFile);
+
+        var link = document.createElement("a");
+        link.href = uri;
+
+        link.style = "visibility:hidden";
+        link.download = FileName + ".xls";
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+//判断是否为JSON格式数据
+function isJSON(str) {
+    try {
+        if (typeof JSON.parse(str) == "object") {
+            return true;
+        }
+    } catch(e) {
+    }
+    return false;
 }
 
 /*条件查询用户find*/

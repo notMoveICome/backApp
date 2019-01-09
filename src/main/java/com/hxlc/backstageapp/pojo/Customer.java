@@ -5,10 +5,11 @@ import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
 
+import java.io.Serializable;
 import java.sql.Date;
 
 @TableName("customer_info")
-public class Customer {
+public class Customer implements Serializable {
     @TableId(value="gid",type= IdType.AUTO)
     private Integer gid;
     private String name;

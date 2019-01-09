@@ -265,7 +265,7 @@ public class ProjectServiceImpl implements ProjectService {
     private Integer addMedia(String name, String savePath, String fileName, Integer gid) {
         String type = "";
         if ("spjs".equals(name)){
-            type = "沙盘解说";
+            type = "沙盘说辞";
         }else if ("xswd".equals(name)){
             type = "销售问答";
         }else if ("hxt".equals(name)){

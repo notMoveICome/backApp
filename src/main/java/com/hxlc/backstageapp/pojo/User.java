@@ -17,29 +17,13 @@ public class User implements Serializable {
     private String tel;
     private Integer roleId;
     private String state;
-    private String checkState;
+//    private String checkState;
     private Date createTime;
-    private String channelComm;
-    private String size;
+//    private String channelComm;
+//    private String size;
     private String remark;
     @TableField(exist = false)
-    private Integer count;
-
-    public User() {
-    }
-
-    public User(Integer gid, String name, String password, String tel, Integer roleId, String state, String checkState, Date createTime, String remark, String channelComm) {
-        this.gid = gid;
-        this.name = name;
-        this.password = password;
-        this.tel = tel;
-        this.roleId = roleId;
-        this.state = state;
-        this.checkState = checkState;
-        this.createTime = createTime;
-        this.remark = remark;
-        this.channelComm = channelComm;
-    }
+    private Integer count;// 分销商报备总数统计
 
     public Integer getGid() {
         return gid;
@@ -105,33 +89,33 @@ public class User implements Serializable {
         this.remark = remark;
     }
 
-    public String getChannelComm() {
-        return channelComm;
-    }
+//    public String getChannelComm() {
+//        return channelComm;
+//    }
     public Integer getCount() {
         return count;
     }
 
-    public void setChannelComm(String channelComm) {
-        this.channelComm = channelComm;
-    }
+//    public void setChannelComm(String channelComm) {
+//        this.channelComm = channelComm;
+//    }
 
-    public String getCheckState() {
-        return checkState;
-    }
+//    public String getCheckState() {
+//        return checkState;
+//    }
 
-    public void setCheckState(String checkState) {
-        this.checkState = checkState;
-    }
+//    public void setCheckState(String checkState) {
+//        this.checkState = checkState;
+//    }
     public void setCount(Integer count) {
         this.count = count;
     }
 
-    public String getSize() {
-        return size;
-    }
+//    public String getSize() {
+//        return size;
+//    }
 
-    public void setSize(String size) {
-        this.size = size;
-    }
+//    public void setSize(String size) {
+//        this.size = size;
+//    }
 }

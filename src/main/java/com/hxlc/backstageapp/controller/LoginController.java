@@ -7,6 +7,7 @@ import com.hxlc.backstageapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,7 +22,15 @@ public class LoginController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping("/userLogin")
+    /**
+     * 后台管理员登录
+     * @param username
+     * @param password
+     * @param session
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/userLogin",method = RequestMethod.POST)
     public SysObject login(String username, String password, HttpSession session, HttpServletResponse response) {
         User user = userService.findUser(username, password);
         if (user != null) {
@@ -49,8 +58,13 @@ public class LoginController {
         return new SysObject(201, "账号或密码错误", null);
     }
 
-
-    @RequestMapping("/salesLogin")
+    /**
+     * 分销商登录(分销商就是业务员)
+     * @param tel
+     * @param pwd
+     * @return
+     */
+    @RequestMapping(value = "/salesLogin",method = RequestMethod.POST)
     public SysObject salesLogin(String tel,String pwd){
         User user = userService.findSaleByTelAndPwd(tel, pwd);
         if (user != null){
@@ -63,6 +77,11 @@ public class LoginController {
         return new SysObject(201, "业务员登录失败!", null);
     }
 
+    /**
+     * 后台退出
+     * @param session
+     * @param response
+     */
     @RequestMapping("/signOut")
     public void singOut(HttpSession session, HttpServletResponse response) {
         session.invalidate();
