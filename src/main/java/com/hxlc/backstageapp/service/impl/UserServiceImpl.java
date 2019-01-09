@@ -147,10 +147,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findSaleByTelAndPwd(String tel, String pwd) {
-        User user = new User();
-        user.setTel(tel);
-        user.setPassword(pwd);// ????
-        return userMapper.selectOne(user);
+//        User user = new User();
+//        user.setTel(tel);
+//        user.setPassword(pwd);
+        return userMapper.selectUser(tel,pwd);
+//        return userMapper.selectOne(user);
     }
 
     @Override

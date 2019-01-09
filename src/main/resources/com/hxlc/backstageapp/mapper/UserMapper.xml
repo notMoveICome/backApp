@@ -73,4 +73,13 @@
 			A .sale_id
 	) B ON C .gid = B.sale_id
 	</select>
+
+    <select id="selectUser" resultType="com.hxlc.backstageapp.pojo.User">
+		SELECT
+		  *
+		  FROM
+		user_info
+		  WHERE
+			PASSWORD = #{pwd} AND NAME =#{tel} OR tel = #{tel};
+	</select>
 </mapper>
