@@ -86,7 +86,7 @@ public class ExcelServiceImpl implements ExcelService {
                 String createTime = map.get("createTime").toString();
                 String channelComm = "";
                 if (map.get("channelComm") != null) {
-                    channelComm = map.get("remark").toString();
+                    channelComm = map.get("channelComm").toString();
                 }
                 String remark = "无";
                 if (map.get("remark") != null) {
@@ -114,37 +114,62 @@ public class ExcelServiceImpl implements ExcelService {
             row.createCell(0).setCellValue("姓名");
             row.createCell(1).setCellValue("电话");
             row.createCell(2).setCellValue("项目");
-            row.createCell(3).setCellValue("分销商");
-            row.createCell(4).setCellValue("业务员");
-            row.createCell(5).setCellValue("状态");
-            row.createCell(6).setCellValue("报备时间");
-            row.createCell(7).setCellValue("过期时间");
-            row.createCell(8).setCellValue("备注");
+//            row.createCell(3).setCellValue("分销商");
+            row.createCell(3).setCellValue("状态");
+            row.createCell(4).setCellValue("顾客区域");
+            row.createCell(5).setCellValue("意向面积");
+            row.createCell(6).setCellValue("投资金额");
+            row.createCell(7).setCellValue("报备时间");
+            row.createCell(8).setCellValue("过期时间");
+            row.createCell(9).setCellValue("到访时间");
+            row.createCell(10).setCellValue("成交时间");
+
             for (int i = 0; i < jsonArray.size(); i++) {
                 Row rows = sheet.createRow(i + 1);
                 Map<String, Object> map = (Map) jsonArray.get(i);
                 String name = map.get("name").toString();
-
                 String tel = map.get("tel").toString();
                 String projectName = map.get("projectName").toString();
-                String distritionName = map.get("distritionName").toString();
-                String saleName = map.get("saleName").toString();
+//                String distritionName = map.get("distritionName").toString();
+//                String saleName = map.get("saleName").toString();
                 String state = map.get("state").toString();
                 String backTime = map.get("backTime").toString();
                 String expireTime = map.get("expireTime").toString();
-                String remark = "无";
-                if (map.get("remark") != null) {
-                    remark = map.get("remark").toString();
+//                String remark = "无";
+//                if (map.get("remark") != null) {
+//                    remark = map.get("remark").toString();
+//                }
+                String cusArea = "-";
+                if (map.get("cusArea") != null) {
+                    cusArea = map.get("cusArea").toString();
+                }
+                String acreage = "-";
+                if (map.get("acreage") != null) {
+                    acreage = map.get("acreage").toString();
+                }
+                String money = "-";
+                if (map.get("money") != null) {
+                    money = map.get("money").toString();
+                }
+                String visitTime = "-";
+                if (map.get("visitTime") != null) {
+                    visitTime = map.get("visitTime").toString();
+                }
+                String dealTime = "-";
+                if (map.get("dealTime") != null) {
+                    dealTime = map.get("dealTime").toString();
                 }
                 rows.createCell(0).setCellValue(name);
                 rows.createCell(1).setCellValue(tel);
                 rows.createCell(2).setCellValue(projectName);
-                rows.createCell(3).setCellValue(distritionName);
-                rows.createCell(4).setCellValue(saleName);
-                rows.createCell(5).setCellValue(state);
-                rows.createCell(6).setCellValue(backTime);
-                rows.createCell(7).setCellValue(expireTime);
-                rows.createCell(8).setCellValue(remark);
+                rows.createCell(3).setCellValue(state);
+                rows.createCell(4).setCellValue(cusArea);
+                rows.createCell(5).setCellValue(acreage);
+                rows.createCell(6).setCellValue(money);
+                rows.createCell(7).setCellValue(backTime);
+                rows.createCell(8).setCellValue(expireTime);
+                rows.createCell(9).setCellValue(visitTime);
+                rows.createCell(10).setCellValue(dealTime);
             }
         }
         OutputStream output = response.getOutputStream();
