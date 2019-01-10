@@ -223,9 +223,9 @@ public class UserController {
      * @return
      */
     @RequestMapping("/changeCusVisit")
-    public SysObject changeCusVisit(Integer disId,String cusTel){
+    public SysObject changeCusVisit(Integer disId, Integer proId, String cusTel){
         try {
-            Integer row = userService.changeCusVisit(disId, cusTel);
+            Integer row = userService.changeCusVisit(disId, proId, cusTel);
             if (row > 0){
                 return new SysObject(200,"到访成功!",null);
             }
@@ -242,9 +242,9 @@ public class UserController {
      * @return
      */
     @RequestMapping("/changeCusDeal")
-    public SysObject changeCusDeal(Integer disId,String cusTel){
+    public SysObject changeCusDeal(Integer disId,Integer proId,String cusTel){
         try {
-            Integer row = userService.changeCusDeal(disId, cusTel);
+            Integer row = userService.changeCusDeal(disId, proId, cusTel);
             if (row > 0){
                 return new SysObject(200,"成交成功!",null);
             }

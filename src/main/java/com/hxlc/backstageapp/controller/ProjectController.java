@@ -85,7 +85,7 @@ public class ProjectController {
     @RequestMapping("/addProjectRecomm")
     public SysObject addProjectRecomm(Integer proId) {
         Integer row = projectService.addProjectRecomm(proId);
-        if (row == 1) {
+        if (row > 0) {
             return new SysObject(200, "添加成功!", null);
         }
         return new SysObject(201, "添加失败!", null);
@@ -106,7 +106,7 @@ public class ProjectController {
     @RequestMapping(value = "/editProjectInfo", method = RequestMethod.POST)
     public SysObject editProjectInfo(Project project) {
         Integer row = projectService.editProjectInfo(project);
-        if (row == 1) {
+        if (row > 0) {
             return new SysObject(200, "修改成功!", null);
         }
         return new SysObject(201, "修改失败!", null);
@@ -121,7 +121,7 @@ public class ProjectController {
     @RequestMapping("/deleteProById")
     public SysObject deleteProById(Integer proId) {
         Integer rows = projectService.deleteProById(proId);
-        if (rows == 1) {
+        if (rows > 0) {
             return new SysObject(200, "删除成功!", null);
         } else {
             return new SysObject(201, "删除失败!", null);

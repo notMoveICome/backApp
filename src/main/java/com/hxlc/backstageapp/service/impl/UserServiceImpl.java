@@ -246,24 +246,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Integer changeCusVisit(Integer disId, String cusTel) {
+    public Integer changeCusVisit(Integer disId, Integer proId, String cusTel) {
         Customer customer = new Customer();
 //        customer.setTel(cusTel);
 //        customer.setSaleId(disId);
         customer.setState("到访");
         customer.setVisitTime(new Date(new java.util.Date().getTime()));
-        Integer row = customerMapper.update(customer, new EntityWrapper<Customer>().eq("tel", cusTel).and().eq("sale_id", disId));
+        Integer row = customerMapper.update(customer, new EntityWrapper<Customer>().eq("tel", cusTel).eq("sale_id", disId).eq("project_id",proId));
         return row;
     }
 
     @Override
-    public Integer changeCusDeal(Integer disId, String cusTel) {
+    public Integer changeCusDeal(Integer disId, Integer proId, String cusTel) {
         Customer customer = new Customer();
 //        customer.setTel(cusTel);
 //        customer.setSaleId(disId);
         customer.setState("成交");
         customer.setDealTime(new Date(new java.util.Date().getTime()));
-        return customerMapper.update(customer,new EntityWrapper<Customer>().eq("tel",cusTel).and().eq("sale_id",disId));
+        return customerMapper.update(customer,new EntityWrapper<Customer>().eq("tel",cusTel).eq("sale_id",disId).eq("project_id",proId));
     }
 
     private Map<String, Object> parseExcel(Integer disId, MultipartFile cusExcel) {

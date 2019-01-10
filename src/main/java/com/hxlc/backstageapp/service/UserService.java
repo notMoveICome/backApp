@@ -57,7 +57,7 @@ public interface UserService {
 
     Integer  saveDisLicense(MultipartFile licensePic, DistributorInfo distributorInfo);
 
-    Integer changeCusVisit(Integer disId, String cusTel);
+    Integer changeCusVisit(Integer disId, Integer proId, String cusTel);
 
-    Integer changeCusDeal(Integer disId, String cusTel);
+    Integer changeCusDeal(Integer disId, Integer proId, String cusTel);
 }
