@@ -2,17 +2,14 @@ package com.hxlc.backstageapp.mapper;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.hxlc.backstageapp.pojo.DistributorInfo;
-import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.hxlc.backstageapp.pojo.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @Repository
 public interface UserMapper extends BaseMapper<User> {
@@ -32,5 +29,4 @@ public interface UserMapper extends BaseMapper<User> {
 
 //    @Select("SELECT check_state FROM distributor_info WHERE dis_id = #{saleId}")
 //    String queryDisStateById(Integer saleId);
-
 }

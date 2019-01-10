@@ -269,9 +269,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public DistributorInfo selectDisByDIsID(Integer disId) {
-        DistributorInfo dis = new DistributorInfo();
-        dis.setDisId(disId);
-        return distributorMapper.selectOne(dis);
+        return distributorMapper.queryDisByDisId(disId);
     }
 
     private Map<String, Object> parseExcel(Integer disId, MultipartFile cusExcel) {
