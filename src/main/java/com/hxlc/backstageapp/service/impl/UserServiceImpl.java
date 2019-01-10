@@ -235,6 +235,7 @@ public class UserServiceImpl implements UserService {
                 fos.write(b, 0, len);
             }
             // 开始入库
+            distributorInfo.setCheckState("审核中");
             distributorInfo.setLicense(disLicense.substring(disLicense.lastIndexOf("/"),disLicense.length()) + "/" + filename);
             Integer row = distributorMapper.update(distributorInfo, new EntityWrapper<DistributorInfo>().eq("dis_id", distributorInfo.getDisId()));
             fos.close();
@@ -403,7 +404,7 @@ public class UserServiceImpl implements UserService {
         DistributorInfo dis = new DistributorInfo();
         dis.setDisId(user.getGid());
         dis.setChannelComm(attache);
-        dis.setCheckState("未过审");
+        dis.setCheckState("未提交");
         dis.setSize(size);
         return distributorMapper.insert(dis);
     }

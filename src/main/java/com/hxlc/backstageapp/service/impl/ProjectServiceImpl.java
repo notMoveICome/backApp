@@ -181,13 +181,13 @@ public class ProjectServiceImpl implements ProjectService {
             while ((len = inputStream.read(bs)) != -1) {
                 os.write(bs, 0, len);
             }
+            File zf = new File(savePath + File.separator + fileName);
             // doc转pdf
             if (fileName.endsWith(".doc") || fileName.endsWith("docx")){
                 WordUtil.wordSaveAs(savePath + File.separator + fileName,savePath + File.separator + fileName.substring(0,fileName.lastIndexOf(".")) + ".pdf");
             }
             // 若是zip文件就进行解压
-            if (fileName.substring(fileName.lastIndexOf("."),fileName.length()).equals(".zip")){
-                File zf = new File(savePath + File.separator + fileName);
+            if (fileName.endsWith(".zip")){
                 ZipFile zFile = new ZipFile(zf, "GBK");
                 Enumeration emu = zFile.getEntries();
                 while (emu.hasMoreElements()){
@@ -218,43 +218,43 @@ public class ProjectServiceImpl implements ProjectService {
                 System.out.println("zip压缩文件解压成功");
                 return -1;
             }
-            // 若是rar文件就进行解压(不支持)
-//            if (fileName.substring(fileName.lastIndexOf("."),fileName.length()).equals(".rar")){
-//                Archive a = null;
-//                try {
-//                    a = new Archive(new File(savePath + File.separator + fileName));
-//                    if (a != null) {
-//                        a.getMainHeader().print(); // 打印文件信息.
-//                        FileHeader fh = a.nextFileHeader();
-//                        while (fh != null) {
-//                            if (fh.isDirectory()) { // 文件夹
-//                                File fol = new File(savePath + File.separator + fh.getFileNameW());
-//                                fol.mkdirs();
-//                            } else { // 文件
-//                                File out = new File(savePath + File.separator + fh.getFileNameW().trim());
-//                                try {// 之所以这么写try，是因为万一这里面有了异常，不影响继续解压.
-//                                    if (!out.exists()) {
-//                                        if (!out.getParentFile().exists()) {// 相对路径可能多级，可能需要创建父目录.
-//                                            out.getParentFile().mkdirs();
-//                                        }
-//                                        out.createNewFile();
-//                                    }
-//                                    FileOutputStream fos = new FileOutputStream(out);
-//                                    a.extractFile(fh, fos);
-//                                    fos.close();
-//                                } catch (Exception ex) {
-//                                    ex.printStackTrace();
-//                                }
-//                            }
-//                            fh = a.nextFileHeader();
-//                        }
-//                        a.close();
-//                        System.out.println("rar压缩文件解压成功");
-//                    }
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
+
+            if (fileName.endsWith(".rar")){
+                Archive a = null;
+                try {
+                    a = new Archive(zf);
+                    if (a != null) {
+                        a.getMainHeader().print(); // 打印文件信息.
+                        FileHeader fh = a.nextFileHeader();
+                        while (fh != null) {
+                            if (fh.isDirectory()) { // 文件夹
+                                File fol = new File(savePath + File.separator + fh.getFileNameW().trim());
+                                fol.mkdirs();
+                            } else { // 文件
+                                File out = new File(savePath + File.separator + fh.getFileNameW().trim());
+                                try {// 之所以这么写try，是因为万一这里面有了异常，不影响继续解压.
+                                    if (!out.exists()) {
+                                        if (!out.getParentFile().exists()) {// 相对路径可能多级，可能需要创建父目录.
+                                            out.getParentFile().mkdirs();
+                                        }
+                                        out.createNewFile();
+                                    }
+                                    FileOutputStream fos = new FileOutputStream(out);
+                                    a.extractFile(fh, fos);
+                                    fos.close();
+                                } catch (Exception ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
+                            fh = a.nextFileHeader();
+                        }
+                        a.close();
+                        System.out.println("rar压缩文件解压成功");
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
             addMedia(filecontent.getName(), savePath, fileName, gid);
             Integer mediaId = addMedia(filecontent.getName(), savePath, fileName.substring(0,fileName.lastIndexOf(".")) + ".pdf", gid);
             return mediaId;
