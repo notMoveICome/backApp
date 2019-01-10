@@ -767,9 +767,9 @@ function userManage() {
             if (role == "管理员" || role == "分销商") {
                 $("#searchUser").append('<span><input id="userName" type="text" class="form-control" placeholder="请输入姓名"/>' +
                     '</span><span><input id="userTel" type="text" class="form-control" placeholder="请输入电话号码"/></span>' +
-                    '<span><input  type="text" class="form-control" placeholder="请选择起始报备时间" id="fromReport"/></span>' +
+                    '<span><input  type="text" class="form-control" placeholder="请选择起始报备时间" readonly="readonly" id="fromReport"/></span>' +
                     '<span style="width: 2em;line-height: 30px;margin-right: 1em;">至</span>' +
-                    '<span><input  type="text" class="form-control" placeholder="请选择终止报备时间" id="toReport"/></span>');
+                    '<span><input  type="text" class="form-control" placeholder="请选择终止报备时间" readonly="readonly" id="toReport"/></span>');
                 $("#searchUser").append('<button id="downExcel" class="btn btn-primary" type="button" style="float: right;margin-right: 20px">导出</button>');
                 $("#searchUser").append('<button id="addUser" class="btn btn-primary" type="button" style="float: right;margin-right: 20px">添加</button>');
                 $("#searchUser").append('<button id="findUser" class="btn btn-primary" type="button" style="float: right;margin-right: 400px">查询人员</button>');
