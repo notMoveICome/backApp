@@ -41,6 +41,7 @@ security:
   successUrl: "/index.html"
   logoutSuccessUrl: "/login.html"
 fileDir:
-  projectFile: "E:/ifamily/resources"   # 项目文件资料
+  projectFile: "E:/ifamily/prodata"   # 项目文件资料
+  disLicense: "E:/ifamily/license"   # 分销商营业执照资料
   tempFile: "E:/ifamily/temp" # 文件上传临时目录
 

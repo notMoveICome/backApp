@@ -207,9 +207,9 @@ public class ProjectServiceImpl implements ProjectService {
                 }
                 zFile.close();
                 System.out.println("zip压缩文件解压成功");
-                return 0;
+                return -1;
             }
-            // 若是rar文件就进行解压
+            // 若是rar文件就进行解压(不支持)
 //            if (fileName.substring(fileName.lastIndexOf("."),fileName.length()).equals(".rar")){
 //                Archive a = null;
 //                try {
@@ -278,7 +278,7 @@ public class ProjectServiceImpl implements ProjectService {
         String mediaName = fileName.substring(0,fileName.lastIndexOf("."));
         String format = fileName.substring(fileName.lastIndexOf(".") + 1,fileName.length());
         savePath = savePath.replaceAll("\\\\","/");
-        String url = "/resources" + savePath.substring(savePath.lastIndexOf("/"),savePath.length()) + "/" + fileName;
+        String url = projectFile.substring(projectFile.lastIndexOf("/"),projectFile.length()) + savePath.substring(savePath.lastIndexOf("/"),savePath.length()) + "/" + fileName;
         Media media = new Media();
         media.setName(mediaName);
         media.setFormat(format);

@@ -20,6 +20,8 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Value("${fileDir.projectFile}")
     private String projectFile;
+    @Value("${fileDir.disLicense}")
+    private String disLicense;
     @Value("${fileDir.tempFile}")
     private String tempFile;
 
@@ -40,7 +42,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
         configurer.enable();
     }
-    
+
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/").setViewName("login.html");
@@ -51,12 +53,16 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     /**
      * 项目文件路径地址
+     *
      * @param registry
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        String projectFilePre = projectFile.substring(projectFile.lastIndexOf("/") + 1, projectFile.length());
+        String disLicensePre = disLicense.substring(disLicense.lastIndexOf("/") + 1, disLicense.length());
         registry.addResourceHandler("/public/**").addResourceLocations("classpath:/public/");
-//        registry.addResourceHandler("/resources/**").addResourceLocations("file:"+projectFile+"/");// ??
+        registry.addResourceHandler("/" + projectFilePre + "/**").addResourceLocations("file:" + projectFile + "/");
+        registry.addResourceHandler("/" + disLicensePre + "/**").addResourceLocations("file:" + disLicense + "/");
         super.addResourceHandlers(registry);
     }
 
@@ -71,6 +77,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     /**
      * 文件上传临时路径
+     *
      * @return
      */
     @Bean

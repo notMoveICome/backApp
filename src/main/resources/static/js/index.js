@@ -30,6 +30,8 @@ var user_fields = {
         state: "状态",
         backTime: "报备时间",
         expireTime: "过期时间",
+        visitTime: "到访时间",
+        dealTime: "成交时间",
         remark: "备注",
         cusArea: "客户区域",
         acreage: "意向面积",

@@ -15,6 +15,9 @@ public class DistributorInfo extends User implements Serializable {
     private String channelComm;
     private String size;
     private String license;
+    private String disCompany;
+    private String disLinkman;
+    private String disLinktel;
 
     public Integer getGid() {
         return gid;
@@ -62,5 +65,29 @@ public class DistributorInfo extends User implements Serializable {
 
     public void setLicense(String license) {
         this.license = license;
+    }
+
+    public String getDisCompany() {
+        return disCompany;
+    }
+
+    public void setDisCompany(String disCompany) {
+        this.disCompany = disCompany;
+    }
+
+    public String getDisLinkman() {
+        return disLinkman;
+    }
+
+    public void setDisLinkman(String disLinkman) {
+        this.disLinkman = disLinkman;
+    }
+
+    public String getDisLinktel() {
+        return disLinktel;
+    }
+
+    public void setDisLinktel(String disLinktel) {
+        this.disLinktel = disLinktel;
     }
 }

@@ -2,6 +2,7 @@ package com.hxlc.backstageapp.controller;
 
 import com.hxlc.backstageapp.common.SysObject;
 import com.hxlc.backstageapp.pojo.Customer;
+import com.hxlc.backstageapp.pojo.DistributorInfo;
 import com.hxlc.backstageapp.pojo.User;
 import com.hxlc.backstageapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,13 +106,14 @@ public class UserController {
 
     /**
      * 分销商注册
+     *
      * @param map
      * @return
      */
     @RequestMapping(value = "/registerUser", method = RequestMethod.POST)
     public SysObject registerUser(@RequestParam Map map) {
         Integer rows = userService.registerUser(map);
-        if (rows == 1) {
+        if (rows > 0) {
             return new SysObject(200, "注册成功!", null);
         } else {
             return new SysObject(201, "注册失败!", null);
@@ -120,6 +122,7 @@ public class UserController {
 
     /**
      * 批量导入用户
+     *
      * @param dis      分销商
      * @param cusExcel Excel文件
      * @return
@@ -138,52 +141,116 @@ public class UserController {
     }
 
     /**
-     * 上传营业执照
-     * @param licensePic 照片
-     * @param company   公司名称
-     * @param linkman   联系人
-     * @param linkTel   联系电话
+     * 验证分销商是否已审核营业执照
+     *
+     * @param disId 分销商ID
      * @return
      */
-    @RequestMapping(value = "/uploadLicense",method = RequestMethod.POST)
-    public SysObject uploadLicense(@RequestParam(value = "licensePic") MultipartFile licensePic,String company,String linkman,Integer linkTel) {
-        String picName = licensePic.getOriginalFilename();
-        System.out.println(picName);
-        System.out.println(company);
-        System.out.println(linkman);
-        System.out.println(linkTel);
-        return null;
+    @RequestMapping("/validateDisState")
+    public SysObject validateDisState(Integer disId) {
+        try {
+            boolean flag = userService.checkDistributorState(disId);
+            if (flag) {
+                return new SysObject(200, "已过审", null);
+            } else {
+                return new SysObject(200, "未过审", null);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new SysObject(500, "服务器异常!", null);
+    }
+
+    /**
+     * 上传营业执照
+     *
+     * @param licensePic 照片
+     * @param disId      分销商ID
+     * @param disCompany    公司名称
+     * @param disLinkman    联系人
+     * @param disLinktel    联系电话
+     * @return
+     */
+    @RequestMapping(value = "/uploadLicense", method = RequestMethod.POST)
+    public SysObject uploadLicense(@RequestParam(value = "licensePic") MultipartFile licensePic, DistributorInfo distributorInfo) {
+        try {
+            Integer row = userService.saveDisLicense(licensePic,distributorInfo);
+            if (row > 0){
+                return new SysObject(200, "提交成功,审核结果会在一个工作日内发送到至您的手机!", null);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new SysObject(201, "提交失败!", null);
     }
 
     /**
      * 分销商报备客户
-     * @param saleId        分销商ID
-     * @param name          客户名字
-     * @param tel           客户电话
-     * @param projectName   项目名称
-     * @param cusArea       客户区域
-     * @param acreage       意向面积
-     * @param money         投资额
-     * @param remark        客户备注
+     *
+     * @param saleId      分销商ID
+     * @param name        客户名字
+     * @param tel         客户电话
+     * @param projectName 项目名称
+     * @param cusArea     客户区域
+     * @param acreage     意向面积
+     * @param money       投资额
+     * @param remark      客户备注
      * @return
      */
-    @RequestMapping(value = "/reportCustomer",method = RequestMethod.POST)
-    public SysObject reportCustomer(Customer customer){
+    @RequestMapping(value = "/reportCustomer", method = RequestMethod.POST)
+    public SysObject reportCustomer(Customer customer) {
         try {
             boolean flag = userService.checkDistributorState(customer.getSaleId());
-            if (flag){
+            if (flag) {
                 Integer row = userService.reportCustomer(customer);
-                if (row == -1){
-                    return new SysObject(201,"该客户报备该项目已超过报备次数!",null);
-                }else {
-                    return new SysObject(200,"报备成功!",null);
+                if (row == -1) {
+                    return new SysObject(201, "该客户报备该项目已超过报备次数!", null);
+                } else {
+                    return new SysObject(200, "报备成功!", null);
                 }
-
             }
-            return new SysObject(201,"权限不足,请先完成营业许可证审核!",null);
+            return new SysObject(201, "权限不足,请先完成公司营业执照审核!", null);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return new SysObject(201,"报备异常!",null);
+        return new SysObject(201, "报备异常!", null);
+    }
+
+    /**
+     * 修改客户状态--到访
+     * @param disId
+     * @param cusTel
+     * @return
+     */
+    @RequestMapping("/changeCusVisit")
+    public SysObject changeCusVisit(Integer disId,String cusTel){
+        try {
+            Integer row = userService.changeCusVisit(disId, cusTel);
+            if (row > 0){
+                return new SysObject(200,"到访成功!",null);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return new SysObject(201,"到访失败!",null);
+    }
+
+    /**
+     * 修改客户状态--成交
+     * @param disId
+     * @param cusTel
+     * @return
+     */
+    @RequestMapping("/changeCusDeal")
+    public SysObject changeCusDeal(Integer disId,String cusTel){
+        try {
+            Integer row = userService.changeCusDeal(disId, cusTel);
+            if (row > 0){
+                return new SysObject(200,"成交成功!",null);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return new SysObject(201,"成交失败!",null);
     }
 }

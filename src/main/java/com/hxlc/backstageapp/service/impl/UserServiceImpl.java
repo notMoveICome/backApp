@@ -17,11 +17,11 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -42,6 +42,8 @@ public class UserServiceImpl implements UserService {
     private CustomerMapper customerMapper;
     @Autowired
     private ProjectMapper projectMapper;
+    @Value("${fileDir.disLicense}")
+    private String disLicense;
 
     @Override
     public Object getUserByRole(String role) {
@@ -150,7 +152,7 @@ public class UserServiceImpl implements UserService {
 //        User user = new User();
 //        user.setTel(tel);
 //        user.setPassword(pwd);
-        return userMapper.selectUser(tel,pwd);
+        return userMapper.selectUser(tel, pwd);
 //        return userMapper.selectOne(user);
     }
 
@@ -176,11 +178,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Map<String,Object> batchExportCus(String dis, MultipartFile cusExcel) {
+    public Map<String, Object> batchExportCus(String dis, MultipartFile cusExcel) {
         User user = new User();
         user.setName(dis);
         User disUser = userMapper.selectOne(user);
-        Map<String,Object> map = parseExcel(disUser.getGid(), cusExcel);
+        Map<String, Object> map = parseExcel(disUser.getGid(), cusExcel);
         return map;
     }
 
@@ -194,14 +196,14 @@ public class UserServiceImpl implements UserService {
         // 查该项目下的该用户报备次数
         Integer count = customerMapper.selectCount(new EntityWrapper<Customer>().eq("tel", customer.getTel()).and().eq("project_id", pro.getGid()));
         // 超过报备次数限制的用户不予报备
-        if (count >= pro.getReportLimit()){
+        if (count >= pro.getReportLimit()) {
             return -1;
-        }else {
+        } else {
             customer.setProjectId(pro.getGid());
             customer.setState("正常");
             java.util.Date date = new java.util.Date();
             customer.setBackTime(new Date(date.getTime()));
-            customer.setExpireTime(new Date(date.getTime() + 3600*24*7*1000));
+            customer.setExpireTime(new Date(date.getTime() + 3600 * 24 * 7 * 1000));
             return customerMapper.insert(customer);
         }
     }
@@ -209,13 +211,65 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean checkDistributorState(Integer saleId) {
         String state = userMapper.queryDisStateById(saleId);
-        return state == "已过审" ? true : false;
+        return "已过审".equals(state) ? true : false;
     }
 
-    private Map<String,Object> parseExcel(Integer disId, MultipartFile cusExcel) {
+    @Override
+    public Integer saveDisLicense(MultipartFile licensePic,DistributorInfo distributorInfo) {
+        InputStream is = null;
+        FileOutputStream fos = null;
+        try {
+            String filename = licensePic.getOriginalFilename();
+            File parentFile = new File(disLicense);
+            if (!parentFile.exists()) {
+                parentFile.mkdirs();
+            }
+            // 存入本地
+            File file = new File(parentFile.getAbsolutePath() + File.separator + filename);
+            is = licensePic.getInputStream();
+            fos = new FileOutputStream(file);
+            byte[] b = new byte[1024];
+            int len;
+            while ((len = is.read(b)) != -1) {
+                fos.write(b, 0, len);
+            }
+            // 开始入库
+            distributorInfo.setLicense(disLicense.substring(disLicense.lastIndexOf("/"),disLicense.length()) + "/" + filename);
+            Integer row = distributorMapper.update(distributorInfo, new EntityWrapper<DistributorInfo>().eq("dis_id", distributorInfo.getDisId()));
+            fos.close();
+            is.close();
+            return row;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    @Override
+    public Integer changeCusVisit(Integer disId, String cusTel) {
+        Customer customer = new Customer();
+//        customer.setTel(cusTel);
+//        customer.setSaleId(disId);
+        customer.setState("到访");
+        customer.setVisitTime(new Date(new java.util.Date().getTime()));
+        Integer row = customerMapper.update(customer, new EntityWrapper<Customer>().eq("tel", cusTel).and().eq("sale_id", disId));
+        return row;
+    }
+
+    @Override
+    public Integer changeCusDeal(Integer disId, String cusTel) {
+        Customer customer = new Customer();
+//        customer.setTel(cusTel);
+//        customer.setSaleId(disId);
+        customer.setState("成交");
+        customer.setDealTime(new Date(new java.util.Date().getTime()));
+        return customerMapper.update(customer,new EntityWrapper<Customer>().eq("tel",cusTel).and().eq("sale_id",disId));
+    }
+
+    private Map<String, Object> parseExcel(Integer disId, MultipartFile cusExcel) {
         //读取Excel里面客户的信息
         List<Customer> customerList = new ArrayList<>();
-        Map<String,Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         //初始化输入流
         InputStream is = null;
         Workbook wb = null;
@@ -272,10 +326,10 @@ public class UserServiceImpl implements UserService {
                     customer.setProjectId(proRes.getGid());
                     customer.setState("正常");
                     customer.setBackTime(new Date(date.getTime()));
-                    customer.setExpireTime(new Date(date.getTime() + 3600*24*7*1000));// 七天时间
+                    customer.setExpireTime(new Date(date.getTime() + 3600 * 24 * 7 * 1000));// 七天时间
                     customerMapper.insert(customer);
                     m++;
-                }else {
+                } else {
                     Customer c = new Customer();
                     c.setName(list.get(0));
                     c.setTel(list.get(1));
@@ -283,8 +337,8 @@ public class UserServiceImpl implements UserService {
                     customerList.add(c);
                 }
             }
-            map.put("success",m);
-            map.put("fail",customerList);
+            map.put("success", m);
+            map.put("fail", customerList);
             is.close();
             return map;
         } catch (Exception e) {

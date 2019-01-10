@@ -17,10 +17,10 @@ public class User implements Serializable {
     private String tel;
     private Integer roleId;
     private String state;
-//    private String checkState;
+    //    private String checkState;
     private Date createTime;
-//    private String channelComm;
-//    private String size;
+    //    private String channelComm;
+    //    private String size;
     private String remark;
     @TableField(exist = false)
     private Integer count;// 分销商报备总数统计
@@ -89,7 +89,7 @@ public class User implements Serializable {
         this.remark = remark;
     }
 
-//    public String getChannelComm() {
+    //    public String getChannelComm() {
 //        return channelComm;
 //    }
     public Integer getCount() {
@@ -104,7 +104,7 @@ public class User implements Serializable {
 //        return checkState;
 //    }
 
-//    public void setCheckState(String checkState) {
+    //    public void setCheckState(String checkState) {
 //        this.checkState = checkState;
 //    }
     public void setCount(Integer count) {

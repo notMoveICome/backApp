@@ -1,6 +1,7 @@
 package com.hxlc.backstageapp.service;
 
 import com.hxlc.backstageapp.pojo.Customer;
+import com.hxlc.backstageapp.pojo.DistributorInfo;
 import com.hxlc.backstageapp.pojo.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Update;
@@ -40,6 +41,7 @@ public interface UserService {
 
     /**
      * 分销商注册
+     *
      * @param map
      * @return
      */
@@ -47,9 +49,15 @@ public interface UserService {
 
     List<Customer> findCustomerByCondition(Map map) throws ParseException;
 
-    Map<String,Object> batchExportCus(String dis, MultipartFile cusExcel);
+    Map<String, Object> batchExportCus(String dis, MultipartFile cusExcel);
 
     Integer reportCustomer(Customer customer);
 
     boolean checkDistributorState(Integer saleId);
+
+    Integer  saveDisLicense(MultipartFile licensePic, DistributorInfo distributorInfo);
+
+    Integer changeCusVisit(Integer disId, String cusTel);
+
+    Integer changeCusDeal(Integer disId, String cusTel);
 }

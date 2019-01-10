@@ -32,6 +32,8 @@ public class Customer implements Serializable {
     private String remark;
     private Date backTime;
     private Date expireTime;
+    private Date visitTime;
+    private Date dealTime;
 
     public Integer getGid() {
         return gid;
@@ -159,5 +161,21 @@ public class Customer implements Serializable {
 
     public void setMoney(Float money) {
         this.money = money;
+    }
+
+    public Date getVisitTime() {
+        return visitTime;
+    }
+
+    public void setVisitTime(Date visitTime) {
+        this.visitTime = visitTime;
+    }
+
+    public Date getDealTime() {
+        return dealTime;
+    }
+
+    public void setDealTime(Date dealTime) {
+        this.dealTime = dealTime;
     }
 }
