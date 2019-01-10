@@ -60,4 +60,6 @@ public interface UserService {
     Integer changeCusVisit(Integer disId, Integer proId, String cusTel);
 
     Integer changeCusDeal(Integer disId, Integer proId, String cusTel);
+
+    DistributorInfo selectDisByDIsID(Integer disId);
 }

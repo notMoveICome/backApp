@@ -12,6 +12,8 @@ import com.hxlc.backstageapp.pojo.Customer;
 import com.hxlc.backstageapp.pojo.Media;
 import com.hxlc.backstageapp.pojo.Project;
 import com.hxlc.backstageapp.service.ProjectService;
+import com.hxlc.backstageapp.util.WordUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tools.zip.ZipEntry;
 import org.apache.tools.zip.ZipFile;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,7 +127,6 @@ public class ProjectServiceImpl implements ProjectService {
         project.setBackTime(new java.sql.Date(date.getTime()));
         projectMapper.addProject(project);
         Integer gid = project.getGid();
-//        System.out.println(gid);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         String format = sdf.format(date);
         String round = "";
@@ -135,16 +136,20 @@ public class ProjectServiceImpl implements ProjectService {
         String fileDir = project.getName() + format + "_" + round;
         File parentFile = new File(projectFile + "/" + fileDir);
         parentFile.mkdirs();
+
         Integer spjsId = approvalFile(spjs, parentFile.getPath(), gid);
         Integer xswdId = approvalFile(xswd, parentFile.getPath(), gid);
-        approvalFile(hxt,parentFile.getPath(),gid);
-        approvalFile(xgt,parentFile.getPath(),gid);
-        approvalFile(other,parentFile.getPath(),gid);
         Project pro = new Project();
         pro.setGid(gid);
         pro.setCaptionId(spjsId);
         pro.setQuestionId(xswdId);
         projectMapper.updateById(pro);
+
+        approvalFile(hxt,parentFile.getPath(),gid);
+        approvalFile(xgt,parentFile.getPath(),gid);
+        if (StringUtils.isNotBlank(other.getOriginalFilename())){
+            approvalFile(other,parentFile.getPath(),gid);
+        }
     }
 
     @Override
@@ -175,6 +180,10 @@ public class ProjectServiceImpl implements ProjectService {
             // 开始读取
             while ((len = inputStream.read(bs)) != -1) {
                 os.write(bs, 0, len);
+            }
+            // doc转pdf
+            if (fileName.endsWith(".doc") || fileName.endsWith("docx")){
+                WordUtil.wordSaveAs(savePath + File.separator + fileName,savePath + File.separator + fileName.substring(0,fileName.lastIndexOf(".")) + ".pdf");
             }
             // 若是zip文件就进行解压
             if (fileName.substring(fileName.lastIndexOf("."),fileName.length()).equals(".zip")){
@@ -246,7 +255,8 @@ public class ProjectServiceImpl implements ProjectService {
 //                    e.printStackTrace();
 //                }
 //            }
-            Integer mediaId = addMedia(filecontent.getName(), savePath, fileName, gid);
+            addMedia(filecontent.getName(), savePath, fileName, gid);
+            Integer mediaId = addMedia(filecontent.getName(), savePath, fileName.substring(0,fileName.lastIndexOf(".")) + ".pdf", gid);
             return mediaId;
         } catch (Exception e) {
             e.printStackTrace();

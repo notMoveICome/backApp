@@ -420,22 +420,13 @@ function projectPublish() {
 }
 
 function addProject() {
-    var form = new FormData(document.getElementById("proForm"));
     var pro_name =$("#pro_name").val();
     var reg =  /^$| /;
     if(reg.test(pro_name)){
-        layer.msg("请输入项目名,不能有空格",{icon:2});
+        layer.msg("请输入正确项目名,不能有空格",{icon:2});
         return false;
-    }else{
-        $.ajaxSettings.async = false;
-        $.post("/backApp/project/existPro",{pro_name:pro_name},function (res) {
-            if(res.status==201){
-                layer.msg(res.msg,{icon:2});
-                return false;
-            }
-        })
-        $.ajaxSettings.async = true;
     }
+
     if(reg.test($("#pro_develop").val())){
         layer.msg("请输入开发商信息",{icon:2});
         return false;
@@ -513,39 +504,46 @@ function addProject() {
         layer.msg("请上传效果图文件",{icon:2});
         return false;
     }
-
-    if(reg.test($("#pro_other").val())){
-        layer.msg("请上传其他文件",{icon:2});
-        return false;
-    }
+    // 非必须
+    // if(reg.test($("#pro_other").val())){
+    //     layer.msg("请上传其他文件",{icon:2});
+    //     return false;
+    // }
     var state=$('input:radio[name="state"]:checked').val();
     if(state==null){
         layer.msg("请选择项目状态",{icon:2});
         return false;
     }
-    /**
-     * ajax提交表单(带文件)
-     */
-    $.ajax({
-        //几个参数需要注意一下
-        type: "POST",//方法类型
-        dataType: "json",//预期服务器返回的数据类型
-        cache: false,    //上传文件不需缓存
-        contentType: false,//需设置为false，因为是FormData对象，且已经声明了属性enctype="multipart/form-data"
-        processData: false,//需设置为false，因为data值是FormData对象，不需要对数据做处理
-        async:true,
-        url: "/backApp/project/addProject",//url
-        data: form,
-        success: function (res) {
-            // console.log(res);//打印服务端返回的数据(调试用)
-            if (res.status == 200) {
-                layer.msg(res.msg,{icon:1});
-            }else {
-                layer.msg(res.msg,{icon:2});
-            }
-        },
-        error: function () {
-            layer.msg("上传接口异常!",{icon:2});
+
+    $.post("/backApp/project/existPro",{pro_name:pro_name},function (result) {
+        if(res.status==200){
+            // ajax提交表单(带文件)
+            var form = new FormData(document.getElementById("proForm"));
+            $.ajax({
+                //几个参数需要注意一下
+                type: "POST",//方法类型
+                dataType: "json",//预期服务器返回的数据类型
+                cache: false,    //上传文件不需缓存
+                contentType: false,//需设置为false，因为是FormData对象，且已经声明了属性enctype="multipart/form-data"
+                processData: false,//需设置为false，因为data值是FormData对象，不需要对数据做处理
+                async:true,
+                url: "/backApp/project/addProject",//url
+                data: form,
+                success: function (res) {
+                    // console.log(res);//打印服务端返回的数据(调试用)
+                    if (res.status == 200) {
+                        layer.msg(res.msg,{icon:1});
+                    }else {
+                        layer.msg(res.msg,{icon:2});
+                    }
+                },
+                error: function () {
+                    layer.msg("上传接口异常!",{icon:2});
+                }
+            });
+        }else {
+            layer.msg(result.msg,{icon:2});
+            return false;
         }
     });
 }

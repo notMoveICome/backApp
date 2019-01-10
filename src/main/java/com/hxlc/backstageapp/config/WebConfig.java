@@ -11,6 +11,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
 import javax.servlet.MultipartConfigElement;
+import java.io.File;
 
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
@@ -82,6 +83,10 @@ public class WebConfig extends WebMvcConfigurerAdapter {
      */
     @Bean
     MultipartConfigElement multipartConfigElement() {
+        File file = new File(tempFile);
+        if (!file.exists()){
+            file.mkdirs();
+        }
         MultipartConfigFactory factory = new MultipartConfigFactory();
         factory.setLocation(tempFile);
         return factory.createMultipartConfig();

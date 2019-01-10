@@ -133,7 +133,7 @@ public class ProjectController {
                                 @RequestParam(value = "xswd") MultipartFile xswd,
                                 @RequestParam(value = "hxt") MultipartFile hxt,
                                 @RequestParam(value = "xgt") MultipartFile xgt,
-                                @RequestParam(value = "other") MultipartFile other,
+                                @RequestParam(value = "other",required = false) MultipartFile other,
                                 HttpServletRequest request) {
 
         try {

@@ -176,7 +176,8 @@ public class UserController {
         try {
             Integer row = userService.saveDisLicense(licensePic,distributorInfo);
             if (row > 0){
-                return new SysObject(200, "提交成功,审核结果会在一个工作日内发送到至您的手机!", null);
+                DistributorInfo dis = userService.selectDisByDIsID(distributorInfo.getDisId());
+                return new SysObject(200, "提交成功,审核结果会在一个工作日内发送到至您的手机!", dis);
             }
         } catch (Exception e) {
             e.printStackTrace();

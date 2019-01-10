@@ -266,6 +266,13 @@ public class UserServiceImpl implements UserService {
         return customerMapper.update(customer,new EntityWrapper<Customer>().eq("tel",cusTel).eq("sale_id",disId).eq("project_id",proId));
     }
 
+    @Override
+    public DistributorInfo selectDisByDIsID(Integer disId) {
+        DistributorInfo dis = new DistributorInfo();
+        dis.setDisId(disId);
+        return distributorMapper.selectOne(dis);
+    }
+
     private Map<String, Object> parseExcel(Integer disId, MultipartFile cusExcel) {
         //读取Excel里面客户的信息
         List<Customer> customerList = new ArrayList<>();
