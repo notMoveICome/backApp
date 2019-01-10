@@ -1051,7 +1051,7 @@ function findUserByOptions(role) {
         if (res.status == 200) {
             var columns = [];
             for (var attr in res.data[0]) {
-                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr == "size" || attr == "license" || attr == "remark") {
+                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr.indexOf("dis") > -1 || attr == "size" || attr == "license" || attr == "remark") {
                     continue;
                 }
                 if (role == "管理员" && attr.indexOf("count") > -1) {
@@ -1251,7 +1251,7 @@ function getUserByRole(role) {
         if (res.status == 200) {
             var columns = [];
             for (var attr in res.data[0]) {
-                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr == "size" || attr == "license" || attr == "remark") {
+                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr.indexOf("dis") > -1 || attr == "size" || attr == "license" || attr == "remark") {
                     continue;
                 }
                 if (role == "管理员" && attr.indexOf("count") > -1) {
