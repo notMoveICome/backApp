@@ -53,7 +53,7 @@ public interface UserService {
 
     Integer reportCustomer(Customer customer);
 
-    boolean checkDistributorState(Integer saleId);
+    DistributorInfo checkDistributorState(Integer saleId);
 
     Integer  saveDisLicense(MultipartFile licensePic, DistributorInfo distributorInfo);
 

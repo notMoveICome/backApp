@@ -1,12 +1,9 @@
 package com.hxlc.backstageapp.controller;
 
 import com.hxlc.backstageapp.common.SysObject;
-import com.hxlc.backstageapp.mapper.ProjectMapper;
 import com.hxlc.backstageapp.pojo.Media;
 import com.hxlc.backstageapp.pojo.Project;
 import com.hxlc.backstageapp.service.ProjectService;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,9 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.*;
+import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/project")

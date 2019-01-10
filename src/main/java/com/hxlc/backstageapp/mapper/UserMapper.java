@@ -30,7 +30,7 @@ public interface UserMapper extends BaseMapper<User> {
     @Options(useGeneratedKeys = true, keyProperty = "user.gid", keyColumn = "gid")
     Integer addUser(@Param("user") User user);
 
-    @Select("SELECT check_state FROM distributor_info WHERE dis_id = #{saleId}")
-    String queryDisStateById(Integer saleId);
+//    @Select("SELECT check_state FROM distributor_info WHERE dis_id = #{saleId}")
+//    String queryDisStateById(Integer saleId);
 
 }

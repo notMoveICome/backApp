@@ -149,26 +149,22 @@ public class UserController {
     @RequestMapping("/validateDisState")
     public SysObject validateDisState(Integer disId) {
         try {
-            boolean flag = userService.checkDistributorState(disId);
-            if (flag) {
-                return new SysObject(200, "已过审", null);
-            } else {
-                return new SysObject(200, "未过审", null);
-            }
+            DistributorInfo distributorInfo = userService.checkDistributorState(disId);
+            return SysObject.ok(distributorInfo);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return new SysObject(500, "服务器异常!", null);
+        return new SysObject(201, "服务器异常!", null);
     }
 
     /**
      * 上传营业执照
      *
-     * @param licensePic 照片
-     * @param disId      分销商ID
-     * @param disCompany    公司名称
-     * @param disLinkman    联系人
-     * @param disLinktel    联系电话
+     *  licensePic 照片
+     *  disId      分销商ID
+     *  disCompany    公司名称
+     *  disLinkman    联系人
+     *  disLinktel    联系电话
      * @return
      */
     @RequestMapping(value = "/uploadLicense", method = RequestMethod.POST)
@@ -188,21 +184,21 @@ public class UserController {
     /**
      * 分销商报备客户
      *
-     * @param saleId      分销商ID
-     * @param name        客户名字
-     * @param tel         客户电话
-     * @param projectName 项目名称
-     * @param cusArea     客户区域
-     * @param acreage     意向面积
-     * @param money       投资额
-     * @param remark      客户备注
+     *  saleId      分销商ID
+     *  name        客户名字
+     *  tel         客户电话
+     *  projectName 项目名称
+     *  cusArea     客户区域
+     *  acreage     意向面积
+     *  money       投资额
+     *  remark      客户备注
      * @return
      */
     @RequestMapping(value = "/reportCustomer", method = RequestMethod.POST)
     public SysObject reportCustomer(Customer customer) {
         try {
-            boolean flag = userService.checkDistributorState(customer.getSaleId());
-            if (flag) {
+            DistributorInfo distributorInfo = userService.checkDistributorState(customer.getSaleId());
+            if ("已审核".equals(distributorInfo.getCheckState())) {
                 Integer row = userService.reportCustomer(customer);
                 if (row == -1) {
                     return new SysObject(201, "该客户报备该项目已超过报备次数!", null);

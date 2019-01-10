@@ -209,9 +209,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean checkDistributorState(Integer saleId) {
-        String state = userMapper.queryDisStateById(saleId);
-        return "已过审".equals(state) ? true : false;
+    public DistributorInfo checkDistributorState(Integer saleId) {
+//        String state = userMapper.queryDisStateById(saleId);
+//        return "已过审".equals(state) ? true : false;
+        return selectDisByDIsID(saleId);
     }
 
     @Override

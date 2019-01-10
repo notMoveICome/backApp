@@ -516,7 +516,7 @@ function addProject() {
     }
 
     $.post("/backApp/project/existPro",{pro_name:pro_name},function (result) {
-        if(res.status==200){
+        if(result.status==200){
             // ajax提交表单(带文件)
             var form = new FormData(document.getElementById("proForm"));
             $.ajax({
