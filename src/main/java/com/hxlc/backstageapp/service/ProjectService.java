@@ -1,9 +1,11 @@
 package com.hxlc.backstageapp.service;
 
+import com.hxlc.backstageapp.common.SysObject;
 import com.hxlc.backstageapp.pojo.Media;
 import com.hxlc.backstageapp.pojo.Project;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -31,4 +33,6 @@ public interface ProjectService {
     void addProject(Project project, MultipartFile spjs, MultipartFile xswd, MultipartFile hxt, MultipartFile hxt1, MultipartFile other);
 
     List<Project> existPro(String pro_name);
+
+    SysObject downloadProData(HttpServletResponse response, Integer proId);
 }

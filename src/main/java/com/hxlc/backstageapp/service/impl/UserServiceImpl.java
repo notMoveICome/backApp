@@ -283,6 +283,17 @@ public class UserServiceImpl implements UserService {
         return map;
     }
 
+    @Override
+    public Integer changeDisCkState(Integer disId,String value) {
+        String v = "";
+        if ("pass".equals(value)){
+            v = "已过审";
+        }else {
+            v = "未过审";
+        }
+        return distributorMapper.updateDisCkState(disId,v);
+    }
+
     private Map<String, Object> parseExcel(Integer disId, MultipartFile cusExcel) {
         //读取Excel里面客户的信息
         List<Customer> customerList = new ArrayList<>();

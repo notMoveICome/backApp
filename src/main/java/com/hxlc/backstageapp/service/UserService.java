@@ -64,4 +64,6 @@ public interface UserService {
     DistributorInfo selectDisByDIsID(Integer disId);
 
     Map<String,Integer> statTurnover(Integer disId);
+
+    Integer changeDisCkState(Integer disId,String value);
 }

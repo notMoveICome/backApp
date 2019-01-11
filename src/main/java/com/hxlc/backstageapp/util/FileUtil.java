@@ -1,11 +1,11 @@
-/**   
+/**
  * 特别声明：本技术材料受《中华人民共和国着作权法》、《计算机软件保护条例》
  * 等法律、法规、行政规章以及有关国际条约的保护，武汉中地数码科技有限公
  * 司享有知识产权、保留一切权利并视其为技术秘密。未经本公司书面许可，任何人
  * 不得擅自（包括但不限于：以非法的方式复制、传播、展示、镜像、上载、下载）使
  * 用，不得向第三方泄露、透露、披露。否则，本公司将依法追究侵权者的法律责任。
  * 特此声明！
- * 
+ *
    Copyright (c) 2014,武汉华信联创技术工程有限公司
  */
 package com.hxlc.backstageapp.util;
@@ -33,23 +33,23 @@ import java.util.zip.ZipOutputStream;
 public class FileUtil {
 
 	private static Logger log = Logger.getLogger(FileUtil.class);
-	private String[] sourceFile = new String[255]; //源文件名  
-	private String[] suffix = new String[255]; //文件后缀名  
-	private String canSuffix = ""; //可上传的文件后缀名  
-	private String objectPath = "c:/"; //目标文件目录  
-	private String[] objectFileName = new String[255]; //目标文件名  
+	private String[] sourceFile = new String[255]; //源文件名
+	private String[] suffix = new String[255]; //文件后缀名
+	private String canSuffix = ""; //可上传的文件后缀名
+	private String objectPath = "c:/"; //目标文件目录
+	private String[] objectFileName = new String[255]; //目标文件名
 	private ServletInputStream sis = null; //输入流
-	private String[] description = new String[255]; //描述状态  
-	private long size = 100 * 1024; //限制大小  
-	private int count = 0; //已传输文件数目  
-	private byte[] b = new byte[4096]; //字节流存放数组  
-	private boolean successful = true;  
+	private String[] description = new String[255]; //描述状态
+	private long size = 100 * 1024; //限制大小
+	private int count = 0; //已传输文件数目
+	private byte[] b = new byte[4096]; //字节流存放数组
+	private boolean successful = true;
 	private Hashtable<String,String> fields = new Hashtable<String,String>();
 
 
 	/***
 	 * 获取指定目录下的所有的文件（不包括文件夹），采用了递归
-	 * 
+	 *
 	 * @param obj
 	 * @return
 	 */
@@ -73,7 +73,7 @@ public class FileUtil {
 		}
 		return files;
 	}
-	
+
 	/**
 	 * 获取文件大小
 	 * @param f 文件
@@ -86,7 +86,7 @@ public class FileUtil {
 				FileInputStream fis = null;
 				fis = new FileInputStream(f);
 				size = fis.available();
-			}else{ 
+			}else{
 				f.createNewFile();
 				log.info("文件不存在");
 			}
@@ -95,9 +95,9 @@ public class FileUtil {
 		}
 		return size;
 	}
-	
+
 	/**
-	 * 递归获取文件夹大小	
+	 * 递归获取文件夹大小
 	 * @param f 方件夹
 	 * @return
 	 */
@@ -148,7 +148,7 @@ public class FileUtil {
 		}
 		return size;
 	}
-	
+
 	/**
 	 * 目录文件按最后修改日期排列
 	 * @param forldPath
@@ -167,7 +167,7 @@ public class FileUtil {
 		}
 		return fs;
 	}
-	
+
 	public static String getContentType(String type){
 		String contentType = "text/html";
 		//String rootPath = HttpContext.rootPath;
@@ -196,7 +196,7 @@ public class FileUtil {
 		}
 		return contentType;
 	}
-	
+
 	/**
 	 * 删除指定路径的文件
 	 * @param filePath
@@ -207,7 +207,7 @@ public class FileUtil {
 			file.delete();
 		}
 	}
-	
+
 	/**
 	 * 功能描述：删除某个文件夹下的所有文夹和文件<br>
 	 * 创建作者：雷志强<br>
@@ -238,7 +238,7 @@ public class FileUtil {
 			}
 		}
 	}
-	
+
 	/**检查文件目录是否存在，不存在并创建
 	 * @author LZQ
 	 * @param filePath 文件目录地址
@@ -275,7 +275,7 @@ public class FileUtil {
 		byteArray.close();
 		return bt;
 	}
-	
+
 	/**byte数组生成文件
 	 * @author LZQ
 	 * @param bt byte数组
@@ -298,7 +298,7 @@ public class FileUtil {
 		}
 		return outSrc;
 	}
-	
+
 	/**输入流转换成文件
 	 * @author LZQ
 	 * @param is 输入流
@@ -321,7 +321,7 @@ public class FileUtil {
 		}
 		return rs;
 	}
-	
+
 	/**输入流转换成byte数组
 	 * @author LZQ
 	 * @param is 输入流
@@ -392,7 +392,7 @@ public class FileUtil {
 		br.close();
 		return sb;
 	}
-	
+
 	public static StringBuffer BufferReaderFile(String path,String encode)throws IOException
 	{
 		File file = new File(path);
@@ -421,7 +421,7 @@ public class FileUtil {
 		BufferedReader br = new BufferedReader(new FileReader(file));
 		return br;
 	}
-	
+
 	/**将StringBuffer字符写入到一个文件
 	 * @author LZQ
 	 * @param path 文件输出路径
@@ -436,7 +436,7 @@ public class FileUtil {
 		out.write(sb.toString().getBytes("UTF-8"));
 		out.close();
 	}
-	
+
 	/**将String字符写入到一个文件
 	 * @author LZQ
 	 * @param path 文件输出路径
@@ -455,7 +455,7 @@ public class FileUtil {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**检查磁盘上文件或者目录是否存在
 	 * @author LZQ
 	 * @param path 文件或者目录路径
@@ -491,7 +491,7 @@ public class FileUtil {
 			}
 		}
 	}
-	
+
 	public static void download(HttpServletResponse response, String filepath){
 		try {
 			OutputStream os = response.getOutputStream();
@@ -502,8 +502,8 @@ public class FileUtil {
 			fileName = new String(fileName.getBytes("UTF-8"),"GBK");//处理中文文件名
 			response.addHeader("Content-disposition", "attachment;filename=" + fileName);
 			response.addHeader("Content-Length", "" + fileLoad.length());
-			//response.setContentType("application/x-msdownload");
-			response.setContentType("application/octet-stream");
+			response.setContentType("application/x-msdownload");
+//			response.setContentType("application/octet-stream");
 			//response.setContentType("application/vnd.ms-excel");
 			FileInputStream fis = new FileInputStream(fileLoad);
 			int n = 0;
@@ -517,7 +517,7 @@ public class FileUtil {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**将指定文件目录下的文件打成压缩包
 	 * @author LZQ
 	 * @param folder 指定文件目录路径
@@ -553,7 +553,64 @@ public class FileUtil {
 			e.printStackTrace();
 		}
 	}
-	
+
+	/**
+	 * 指定文件夹目录，则会将该文件夹名称为新的压缩文件名称，新的压缩文件会在指定文件同级目录下，然后将该文件夹下的子文件和子文件夹都进行压缩打包
+	 * @param f				需打包的文件
+	 * @param baseDir		打包文件存放路径
+	 * @param zos			流
+	 */
+	public static void compress(File f, String baseDir, ZipOutputStream zos){
+		if(!f.exists()){
+			System.out.println("待压缩的文件目录或文件"+f.getName()+"不存在");
+			return;
+		}
+		File[] fs = f.listFiles();
+		BufferedInputStream bis = null;
+		//ZipOutputStream zos = null;
+		byte[] bufs = new byte[1024*10];
+		FileInputStream fis = null;
+		try{
+			//zos = new ZipOutputStream(new FileOutputStream(zipFile));
+			for(int i=0; i<fs.length; i++){
+				String fName =  fs[i].getName();
+				System.out.println("压缩：" + baseDir+fName);
+				if(fs[i].isFile()){
+					ZipEntry zipEntry = new ZipEntry(baseDir+fName);//
+					zos.putNextEntry(zipEntry);
+					//读取待压缩的文件并写进压缩包里
+					fis = new FileInputStream(fs[i]);
+					bis = new BufferedInputStream(fis, 1024*10);
+					int read = 0;
+					while((read=bis.read(bufs, 0, 1024*10))!=-1){
+						zos.write(bufs, 0, read);
+					}
+					//如果需要删除源文件，则需要执行下面2句
+					//fis.close();
+					//fs[i].delete();
+				}
+				else if(fs[i].isDirectory()){
+					compress(fs[i], baseDir+fName+"/", zos);
+				}
+			}//end for
+		}catch  (IOException e) {
+			e.printStackTrace();
+		} finally{
+			//关闭流
+			try {
+				if(null!=bis)
+					bis.close();
+				//if(null!=zos)
+				//zos.close();
+				if(null!=fis)
+					fis.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+
 	public static void FileToZip(File[] files,String zipPath){
 		int buffer = 2048;
 		try {
@@ -578,7 +635,7 @@ public class FileUtil {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**将压缩包解压到指定目录下
 	 * @author LZQ
 	 * @param folder 文件存放目录
@@ -645,7 +702,7 @@ public class FileUtil {
 				Node pngNode = doc.createElement("pngName");
 				Node tPngName = doc.createTextNode(null);
 				tPngName.setNodeValue(pngName);
-				pngNode.appendChild(tPngName);	
+				pngNode.appendChild(tPngName);
 				Node boxNode = doc.createElement("pngRect");
 				Node tPngRect = doc.createTextNode(null);
 				tPngRect.setNodeValue(rect);
@@ -661,7 +718,7 @@ public class FileUtil {
 			} catch (ParserConfigurationException e) {
 				e.printStackTrace();
 			}
-			
+
 		}else{
 			Document doc = DOMUtils.createDocument();
 			Node node = doc.createElement("root");
@@ -669,7 +726,7 @@ public class FileUtil {
 			Node pngNode = doc.createElement("pngName");
 			//Node tPngName = doc.createTextNode(null);
 			//tPngName.setNodeValue(pngName);
-			//pngNode.appendChild(tPngName);	
+			//pngNode.appendChild(tPngName);
 			Node boxNode = doc.createElement("pngRect");
 			//Node tPngRect = doc.createTextNode(null);
 			//tPngRect.setNodeValue(rect);
@@ -690,7 +747,7 @@ public class FileUtil {
 			}
 		}
 	}
-	//设置上传文件的后缀名  
+	//设置上传文件的后缀名
 	public void setSuffix(String canSuffixStr) {
 		log.info("canSuffixStr --> "+canSuffixStr);
 		this.canSuffix = canSuffixStr;
@@ -793,7 +850,7 @@ public class FileUtil {
 
 	// 判断上传文件的类型
 	private boolean canTransfer(int i) {
-		canSuffix = getSuffix(); 
+		canSuffix = getSuffix();
 		log.info("canSuffix --> "+canSuffix);
 		suffix[i] = suffix[i].toLowerCase();
 		log.info("suffix[i] --> "+suffix[i]);
@@ -861,18 +918,20 @@ public class FileUtil {
 	 * @author 雷志强
 	 *
 	 */
-	static class CompratorByLastModified implements Comparator<File>{  
-		public int compare(File f1, File f2) {  
-			long diff = f1.lastModified() - f2.lastModified();  
-			if(diff>0)  
-				return 1;  
+	static class CompratorByLastModified implements Comparator<File>{
+		public int compare(File f1, File f2) {
+			long diff = f1.lastModified() - f2.lastModified();
+			if(diff>0)
+				return 1;
 			else if(diff==0)
-				return 0;  
-			else  
-				return -1;  
-		}  
+				return 0;
+			else
+				return -1;
+		}
 		public boolean equals(Object obj){
-			return true;  
+			return true;
 		}
 	}
+
+
 }

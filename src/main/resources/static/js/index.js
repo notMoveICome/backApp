@@ -1362,7 +1362,8 @@ function userOperateFormatter(value, row, index) {
     var btns = [];
     if (row.roleId != 3) {
         btns.push('<button type="button" class="RoleOfwatch btn btn-primary  btn-sm" style="margin-right:15px;">查看</button>');
-        if (row.checkState == "已过审") {
+        // row.checkState 四种状态:未提交,审核中,已过审,未过审
+        if (row.checkState != "审核中") {
             btns.push('<button type="button" class="RoleOfaudit btn btn-primary  btn-sm" style="margin-right:15px;" disabled="true">审核</button>');
         } else {
             btns.push('<button type="button" class="RoleOfaudit btn btn-primary  btn-sm" style="margin-right:15px;">审核</button>');
@@ -1413,8 +1414,67 @@ window.userOperateEvents = {
         // $("#editModal").modal('show');
     },
     'click .RoleOfaudit': function (e, value, row, index) {
-        console.log(row);
-        console.log(index);
+        $.get('/backApp/user/validateDisState',{disId:row.gid},function (res) {
+           if (res.status == 200){
+               var html = '<div style="text-align: center"> ' +
+                   '   <img src="/backApp'+res.data.license+'" style="width: 35em;height: 20em;margin-bottom: 1em;"><br> ' +
+                   // '   <div>' +
+                   '        <table style="margin:auto;">' +
+                   '            <tr>' +
+                   '                <td style="text-align: right;"><label>公司名称：</label></td>' +
+                   '                <td style="text-align: left;"><label>'+res.data.disCompany+'</label></td>' +
+                   '            </tr>' +
+                   '            <tr>' +
+                   '                <td style="text-align: right;"><label>联系人：</label></td>' +
+                   '                <td style="text-align: left;"><label>'+res.data.disLinkman+'</label></td>' +
+                   '            </tr>' +
+                   '            <tr>' +
+                   '                <td style="text-align: right;"><label>联系电话：</label></td>' +
+                   '                <td style="text-align: left;"><label>'+res.data.disLinktel+'</label></td>' +
+                   '            </tr>' +
+                   '            <tr>' +
+                   '                <td style="text-align: right;"><label>渠道专员：</label></td>' +
+                   '                <td style="text-align: left;"><label>'+res.data.channelComm+'</label></td>' +
+                   '            </tr>' +
+                   '            <tr>' +
+                   '                <td style="text-align: right;"><label>公司规模：</label></td>' +
+                   '                <td style="text-align: left;"><label>'+res.data.size+'</label></td>' +
+                   '            </tr>' +
+                   '            <tr>' +
+                   '                <td style="text-align: right;"><label>是否通过审核：</label></td>' +
+                   '                <td style="text-align: left;">' +
+                   '                    <button id="passAudit" type="button" class="btn btn-primary btn-sm" style="margin-right:15px;" value="pass">通过</button>' +
+                   '                    <button id="unpassAudit" type="button" class="btn btn-primary btn-sm" style="margin-right:15px;" value="unpass">不通过</button>' +
+                   '                </td>' +
+                   '            </tr>' +
+                   '        </table>' +
+                   // '   </div>' +
+                   '</div>';
+               var index = layer.open({
+                   type: 1,
+                   title: "营业执照审核", //不显示标题栏
+                   closeBtn: true,
+                   area: ['80%','80%'],
+                   shade: 0.8,
+                   id: 'LAY_layuipro', //设定一个id，防止重复弹出
+                   btn: ['取消'],
+                   btnAlign: 'r',
+                   moveType: 1, //拖拽模式，0或者1
+                   content: '<div id="licenseDiv" style="padding: 30px; line-height: 22px; background-color: #e9edf3; color: #000; font-weight: 300;height: 100%;"></div>',
+                   success: function(layero){
+                   }
+               });
+               $("#licenseDiv").html(html);
+               $("#passAudit").on('click',function () {
+                    changeDisCheckState(row.gid,$(this).val(),index);
+               });
+               $("#unpassAudit").on('click',function () {
+                   changeDisCheckState(row.gid,$(this).val(),index);
+               });
+           }else {
+               layer.msg(res.msg,{icon:2});
+           }
+        });
     },
     'click .RoleOfedit': function (e, value, row, index) {
         var role = $("#userManage").find(".active").find("a").eq(0).text();
@@ -1528,11 +1588,18 @@ window.recommOperateEvents = {
 };
 window.projectOperateEvents = {
     'click .ProOfwatch': function (e, value, row, index) {
-        $.get('/backApp/project/downloadProData',{proId:row.gid},function (res) {
-            if (res != 200){
-                layer.msg(res.msg,{icon:2});
-            }
-        })
+        var url = "/backApp/project/downloadProData";
+        $('<form id="excelForm" method="post" action="' + url + '" style="display: none">' +
+            '<input name="proId" value="' + row.gid + '">' +
+            '</form>').appendTo('body').submit().remove();
+
+        // 由于ajax函数的返回类型只有xml、text、json、html等类型，没有“流”类型，
+        // 所以通过ajax去请求该接口是无法下载文件的，所以我们创建一个新的form元素来请求接口。
+        // $.get('/backApp/project/downloadProData',{proId:row.gid},function (res) {
+        //     if (res != 200){
+        //         layer.msg(res.msg,{icon:2});
+        //     }
+        // })
     },
     'click .ProOfedit': function (e, value, row, index) {
         var div = $('<div id="editpro"></div>');
@@ -1672,7 +1739,24 @@ function getCookie(name) {
     }
 }
 
+/*分销商审核*/
+function changeDisCheckState(disId,val,index){
+    var text = val == "pass" ? "通过" : "不通过";
+    layer.confirm('是否确认'+text+'?', {icon: 3, title:'提示'}, function(index2){
+        //do something
+        $.get('/backApp/user/changeDisCkState',{disId:disId,value:val},function(res){
+            if (res.status == 200){
+                layer.msg(res.msg,{icon:1});
+            }else {
+                layer.msg(res.msg,{icon:2});
+            }
+            layer.close(index);
+            getUserByRole("分销商");
+        });
+        layer.close(index2);
+    });
 
+}
 
 
 

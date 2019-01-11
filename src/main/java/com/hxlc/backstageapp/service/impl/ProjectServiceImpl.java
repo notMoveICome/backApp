@@ -3,6 +3,7 @@ package com.hxlc.backstageapp.service.impl;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.github.junrar.Archive;
 import com.github.junrar.rarfile.FileHeader;
+import com.hxlc.backstageapp.common.SysObject;
 import com.hxlc.backstageapp.mapper.AppFaceMapper;
 import com.hxlc.backstageapp.mapper.CustomerMapper;
 import com.hxlc.backstageapp.mapper.MediaMapper;
@@ -12,6 +13,7 @@ import com.hxlc.backstageapp.pojo.Customer;
 import com.hxlc.backstageapp.pojo.Media;
 import com.hxlc.backstageapp.pojo.Project;
 import com.hxlc.backstageapp.service.ProjectService;
+import com.hxlc.backstageapp.util.FileUtil;
 import com.hxlc.backstageapp.util.WordUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tools.zip.ZipEntry;
@@ -21,11 +23,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipOutputStream;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -40,6 +44,8 @@ public class ProjectServiceImpl implements ProjectService {
     private AppFaceMapper appFaceMapper;
     @Value("${fileDir.projectFile}")
     private String projectFile;
+    @Value("${fileDir.tempFile}")
+    private String tempFile;
 
     @Override
     public List<Project> findProjectList() {
@@ -157,6 +163,49 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public List<Project> existPro(String pro_name) {
         return projectMapper.selectList(new EntityWrapper<Project>().eq("name",pro_name));
+    }
+
+    @Override
+    public SysObject downloadProData(HttpServletResponse response, Integer proId) {
+        String url = mediaMapper.selectUrlByProId(proId);
+        if (StringUtils.isBlank(url)){
+            return new SysObject(201,"暂无该项目资料!",null);
+        }
+        String u = null;
+        String filePath = null;   // 目标文件路径
+        try {
+            String path = projectFile.substring(projectFile.lastIndexOf("/"), projectFile.length()) + "/";
+            u = url.substring(path.length());
+            filePath = projectFile + "/" + u.substring(0, u.indexOf("/"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new SysObject(201,"文件路径异常!",null);
+        }
+        File zipFile = new File(tempFile + "/" + System.currentTimeMillis()+".zip");    // 压缩文件路径
+        ZipOutputStream zos = null;
+        try {
+            File f = new File(filePath);
+            if (!f.exists()){
+                return new SysObject(201,"该项目文件已不存在!",null);
+            }
+            zos = new ZipOutputStream(new FileOutputStream(zipFile));
+            String baseDir = u.substring(0, u.indexOf("/") + 1);
+            FileUtil.compress(f,baseDir,zos);   // 递归压缩
+            zos.close();
+            FileUtil.download(response,zipFile.getAbsolutePath());
+            zipFile.delete();   // 刪除生成的zip文件
+            return SysObject.ok();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            if(zos!=null)
+                try {
+                    zos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+        }
+        return SysObject.build(201,"服务器异常!");
     }
 
     /**

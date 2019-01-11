@@ -266,4 +266,22 @@ public class UserController {
         }
         return new SysObject(201,"服务器异常!",null);
     }
+
+    /**
+     * 修改分销商审核状态
+     * @param value
+     * @return
+     */
+    @RequestMapping("/changeDisCkState")
+    public SysObject changeDisCkState(Integer disId,String value){
+        try {
+            Integer row = userService.changeDisCkState(disId,value);
+            if (row > 0){
+                return SysObject.build(200,"修改成功!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return SysObject.build(201,"修改异常!");
+    }
 }

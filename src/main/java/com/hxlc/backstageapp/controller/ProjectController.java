@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
@@ -148,5 +149,15 @@ public class ProjectController {
             return new SysObject(200,"项目名可以使用!",null);
         }
         return new SysObject(201,"项目名已被占用!",null);
+    }
+
+    /**
+     * 下载项目资料
+     * @param proId
+     * @return
+     */
+    @RequestMapping("/downloadProData")
+    public SysObject downloadProData(HttpServletResponse response,Integer proId){
+        return projectService.downloadProData(response,proId);
     }
 }
