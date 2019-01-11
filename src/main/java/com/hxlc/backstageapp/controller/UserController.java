@@ -105,6 +105,21 @@ public class UserController {
     }
 
     /**
+     * 验证用户名是否可用
+     * @param name
+     * @return
+     */
+    @RequestMapping("/validateUserName")
+    public SysObject validateUserName(String name){
+        Integer rows = userService.validateUserName(name);
+        if (rows == 0) {
+            return new SysObject(200, "该公司名称可以使用!", null);
+        } else {
+            return new SysObject(201, "该公司名称已被使用!", null);
+        }
+    }
+
+    /**
      * 分销商注册
      *
      * @param map
@@ -123,14 +138,14 @@ public class UserController {
     /**
      * 批量导入用户
      *
-     * @param dis      分销商
+     * @param disId      分销商ID
      * @param cusExcel Excel文件
      * @return
      */
     @RequestMapping(value = "/batchExportCus", method = RequestMethod.POST)
-    public SysObject batchExportCus(String dis, @RequestParam(value = "cusExcel") MultipartFile cusExcel) {
+    public SysObject batchExportCus(Integer disId, @RequestParam(value = "cusExcel") MultipartFile cusExcel) {
         try {
-            Map<String, Object> map = userService.batchExportCus(dis, cusExcel);
+            Map<String, Object> map = userService.batchExportCus(disId, cusExcel);
             if (map != null) {
                 return new SysObject(200, "报备成功!", map);
             }
@@ -198,15 +213,19 @@ public class UserController {
     public SysObject reportCustomer(Customer customer) {
         try {
             DistributorInfo distributorInfo = userService.checkDistributorState(customer.getSaleId());
-            if ("已过审".equals(distributorInfo.getCheckState())) {
-                Integer row = userService.reportCustomer(customer);
-                if (row == -1) {
-                    return new SysObject(201, "该客户报备该项目已超过报备次数!", null);
-                } else {
-                    return new SysObject(200, "报备成功!", null);
-                }
+            if (!"已过审".equals(distributorInfo.getCheckState())) {
+                return new SysObject(201, "权限不足,请先完成公司营业执照审核!", null);
             }
-            return new SysObject(201, "权限不足,请先完成公司营业执照审核!", null);
+            Integer row = userService.reportCustomer(customer);
+            if (row > 0){
+                return new SysObject(200, "报备成功!", null);
+            }
+            if (row == -1) {
+                return new SysObject(201, "该客户报备该项目已超过报备次数!", null);
+            }
+            if (row == -2){
+                return new SysObject(201, "您之前给该客户报备过相同的项目,不能重复上报!", null);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

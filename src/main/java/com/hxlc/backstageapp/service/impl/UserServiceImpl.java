@@ -93,7 +93,7 @@ public class UserServiceImpl implements UserService {
             DistributorInfo dis = new DistributorInfo();
             dis.setDisId(user.getGid());
 //            dis.setChannelComm("王五");
-            dis.setCheckState("未过审");
+            dis.setCheckState("未提交");
             return distributorMapper.insert(dis);
         }
         return null;
@@ -178,11 +178,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Map<String, Object> batchExportCus(String dis, MultipartFile cusExcel) {
-        User user = new User();
-        user.setName(dis);
-        User disUser = userMapper.selectOne(user);
-        Map<String, Object> map = parseExcel(disUser.getGid(), cusExcel);
+    public Map<String, Object> batchExportCus(Integer disId, MultipartFile cusExcel) {
+        Map<String, Object> map = parseExcel(disId, cusExcel);
         return map;
     }
 
@@ -193,10 +190,13 @@ public class UserServiceImpl implements UserService {
         Project project = new Project();
         project.setName(projectName);
         Project pro = projectMapper.selectOne(project);
+        // 查看是否之前给该客户报备过相同的项目
+        List<Customer> selectList = customerMapper.selectList(new EntityWrapper<Customer>().eq("tel", customer.getTel()).eq("sale_id", customer.getSaleId()).eq("project_id", pro.getGid()));
         // 查该项目下的该用户报备次数
-        Integer count = customerMapper.selectCount(new EntityWrapper<Customer>().eq("tel", customer.getTel()).and().eq("project_id", pro.getGid()));
-        // 超过报备次数限制的用户不予报备
-        if (count >= pro.getReportLimit()) {
+        Integer count = customerMapper.selectCount(new EntityWrapper<Customer>().eq("tel", customer.getTel()).eq("project_id", pro.getGid()));
+        if (selectList != null && selectList.size() > 0){
+            return -2;
+        }else if (count >= pro.getReportLimit()) {  // 超过报备次数限制的用户不予报备
             return -1;
         } else {
             customer.setProjectId(pro.getGid());
@@ -294,6 +294,11 @@ public class UserServiceImpl implements UserService {
         return distributorMapper.updateDisCkState(disId,v);
     }
 
+    @Override
+    public Integer validateUserName(String name) {
+        return userMapper.selectCount(new EntityWrapper<User>().eq("name", name));
+    }
+
     private Map<String, Object> parseExcel(Integer disId, MultipartFile cusExcel) {
         //读取Excel里面客户的信息
         List<Customer> customerList = new ArrayList<>();
@@ -323,9 +328,10 @@ public class UserServiceImpl implements UserService {
                 }
                 /** 循环Excel的列 */
                 List<String> list = getRowList(row, totalCells);
+                // excel表各中每列不能有空,备注除外
                 boolean flag = true;
-                for (String s : list) {
-                    if (org.apache.commons.lang3.StringUtils.isBlank(s)) {
+                for (int i = 0;i < list.size() - 1;i++) {
+                    if (org.apache.commons.lang3.StringUtils.isBlank(list.get(i))) {
                         flag = false;
                         break;
                     }
@@ -336,13 +342,20 @@ public class UserServiceImpl implements UserService {
                 Project proRes = projectMapper.selectOne(project);
                 if (flag && proRes != null) {
                     // 查该项目下的该用户报备次数
-                    Integer count = customerMapper.selectCount(new EntityWrapper<Customer>().eq("tel", list.get(1)).and().eq("project_id", proRes.getGid()));
+                    Integer count = customerMapper.selectCount(new EntityWrapper<Customer>().eq("tel", list.get(1)).eq("project_id", proRes.getGid()));
+                    // 查是否之前已经报备过(该分销商+该客户+该项目)
+                    List<Customer> selectList = customerMapper.selectList(new EntityWrapper<Customer>().eq("tel", list.get(1)).eq("sale_id", disId).eq("project_id", proRes.getGid()));
                     // 超过报备次数限制的用户不予报备
-                    if (count >= proRes.getReportLimit()) {
+                    Integer limit = proRes.getReportLimit() == null ? 0 : proRes.getReportLimit();
+                    if ((selectList != null && selectList.size() > 0) || count >= limit) {
                         Customer c = new Customer();
                         c.setName(list.get(0));
                         c.setTel(list.get(1));
                         c.setProjectName(list.get(2));
+                        c.setCusArea(list.get(3));
+                        c.setAcreage(list.get(4));
+                        c.setMoney(new Float(list.get(5)));
+                        c.setRemark(list.get(6));
                         customerList.add(c);
                         continue;
                     }
@@ -362,6 +375,10 @@ public class UserServiceImpl implements UserService {
                     c.setName(list.get(0));
                     c.setTel(list.get(1));
                     c.setProjectName(list.get(2));
+                    c.setCusArea(list.get(3));
+                    c.setAcreage(list.get(4));
+                    c.setMoney(new Float(list.get(5)));
+                    c.setRemark(list.get(6));
                     customerList.add(c);
                 }
             }
@@ -401,7 +418,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Integer validateTel(String tel) {
-        return userMapper.selectList(new EntityWrapper<User>().eq("tel", tel)).size();
+        return userMapper.selectCount(new EntityWrapper<User>().eq("tel", tel));
     }
 
     @Override

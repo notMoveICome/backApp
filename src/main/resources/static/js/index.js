@@ -885,15 +885,16 @@ function batchExportCustomer(){
             var data = res.data;
             var disSelect = $("#disSelect");
             for (var i = 0;i < data.length;i++){
-                var name = data[i].name;
-                disSelect.append('<option value="'+name+'">'+name+'</option>');
+                if (data[i].checkState == "已过审"){
+                    disSelect.append('<option value="'+data[i].gid+'">'+data[i].name+'</option>');
+                }
             }
         }
     });
     layer.open({
         type: 1, offset: '250px', area: '650px', title: '批量导入',
         content: '<div id="batchExportCustomer"></div>',
-        btn: ['确认'],
+        btn: ['确认','取消'],
         yes: function (index, layero) {
             var form = new FormData(document.getElementById("exportCusForm"));
             /**
@@ -1409,9 +1410,7 @@ function projectOperateFormatter_Dis(value, row, index) {
 
 window.userOperateEvents = {
     'click .RoleOfwatch': function (e, value, row, index) {
-        console.log(row);
-        console.log(index);
-        // $("#editModal").modal('show');
+
     },
     'click .RoleOfaudit': function (e, value, row, index) {
         $.get('/backApp/user/validateDisState',{disId:row.gid},function (res) {

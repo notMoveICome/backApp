@@ -51,7 +51,8 @@ public class ProjectServiceImpl implements ProjectService {
     public List<Project> findProjectList() {
         List<Project> projectList = projectMapper.selectList(new EntityWrapper<Project>());
         for (int i = 0;i < projectList.size();i++){
-            projectList.get(i).setDisnum(projectList.get(i).getDisnum() + 80);//分销商数加上80
+            Integer disnum = projectList.get(i).getDisnum() == null ? 0 : projectList.get(i).getDisnum();
+            projectList.get(i).setDisnum(disnum);//分销商数加上80
             Integer count = customerMapper.selectCount(new EntityWrapper<Customer>().eq("project_id", projectList.get(i).getGid()));
             projectList.get(i).setReportNum(count);
         }

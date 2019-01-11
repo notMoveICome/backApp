@@ -49,7 +49,7 @@ public interface UserService {
 
     List<Customer> findCustomerByCondition(Map map) throws ParseException;
 
-    Map<String, Object> batchExportCus(String dis, MultipartFile cusExcel);
+    Map<String, Object> batchExportCus(Integer disId, MultipartFile cusExcel);
 
     Integer reportCustomer(Customer customer);
 
@@ -66,4 +66,6 @@ public interface UserService {
     Map<String,Integer> statTurnover(Integer disId);
 
     Integer changeDisCkState(Integer disId,String value);
+
+    Integer validateUserName(String name);
 }
