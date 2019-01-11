@@ -24,6 +24,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -170,7 +172,7 @@ public class ProjectServiceImpl implements ProjectService {
         try {
             inputStream = filecontent.getInputStream();
             fileName = filecontent.getOriginalFilename();
-            // 2、保存到临时文件
+            // 保存到临时文件
             // 1K的数据缓冲
             byte[] bs = new byte[1024];
             // 读取到的数据长度
@@ -216,7 +218,7 @@ public class ProjectServiceImpl implements ProjectService {
                 }
                 zFile.close();
                 System.out.println("zip压缩文件解压成功");
-                return -1;
+                return 1;
             }
 
             if (fileName.endsWith(".rar")){
@@ -227,11 +229,17 @@ public class ProjectServiceImpl implements ProjectService {
                         a.getMainHeader().print(); // 打印文件信息.
                         FileHeader fh = a.nextFileHeader();
                         while (fh != null) {
+                            // 判断是否有中文
+                            String path = fh.getFileNameW().trim();
+                            if (!existZH(path)){
+                                path = fh.getFileNameW();
+                            }
                             if (fh.isDirectory()) { // 文件夹
-                                File fol = new File(savePath + File.separator + fh.getFileNameW().trim());
+                                File fol = new File(savePath + File.separator + path);
                                 fol.mkdirs();
+                                continue;
                             } else { // 文件
-                                File out = new File(savePath + File.separator + fh.getFileNameW().trim());
+                                File out = new File(savePath + File.separator + path);
                                 try {// 之所以这么写try，是因为万一这里面有了异常，不影响继续解压.
                                     if (!out.exists()) {
                                         if (!out.getParentFile().exists()) {// 相对路径可能多级，可能需要创建父目录.
@@ -246,17 +254,19 @@ public class ProjectServiceImpl implements ProjectService {
                                     ex.printStackTrace();
                                 }
                             }
+                            addMedia(filecontent.getName(),savePath,path,gid);
                             fh = a.nextFileHeader();
                         }
                         a.close();
                         System.out.println("rar压缩文件解压成功");
+                        return 1;
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
             addMedia(filecontent.getName(), savePath, fileName, gid);
-            Integer mediaId = addMedia(filecontent.getName(), savePath, fileName.substring(0,fileName.lastIndexOf(".")) + ".pdf", gid);
+            Integer mediaId = 0;addMedia(filecontent.getName(), savePath, fileName.substring(0,fileName.lastIndexOf(".")) + ".pdf", gid);
             return mediaId;
         } catch (Exception e) {
             e.printStackTrace();
@@ -272,6 +282,21 @@ public class ProjectServiceImpl implements ProjectService {
         return null;
     }
 
+    /**
+     * 判断是否有中文
+     * @param str
+     * @return
+     */
+    public boolean existZH(String str) {
+        String regEx = "[\\u4e00-\\u9fa5]";
+        Pattern p = Pattern.compile(regEx);
+        Matcher m = p.matcher(str);
+        while (m.find()) {
+            return true;
+        }
+        return false;
+    }
+
     private Integer addMedia(String name, String savePath, String fileName, Integer gid) {
         String type = "";
         if ("spjs".equals(name)){
@@ -285,9 +310,10 @@ public class ProjectServiceImpl implements ProjectService {
         }else {
             type = "文件";
         }
+        savePath = savePath.replaceAll("\\\\","/");
+        fileName = fileName.replaceAll("\\\\","/");
         String mediaName = fileName.substring(0,fileName.lastIndexOf("."));
         String format = fileName.substring(fileName.lastIndexOf(".") + 1,fileName.length());
-        savePath = savePath.replaceAll("\\\\","/");
         String url = projectFile.substring(projectFile.lastIndexOf("/"),projectFile.length()) + savePath.substring(savePath.lastIndexOf("/"),savePath.length()) + "/" + fileName;
         Media media = new Media();
         media.setName(mediaName);

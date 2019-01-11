@@ -15,6 +15,8 @@ import java.awt.event.FocusEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -56,8 +58,8 @@ public class BackStageAppApplicationTests {
 
 	@Test
 	public void unRarFile(){
-		String srcRarPath = "E:\\Chrome-DownLoad\\纯js分页插件.rar";
-		String dstDirectoryPath = "E:\\Chrome-DownLoad\\a";
+		String srcRarPath = "E:/Chrome-DownLoad/纯js分页插件.rar";
+		String dstDirectoryPath = "E:/Chrome-DownLoad/d";
 		if (!srcRarPath.toLowerCase().endsWith(".rar")) {
 			System.out.println("非rar文件！");
 			return;
@@ -73,13 +75,18 @@ public class BackStageAppApplicationTests {
 				a.getMainHeader().print(); // 打印文件信息.
 				FileHeader fh = a.nextFileHeader();
 				while (fh != null) {
+					// 判断是否有中文
+					String path = fh.getFileNameW().trim();
+					if (!existZH(path)){
+						path = fh.getFileNameW();
+					}
 					if (fh.isDirectory()) { // 文件夹
 						File fol = new File(dstDirectoryPath + File.separator
-								+ fh.getFileNameString());
+								+ path);
 						fol.mkdirs();
 					} else { // 文件
 						File out = new File(dstDirectoryPath + File.separator
-								+ fh.getFileNameString().trim());
+								+ path);
 						try {// 之所以这么写try，是因为万一这里面有了异常，不影响继续解压.
 							if (!out.exists()) {
 								if (!out.getParentFile().exists()) {// 相对路径可能多级，可能需要创建父目录.
@@ -102,6 +109,16 @@ public class BackStageAppApplicationTests {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public boolean existZH(String str) {
+		String regEx = "[\\u4e00-\\u9fa5]";
+		Pattern p = Pattern.compile(regEx);
+		Matcher m = p.matcher(str);
+		while (m.find()) {
+			return true;
+		}
+		return false;
 	}
 }
 

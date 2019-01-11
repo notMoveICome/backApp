@@ -566,7 +566,7 @@ function fileChange(target,id) {
         filetypes = [".xls",".xlsx"];
         msg = "Excel文件";
     }else {
-        filetypes =[".zip"];
+        filetypes =[".zip",".rar"];
         msg = "zip压缩文件";
     }
     var isIE = /msie/i.test(navigator.userAgent) && !window.opera;
@@ -1528,8 +1528,11 @@ window.recommOperateEvents = {
 };
 window.projectOperateEvents = {
     'click .ProOfwatch': function (e, value, row, index) {
-        console.log(row);
-        console.log(index);
+        $.get('/backApp/project/downloadProData',{proId:row.gid},function (res) {
+            if (res != 200){
+                layer.msg(res.msg,{icon:2});
+            }
+        })
     },
     'click .ProOfedit': function (e, value, row, index) {
         var div = $('<div id="editpro"></div>');

@@ -273,6 +273,16 @@ public class UserServiceImpl implements UserService {
         return distributorMapper.queryDisByDisId(disId);
     }
 
+    @Override
+    public Map<String, Integer> statTurnover(Integer disId) {
+        Integer cj = customerMapper.selectCount(new EntityWrapper<Customer>().eq("sale_id", disId).eq("state", "成交"));
+        Integer dcj = customerMapper.selectCount(new EntityWrapper<Customer>().eq("sale_id", disId).in("state",new String[]{"正常","到访"}));
+        Map<String,Integer> map = new HashMap<>();
+        map.put("success",cj);
+        map.put("unsuccess",dcj);
+        return map;
+    }
+
     private Map<String, Object> parseExcel(Integer disId, MultipartFile cusExcel) {
         //读取Excel里面客户的信息
         List<Customer> customerList = new ArrayList<>();

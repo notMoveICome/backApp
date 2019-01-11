@@ -198,7 +198,7 @@ public class UserController {
     public SysObject reportCustomer(Customer customer) {
         try {
             DistributorInfo distributorInfo = userService.checkDistributorState(customer.getSaleId());
-            if ("已审核".equals(distributorInfo.getCheckState())) {
+            if ("已过审".equals(distributorInfo.getCheckState())) {
                 Integer row = userService.reportCustomer(customer);
                 if (row == -1) {
                     return new SysObject(201, "该客户报备该项目已超过报备次数!", null);
@@ -249,5 +249,21 @@ public class UserController {
             e.printStackTrace();
         }
         return new SysObject(201,"成交失败!",null);
+    }
+
+    /**
+     * 统计该分销商的业绩
+     * @param disId
+     * @return
+     */
+    @RequestMapping("/statTurnover")
+    public SysObject statTurnover(Integer disId){
+        try {
+            Map<String,Integer> map = userService.statTurnover(disId);
+            return SysObject.ok(map);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return new SysObject(201,"服务器异常!",null);
     }
 }
