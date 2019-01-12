@@ -317,30 +317,62 @@ function indexManage() {
 /*头条管理_超级管理员*/
 function newsManage(){
     $("#newsManage").on('click',function(){
-        var newsHtml = '<div id="newsDiv">' +
-            '       <form id="newsForm" method="post" enctype="multipart/form-data">' +
-            '            <table style="border-collapse: separate;margin: auto;">' +
-            '                <tr>' +
-            '                    <td>标题：</td>' +
-            '                    <td><input type="text" name="title"/></td>' +
-            '                </tr>' +
-            '                <tr>' +
-            '                    <td>图片:</td>' +
-            '                    <td><input type="file" name="picture"/></td>' +
-            '                </tr>' +
-            '                <tr>' +
-            '                    <td>内容：</td>' +
-            '                    <td><textarea name="content"></textarea></td>' +
-            '                </tr>' +
-            '                <tr>' +
-            '                    <td>链接：</td>' +
-            '                    <td><input type="text" name="link_url"/></td>' +
-            '                </tr>' +
-            '            </table>' +
-            '        </form>' +
-            '     </div>';
+        // var newsHtml = '<div id="newsDiv" style="background: #fff;padding-top: 1em;padding-bottom: 1em;text-align: center;">' +
+        //     '            <form id="newsForm" method="post" enctype="multipart/form-data">' +
+        //     '                <table style="border-collapse: separate;margin: auto;">' +
+        //     '                    <tr>' +
+        //     '                        <td>标题：</td>' +
+        //     '                        <td><input type="text" name="title"/></td>' +
+        //     '                    </tr>' +
+        //     '                    <tr>' +
+        //     '                        <td>图片:</td>' +
+        //     '                        <td><input type="file" name="picture"/></td>' +
+        //     '                    </tr>' +
+        //     '                    <tr>' +
+        //     '                        <td>内容：</td>' +
+        //     '                        <td><textarea name="content"></textarea></td>' +
+        //     '                    </tr>' +
+        //     '                    <tr>' +
+        //     '                        <td>链接：</td>' +
+        //     '                        <td><input type="text" name="link_url"/></td>' +
+        //     '                    </tr>' +
+        //     '                </table>' +
+        //     '            </form>' +
+        //     '            <button type="button" class="btn btn-primary btn-sm" style="margin-right:15px;">添加</button>' +
+        //     '        </div>';
+        // $(".main-right").html(newsHtml);
+        var newsHtml = '<div style="background-color: #fff;height: 100%;">' +
+            '       <div class="main-right-search"> ' +
+            '           <input type="text" id="newsTitle" style="display: inline" class="form-control" placeholder="请输入标题"/> ' +
+            // '               <button type="button" class="btn-primary btn" style="display: inline;margin-left: 20px" id="queryNews">查询</button>'+
+            '       </div> ' +
+            '       <div class="table-responsive"> ' +
+            '           <table id="rightTable" class="table text-nowrap"></table> ' +
+            '       </div>' +
+            '  </div>';
         $(".main-right").html(newsHtml);
+        newsList();
+        $("#newsTitle").on('keypress', function (e) {
+            if (e.keyCode == "13") {
+                queryNewsByTitle();
+            }
+        });
+        $("#queryNews").on("click", function () {
+            queryNewsByTitle();
+        })
     });
+}
+
+function newsList(){
+    $.get('/backApp/news/newsList',function (res) {
+        if (res.status == 200){
+
+        }
+    })
+}
+
+function queryNewsByTitle(){
+
 }
 
 /*项目发布_管理员*/

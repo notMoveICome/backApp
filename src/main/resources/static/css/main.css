@@ -279,4 +279,6 @@ input[type=checkbox]:focus, input[type=checkbox]:active {
 #exportCusForm table td{
     padding: 0 0.5em !important;
 }
-
+#newsDiv input{
+    line-height: normal;
+}
