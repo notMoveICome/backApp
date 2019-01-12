@@ -1,6 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.hxlc.backstageapp.mapper.ProjectMapper">
+
+	<select id="getAllProject" resultType="com.hxlc.backstageapp.pojo.Project">
+		SELECT
+			P .*, M .url picUrl
+		FROM
+			project_info P,
+			media_info M
+		WHERE
+			P .gid = M .project_id
+		AND M . TYPE = '图标'
+	</select>
+
+	<select id="findProjectByProjectName" resultType="com.hxlc.backstageapp.pojo.Project">
+		SELECT
+			P .*, M .url picUrl
+		FROM
+			project_info P,
+			media_info M
+		WHERE
+			P . NAME LIKE '%${projectName}%'
+		AND P .gid = M .project_id
+		AND M . TYPE = '图标'
+	</select>
+
     <select id="findCapAndQueByProId" resultType="com.hxlc.backstageapp.pojo.Media">
 		SELECT
 			*

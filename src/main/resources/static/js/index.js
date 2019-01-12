@@ -684,7 +684,7 @@ function queryProByName() {
         if (res.status == 200) {
             var columns = [];
             for (var attr in res.data[0]) {
-                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr.indexOf("desc") > -1 || attr.indexOf("bidding") > -1 || attr == "reportLimit" || attr == "keyword" || attr == "address" || attr == "remark") {
+                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr.indexOf("desc") > -1 || attr == "picUrl" || attr.indexOf("bidding") > -1 || attr == "reportLimit" || attr == "keyword" || attr == "address" || attr == "remark") {
                     continue;
                 }
                 var column = {
@@ -730,7 +730,7 @@ function projectList() {
         if (res.status == 200) {
             var columns = [];
             for (var attr in res.data[0]) {
-                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr.indexOf("desc") > -1 || attr.indexOf("bidding") > -1 || attr == "reportLimit" || attr == "keyword" || attr == "address" || attr == "remark") {
+                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr.indexOf("desc") > -1 || attr == "picUrl" || attr.indexOf("bidding") > -1 || attr == "reportLimit" || attr == "keyword" || attr == "address" || attr == "remark") {
                     continue;
                 }
                 var column = {

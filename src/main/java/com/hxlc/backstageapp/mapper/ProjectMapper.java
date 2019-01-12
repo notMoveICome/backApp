@@ -25,4 +25,8 @@ public interface ProjectMapper extends BaseMapper<Project> {
     List<Map> findRecommendPro();
 
     Integer addProject(@Param("project") Project project);
+
+    List<Project> getAllProject();
+
+    List<Project> findProjectByProjectName(@Param("projectName") String projectName);
 }

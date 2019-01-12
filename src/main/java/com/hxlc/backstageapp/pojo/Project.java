@@ -33,6 +33,8 @@ public class Project implements Serializable {
     private Integer questionId;
     private Date biddingBegin;
     private Date biddingEnd;
+    @TableField(exist = false)
+    private String picUrl;
     private String remark;
 
 
@@ -202,6 +204,14 @@ public class Project implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public String getPicUrl() {
+        return picUrl;
+    }
+
+    public void setPicUrl(String picUrl) {
+        this.picUrl = picUrl;
     }
 
     @Override

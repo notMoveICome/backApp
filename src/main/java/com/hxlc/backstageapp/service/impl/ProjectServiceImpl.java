@@ -49,7 +49,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public List<Project> findProjectList() {
-        List<Project> projectList = projectMapper.selectList(new EntityWrapper<Project>());
+        List<Project> projectList = projectMapper.getAllProject();
         for (int i = 0;i < projectList.size();i++){
             Integer disnum = projectList.get(i).getDisnum() == null ? 0 : projectList.get(i).getDisnum();
             projectList.get(i).setDisnum(disnum + 80);//分销商数加上80
@@ -81,7 +81,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public List<Project> findProjectByProjectName(String projectName) {
-        List<Project> projectList = projectMapper.selectList(new EntityWrapper<Project>().like("name", projectName));
+        List<Project> projectList = projectMapper.findProjectByProjectName(projectName);
         for (int i = 0;i < projectList.size();i++){
             Integer disnum = projectList.get(i).getDisnum() == null ? 0 : projectList.get(i).getDisnum();
             projectList.get(i).setDisnum(disnum + 80);//分销商数技术80
