@@ -43,5 +43,6 @@ security:
 fileDir:
   projectFile: "E:/ifamily/prodata"   # 项目文件资料
   disLicense: "E:/ifamily/license"   # 分销商营业执照资料
+  appNews: "E:/ifamily/news"  #爱家头条图片
   tempFile: "E:/ifamily/temp" # 文件上传临时目录
 

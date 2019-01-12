@@ -24,6 +24,8 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     private String projectFile;
     @Value("${fileDir.disLicense}")
     private String disLicense;
+    @Value("${fileDir.appNews}")
+    private String appNews;
     @Value("${fileDir.tempFile}")
     private String tempFile;
 
@@ -63,9 +65,11 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         String projectFilePre = projectFile.substring(projectFile.lastIndexOf("/") + 1, projectFile.length());
         String disLicensePre = disLicense.substring(disLicense.lastIndexOf("/") + 1, disLicense.length());
+        String appNewsPre = appNews.substring(appNews.lastIndexOf("/") + 1, appNews.length());
         registry.addResourceHandler("/public/**").addResourceLocations("classpath:/public/");
         registry.addResourceHandler("/" + projectFilePre + "/**").addResourceLocations("file:" + projectFile + "/");
         registry.addResourceHandler("/" + disLicensePre + "/**").addResourceLocations("file:" + disLicense + "/");
+        registry.addResourceHandler("/" + appNewsPre + "/**").addResourceLocations("file:" + appNews + "/");
         super.addResourceHandlers(registry);
     }
 

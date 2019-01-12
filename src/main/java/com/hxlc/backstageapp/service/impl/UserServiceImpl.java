@@ -448,7 +448,8 @@ public class UserServiceImpl implements UserService {
         dis.setChannelComm(attache);
         dis.setCheckState("未提交");
         dis.setSize(size);
-        return distributorMapper.insert(dis);
+//        return distributorMapper.insert(dis);
+        return user.getGid();
     }
 
     @Override

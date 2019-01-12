@@ -316,36 +316,13 @@ function indexManage() {
 }
 
 /*头条管理_超级管理员*/
-function newsManage(){
-    $("#newsManage").on('click',function(){
-        // var newsHtml = '<div id="newsDiv" style="background: #fff;padding-top: 1em;padding-bottom: 1em;text-align: center;">' +
-        //     '            <form id="newsForm" method="post" enctype="multipart/form-data">' +
-        //     '                <table style="border-collapse: separate;margin: auto;">' +
-        //     '                    <tr>' +
-        //     '                        <td>标题：</td>' +
-        //     '                        <td><input type="text" name="title"/></td>' +
-        //     '                    </tr>' +
-        //     '                    <tr>' +
-        //     '                        <td>图片:</td>' +
-        //     '                        <td><input type="file" name="picture"/></td>' +
-        //     '                    </tr>' +
-        //     '                    <tr>' +
-        //     '                        <td>内容：</td>' +
-        //     '                        <td><textarea name="content"></textarea></td>' +
-        //     '                    </tr>' +
-        //     '                    <tr>' +
-        //     '                        <td>链接：</td>' +
-        //     '                        <td><input type="text" name="link_url"/></td>' +
-        //     '                    </tr>' +
-        //     '                </table>' +
-        //     '            </form>' +
-        //     '            <button type="button" class="btn btn-primary btn-sm" style="margin-right:15px;">添加</button>' +
-        //     '        </div>';
-        // $(".main-right").html(newsHtml);
+function newsManage() {
+    $("#newsManage").on('click', function () {
         var newsHtml = '<div style="background-color: #fff;height: 100%;">' +
             '       <div class="main-right-search"> ' +
             '           <input type="text" id="newsTitle" style="display: inline" class="form-control" placeholder="请输入标题"/> ' +
             // '               <button type="button" class="btn-primary btn" style="display: inline;margin-left: 20px" id="queryNews">查询</button>'+
+            '               <button type="button" class="btn-primary btn" style="float: right;display: inline;margin-left: 20px" id="addNews">添加</button>'+
             '       </div> ' +
             '       <div class="table-responsive"> ' +
             '           <table id="rightTable" class="table text-nowrap"></table> ' +
@@ -360,20 +337,126 @@ function newsManage(){
         });
         $("#queryNews").on("click", function () {
             queryNewsByTitle();
-        })
+        });
+        $("#addNews").on('click',function () {
+           addNews();
+        });
     });
 }
 
-function newsList(){
-    $.get('/backApp/news/newsList',function (res) {
-        if (res.status == 200){
-
+function newsList() {
+    $.get('/backApp/news/newsList', function (res) {
+        if (res.status == 200) {
+            doNewsTable(res);
         }
     })
 }
 
-function queryNewsByTitle(){
+function queryNewsByTitle() {
+    var title = $("#newsTitle").val();
+    $.get('/backApp/news/queryNewsByTitle',{title:title},function (res) {
+        if (res.status == 200){
+            doNewsTable(res);
+        }
+    })
+}
 
+function doNewsTable (res) {
+    var news_fileds = {
+        "gid": "ID",
+        "picture": "图片",
+        "title": "标题",
+        "content": "内容",
+        "linkUrl": "链接"
+    };
+    var columns = [];
+    for (var attr in res.data[0]) {
+        if (attr == "gid") {
+            continue;
+        }
+        var column = {
+            field: attr,
+            title: news_fileds[attr],
+            valign: "middle",
+            align: "center",
+            // sortable: true,
+            visible: true,
+            formatter: paramsMatter
+        };
+        columns.push(column);
+    }
+    columns.push({
+        field: 'operate',
+        title: '操作',
+        valign: "middle",
+        align: 'center',
+        width: '210',
+        events: newsOperateEvents,
+        formatter: newsOperateFormatter
+    });
+    initTable(columns, res.data);
+}
+
+function addNews(){
+    var newsHtml = '<div id="newsDiv" style="background: #e9edf3;padding-top: 1em;padding-bottom: 1em;text-align: center;">' +
+            '            <form id="newsForm" method="post" enctype="multipart/form-data">' +
+            '                <table style="border-collapse: separate;border-spacing: 5px;margin: auto;">' +
+            '                    <tr>' +
+            '                        <td style="text-align: right">标题：</td>' +
+            '                        <td style="text-align: left"><input type="text" name="title" style="width: 25em;"/></td>' +
+            '                    </tr>' +
+            '                    <tr>' +
+            '                        <td style="text-align: right">图片：</td>' +
+            '                        <td style="text-align: left"><input type="file" name="pictureFile" style="width: 25em;"/></td>' +
+            '                    </tr>' +
+            '                    <tr>' +
+            '                        <td style="text-align: right">内容：</td>' +
+            '                        <td style="text-align: left"><textarea name="content" style="width: 25em;height: 10em;"></textarea></td>' +
+            '                    </tr>' +
+            '                    <tr>' +
+            '                        <td style="text-align: right">链接：</td>' +
+            '                        <td style="text-align: left"><input type="text" name="linkUrl" style="width: 25em;"/></td>' +
+            '                    </tr>' +
+            '                </table>' +
+            '            </form>' +
+            // '            <button type="button" class="btn btn-primary btn-sm" style="margin-right:15px;">添加</button>' +
+            '        </div>';
+    layer.open({
+        type: 1, offset: '250px', area: '650px', title: '添加爱家头条',
+        content: '<div id="addNewsDiv"></div>',
+        btn: ['确认','取消'],
+        yes: function (index, layero) {
+            var form = new FormData(document.getElementById("newsForm"));
+            /**
+             * ajax提交表单(带文件)
+             */
+            $.ajax({
+                //几个参数需要注意一下
+                type: "POST",//方法类型
+                dataType: "json",//预期服务器返回的数据类型
+                cache: false,    //上传文件不需缓存
+                contentType: false,//需设置为false，因为是FormData对象，且已经声明了属性enctype="multipart/form-data"
+                processData: false,//需设置为false，因为data值是FormData对象，不需要对数据做处理
+                async: true,
+                url: "/backApp/news/addNews",//url
+                data: form,
+                success: function (res) {
+                    // console.log(res);//打印服务端返回的数据(调试用)
+                    if (res.status == 200) {
+                        layer.msg(res.msg, {icon: 1});
+                        newsList();
+                    } else {
+                        layer.msg(res.msg, {icon: 2});
+                    }
+                    layer.close(index);
+                },
+                error: function () {
+                    layer.msg("上传接口异常!", {icon: 2});
+                }
+            });
+        }
+    });
+    $("#addNewsDiv").append(newsHtml);
 }
 
 /*项目发布_管理员*/
@@ -486,88 +569,88 @@ function projectPublish() {
 }
 
 function addProject() {
-    var pro_name =$("#pro_name").val();
-    var reg =  /^$| /;
-    if(reg.test(pro_name)){
-        layer.msg("请输入正确项目名,不能有空格",{icon:2});
+    var pro_name = $("#pro_name").val();
+    var reg = /^$| /;
+    if (reg.test(pro_name)) {
+        layer.msg("请输入正确项目名,不能有空格", {icon: 2});
         return false;
     }
 
-    if(reg.test($("#pro_develop").val())){
-        layer.msg("请输入开发商信息",{icon:2});
+    if (reg.test($("#pro_develop").val())) {
+        layer.msg("请输入开发商信息", {icon: 2});
         return false;
     }
     //输入的数字只能为数字，且不能以0开头
 
     var regex = /^\d+(\d+)?$/;
-    if(!regex.test($("#pro_disnum").val())){
-        layer.msg("分销商数必须是正整数",{icon:2});
+    if (!regex.test($("#pro_disnum").val())) {
+        layer.msg("分销商数必须是正整数", {icon: 2});
         return false;
     }
 
-    if(!regex.test($("#pro_reportLimit").val())){
-        layer.msg("允许报备次数必须是正整数",{icon:2});
+    if (!regex.test($("#pro_reportLimit").val())) {
+        layer.msg("允许报备次数必须是正整数", {icon: 2});
         return false;
     }
 
-    if(!regex.test($("#pro_price").val())){
-        layer.msg("输入的项目单价必须是正整数",{icon:2});
+    if (!regex.test($("#pro_price").val())) {
+        layer.msg("输入的项目单价必须是正整数", {icon: 2});
         return false;
     }
 
-    if(!regex.test($("#pro_commission").val())){
-        layer.msg("输入的佣金必须是正整数",{icon:2});
+    if (!regex.test($("#pro_commission").val())) {
+        layer.msg("输入的佣金必须是正整数", {icon: 2});
         return false;
     }
 
-    if(reg.test($("#pro_address").val())){
-        layer.msg("请输入地址,不能有空格",{icon:2});
+    if (reg.test($("#pro_address").val())) {
+        layer.msg("请输入地址,不能有空格", {icon: 2});
         return false;
     }
 
-    if(reg.test($("#pro_keyword").val())){
-        layer.msg("请输入关键字,不能有空格",{icon:2});
+    if (reg.test($("#pro_keyword").val())) {
+        layer.msg("请输入关键字,不能有空格", {icon: 2});
         return false;
     }
 
-    if(reg.test($("#pro_header").val())){
-        layer.msg("请输入负责人,不能有空格",{icon:2});
+    if (reg.test($("#pro_header").val())) {
+        layer.msg("请输入负责人,不能有空格", {icon: 2});
         return false;
     }
     //用户手机号正则表达式
     var telpass = /^1([38]\d|5[0-35-9]|7[3678])\d{8}$/;
-    if(!telpass.test($("#pro_tel").val())){
-        layer.msg("请输入正确的手机号",{icon:2});
+    if (!telpass.test($("#pro_tel").val())) {
+        layer.msg("请输入正确的手机号", {icon: 2});
         return false;
     }
 
-    if(reg.test($("#fromTime").val())){
-        layer.msg("请选择合作的开始时间",{icon:2});
+    if (reg.test($("#fromTime").val())) {
+        layer.msg("请选择合作的开始时间", {icon: 2});
         return false;
     }
 
-    if(reg.test($("#toTime").val())){
-        layer.msg("请选择合作的结束时间",{icon:2});
+    if (reg.test($("#toTime").val())) {
+        layer.msg("请选择合作的结束时间", {icon: 2});
         return false;
     }
 
-    if(reg.test($("#pro_spjs").val())){
-        layer.msg("请上传沙盘解说文件",{icon:2});
+    if (reg.test($("#pro_spjs").val())) {
+        layer.msg("请上传沙盘解说文件", {icon: 2});
         return false;
     }
 
-    if(reg.test($("#pro_xswd").val())){
-        layer.msg("请上传销售文件",{icon:2});
+    if (reg.test($("#pro_xswd").val())) {
+        layer.msg("请上传销售文件", {icon: 2});
         return false;
     }
 
-    if(reg.test($("#pro_hxt").val())){
-        layer.msg("请上传户型图文件",{icon:2});
+    if (reg.test($("#pro_hxt").val())) {
+        layer.msg("请上传户型图文件", {icon: 2});
         return false;
     }
 
-    if(reg.test($("#pro_xgt").val())){
-        layer.msg("请上传效果图文件",{icon:2});
+    if (reg.test($("#pro_xgt").val())) {
+        layer.msg("请上传效果图文件", {icon: 2});
         return false;
     }
     // 非必须
@@ -575,14 +658,14 @@ function addProject() {
     //     layer.msg("请上传其他文件",{icon:2});
     //     return false;
     // }
-    var state=$('input:radio[name="state"]:checked').val();
-    if(state==null){
-        layer.msg("请选择项目状态",{icon:2});
+    var state = $('input:radio[name="state"]:checked').val();
+    if (state == null) {
+        layer.msg("请选择项目状态", {icon: 2});
         return false;
     }
 
-    $.post("/backApp/project/existPro",{pro_name:pro_name},function (result) {
-        if(result.status==200){
+    $.post("/backApp/project/existPro", {pro_name: pro_name}, function (result) {
+        if (result.status == 200) {
             // ajax提交表单(带文件)
             var form = new FormData(document.getElementById("proForm"));
             $.ajax({
@@ -592,23 +675,23 @@ function addProject() {
                 cache: false,    //上传文件不需缓存
                 contentType: false,//需设置为false，因为是FormData对象，且已经声明了属性enctype="multipart/form-data"
                 processData: false,//需设置为false，因为data值是FormData对象，不需要对数据做处理
-                async:true,
+                async: true,
                 url: "/backApp/project/addProject",//url
                 data: form,
                 success: function (res) {
                     // console.log(res);//打印服务端返回的数据(调试用)
                     if (res.status == 200) {
-                        layer.msg(res.msg,{icon:1});
-                    }else {
-                        layer.msg(res.msg,{icon:2});
+                        layer.msg(res.msg, {icon: 1});
+                    } else {
+                        layer.msg(res.msg, {icon: 2});
                     }
                 },
                 error: function () {
-                    layer.msg("上传接口异常!",{icon:2});
+                    layer.msg("上传接口异常!", {icon: 2});
                 }
             });
-        }else {
-            layer.msg(result.msg,{icon:2});
+        } else {
+            layer.msg(result.msg, {icon: 2});
             return false;
         }
     });
@@ -620,66 +703,66 @@ function addProject() {
  * @param id
  * @returns {boolean}
  */
-function fileChange(target,id) {
+function fileChange(target, id) {
     var inputName = target.name;
     // var filetypes =[".jpg",".png",".rar",".txt",".zip",".doc",".ppt",".xls",".pdf",".docx",".xlsx"];
     var filetypes;
     var msg;
-    if (inputName == "spjs" || inputName == "xswd"){
-        filetypes =[".doc",".docx",".pdf"];
+    if (inputName == "spjs" || inputName == "xswd") {
+        filetypes = [".doc", ".docx", ".pdf"];
         msg = "Word或Pdf文件";
-    }else if(inputName == "cusExcel"){
-        filetypes = [".xls",".xlsx"];
+    } else if (inputName == "cusExcel") {
+        filetypes = [".xls", ".xlsx"];
         msg = "Excel文件";
-    }else {
-        filetypes =[".zip",".rar"];
+    } else {
+        filetypes = [".zip", ".rar"];
         msg = "zip压缩文件";
     }
     var isIE = /msie/i.test(navigator.userAgent) && !window.opera;
     var fileSize = 0;
     var filepath = target.value;
-    var filemaxsize = 1024*24;//24M
-    if(filepath){
+    var filemaxsize = 1024 * 24;//24M
+    if (filepath) {
         var isnext = false;
         var fileend = filepath.substring(filepath.lastIndexOf("."));
-        if(filetypes && filetypes.length>0){
-            for(var i =0; i<filetypes.length;i++){
-                if(filetypes[i]==fileend){
+        if (filetypes && filetypes.length > 0) {
+            for (var i = 0; i < filetypes.length; i++) {
+                if (filetypes[i] == fileend) {
                     isnext = true;
                     break;
                 }
             }
         }
-        if(!isnext){
-            layer.msg("不接受此文件类型,请选择"+ msg +"!",{icon:2});
-            target.value ="";
+        if (!isnext) {
+            layer.msg("不接受此文件类型,请选择" + msg + "!", {icon: 2});
+            target.value = "";
             return false;
         }
-    }else{
+    } else {
         return false;
     }
     if (isIE && !target.files) {
         var filePath = target.value;
         var fileSystem = new ActiveXObject("Scripting.FileSystemObject");
-        if(!fileSystem.FileExists(filePath)){
-            layer.msg("附件不存在，请重新输入!",{icon:2});
+        if (!fileSystem.FileExists(filePath)) {
+            layer.msg("附件不存在，请重新输入!", {icon: 2});
             return false;
         }
-        var file = fileSystem.GetFile (filePath);
+        var file = fileSystem.GetFile(filePath);
         fileSize = file.Size;
     } else {
         fileSize = target.files[0].size;
     }
 
     var size = fileSize / 1024;
-    if(size>filemaxsize){
-        layer.msg("附件大小不能大于"+filemaxsize/1024+"M!",{icon:2});
-        target.value ="";
+    if (size > filemaxsize) {
+        layer.msg("附件大小不能大于" + filemaxsize / 1024 + "M!", {icon: 2});
+        target.value = "";
         return false;
     }
-    if(size<=0){
-        layer.msg("附件大小不能为0M!",{icon:2});
-        target.value ="";
+    if (size <= 0) {
+        layer.msg("附件大小不能为0M!", {icon: 2});
+        target.value = "";
         return false;
     }
 }
@@ -804,7 +887,7 @@ function projectList() {
 }
 
 function paramsMatter(value, row, index) {
-    if (value == null || value == "null"){
+    if (value == null || value == "null") {
         value = "-";
     }
     return "<span title=" + value + ">" + value + "</span>";
@@ -870,7 +953,7 @@ function userManage() {
                 $("#findUser").on("click", function () {
                     findCustomer(role);
                 });
-                $("#exportCustomer").on('click',function () {
+                $("#exportCustomer").on('click', function () {
                     batchExportCustomer();
                 });
             }
@@ -942,7 +1025,7 @@ function downExcel(role) {
 /**
  * 批量导入客户
  */
-function batchExportCustomer(){
+function batchExportCustomer() {
     var div = $("<div style='margin-top: 1em;'></div>");
     var formHtml = '<form id="exportCusForm" method="post",enctype="multipart/form-data">' +
         '            <table style="border-collapse:separate;border-spacing: 10px;margin: auto;">' +
@@ -957,13 +1040,13 @@ function batchExportCustomer(){
         '            </table>' +
         '        </form>';
     div.append(formHtml);
-    $.get('/backApp/user/getUserByRole',{role:"分销商"},function (res) {
-        if (res.status == 200){
+    $.get('/backApp/user/getUserByRole', {role: "分销商"}, function (res) {
+        if (res.status == 200) {
             var data = res.data;
             var disSelect = $("#disSelect");
-            for (var i = 0;i < data.length;i++){
-                if (data[i].checkState == "已过审"){
-                    disSelect.append('<option value="'+data[i].gid+'">'+data[i].name+'</option>');
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].checkState == "已过审") {
+                    disSelect.append('<option value="' + data[i].gid + '">' + data[i].name + '</option>');
                 }
             }
         }
@@ -971,7 +1054,7 @@ function batchExportCustomer(){
     layer.open({
         type: 1, offset: '250px', area: '650px', title: '批量导入',
         content: '<div id="batchExportCustomer"></div>',
-        btn: ['确认','取消'],
+        btn: ['确认', '取消'],
         yes: function (index, layero) {
             var form = new FormData(document.getElementById("exportCusForm"));
             /**
@@ -984,7 +1067,7 @@ function batchExportCustomer(){
                 cache: false,    //上传文件不需缓存
                 contentType: false,//需设置为false，因为是FormData对象，且已经声明了属性enctype="multipart/form-data"
                 processData: false,//需设置为false，因为data值是FormData对象，不需要对数据做处理
-                async:true,
+                async: true,
                 url: "/backApp/user/batchExportCus",//url
                 data: form,
                 success: function (res) {
@@ -992,24 +1075,24 @@ function batchExportCustomer(){
                     if (res.status == 200) {
                         var success = res.data.success;
                         var fail = res.data.fail;
-                        var text = "成功报备" +"<b style='color: blue'>"+success+"</b>" + "个客户,失败" + "<b style='color: red'>"+fail.length+"</b>" +
-                                   "个客户。<a href='javascript:void(0);' id='failList' style='color: blue;'>查看失败列表</a>";
+                        var text = "成功报备" + "<b style='color: blue'>" + success + "</b>" + "个客户,失败" + "<b style='color: red'>" + fail.length + "</b>" +
+                            "个客户。<a href='javascript:void(0);' id='failList' style='color: blue;'>查看失败列表</a>";
                         layer.open({
                             title: '报备详情',
                             type: 1,
-                            offset: 'auto' ,//具体配置参考：http://www.layui.com/doc/modules/layer.html#offset
-                            content: '<div style="padding-top: 20px;padding-left: 20px;">'+ text +'</div>',
+                            offset: 'auto',//具体配置参考：http://www.layui.com/doc/modules/layer.html#offset
+                            content: '<div style="padding-top: 20px;padding-left: 20px;">' + text + '</div>',
                             btn: '关闭',
                             btnAlign: 'c', //按钮居中
-                            shade: 0 ,//不显示遮罩
-                            yes: function(){
+                            shade: 0,//不显示遮罩
+                            yes: function () {
                                 layer.closeAll();
                                 getUserByRole("客户");
                             }
                         });
-                        $("#failList").on('click',function(){
+                        $("#failList").on('click', function () {
                             var arr = [];
-                            for (var i = 0;i < fail.length;i++){
+                            for (var i = 0; i < fail.length; i++) {
                                 var json = {
                                     "姓名": fail[i].name,
                                     "电话": fail[i].tel,
@@ -1021,15 +1104,15 @@ function batchExportCustomer(){
                                 };
                                 arr.push(json);
                             }
-                            JSONToExcelConvertor(arr,"未报备列表");
+                            JSONToExcelConvertor(arr, "未报备列表");
                         })
-                    }else {
-                        layer.msg(res.msg,{icon:2});
+                    } else {
+                        layer.msg(res.msg, {icon: 2});
                     }
                     layer.close(index);
                 },
                 error: function () {
-                    layer.msg("上传接口异常!",{icon:2});
+                    layer.msg("上传接口异常!", {icon: 2});
                 }
             });
         }
@@ -1040,69 +1123,69 @@ function batchExportCustomer(){
 
 //json数据转excel
 function JSONToExcelConvertor(JSONData, FileName) {
-        //先转化json
-        var arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData;
-        var excel = '<table>';
+    //先转化json
+    var arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData;
+    var excel = '<table>';
+    var row = "<tr>";
+    //设置表头
+    var keys = Object.keys(JSONData[0]);
+    keys.forEach(function (item) {
+        row += "<td>" + item + '</td>';
+    });
+    //换行
+    excel += row + "</tr>";
+    //设置数据
+    for (var i = 0; i < arrData.length; i++) {
         var row = "<tr>";
-        //设置表头
-        var keys = Object.keys(JSONData[0]);
-        keys.forEach(function (item) {
-            row += "<td>" + item + '</td>';
-        });
-        //换行
-        excel += row + "</tr>";
-        //设置数据
-        for (var i = 0; i < arrData.length; i++) {
-            var row = "<tr>";
-            for (var index in arrData[i]) {
-                console.log(arrData[i][index]);
-                //var value = arrData[i][index] === "." ? "" : arrData[i][index];
-                row += '<td>' + arrData[i][index] + '</td>';
-            }
-            excel += row + "</tr>";
+        for (var index in arrData[i]) {
+            console.log(arrData[i][index]);
+            //var value = arrData[i][index] === "." ? "" : arrData[i][index];
+            row += '<td>' + arrData[i][index] + '</td>';
         }
-
-        excel += "</table>";
-
-        var excelFile = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:excel' xmlns='http://www.w3.org/TR/REC-html40'>";
-        excelFile += '<meta http-equiv="content-type" content="application/vnd.ms-excel; charset=UTF-8">';
-        excelFile += '<meta http-equiv="content-type" content="application/vnd.ms-excel';
-        excelFile += '; charset=UTF-8">';
-        excelFile += "<head>";
-        excelFile += "<!--[if gte mso 9]>";
-        excelFile += "<xml>";
-        excelFile += "<x:ExcelWorkbook>";
-        excelFile += "<x:ExcelWorksheets>";
-        excelFile += "<x:ExcelWorksheet>";
-        excelFile += "<x:Name>";
-        excelFile += "{worksheet}";
-        excelFile += "</x:Name>";
-        excelFile += "<x:WorksheetOptions>";
-        excelFile += "<x:DisplayGridlines/>";
-        excelFile += "</x:WorksheetOptions>";
-        excelFile += "</x:ExcelWorksheet>";
-        excelFile += "</x:ExcelWorksheets>";
-        excelFile += "</x:ExcelWorkbook>";
-        excelFile += "</xml>";
-        excelFile += "<![endif]-->";
-        excelFile += "</head>";
-        excelFile += "<body>";
-        excelFile += excel;
-        excelFile += "</body>";
-        excelFile += "</html>";
-
-        var uri = 'data:application/vnd.ms-excel;charset=utf-8,' + encodeURIComponent(excelFile);
-
-        var link = document.createElement("a");
-        link.href = uri;
-
-        link.style = "visibility:hidden";
-        link.download = FileName + ".xls";
-
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        excel += row + "</tr>";
     }
+
+    excel += "</table>";
+
+    var excelFile = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:excel' xmlns='http://www.w3.org/TR/REC-html40'>";
+    excelFile += '<meta http-equiv="content-type" content="application/vnd.ms-excel; charset=UTF-8">';
+    excelFile += '<meta http-equiv="content-type" content="application/vnd.ms-excel';
+    excelFile += '; charset=UTF-8">';
+    excelFile += "<head>";
+    excelFile += "<!--[if gte mso 9]>";
+    excelFile += "<xml>";
+    excelFile += "<x:ExcelWorkbook>";
+    excelFile += "<x:ExcelWorksheets>";
+    excelFile += "<x:ExcelWorksheet>";
+    excelFile += "<x:Name>";
+    excelFile += "{worksheet}";
+    excelFile += "</x:Name>";
+    excelFile += "<x:WorksheetOptions>";
+    excelFile += "<x:DisplayGridlines/>";
+    excelFile += "</x:WorksheetOptions>";
+    excelFile += "</x:ExcelWorksheet>";
+    excelFile += "</x:ExcelWorksheets>";
+    excelFile += "</x:ExcelWorkbook>";
+    excelFile += "</xml>";
+    excelFile += "<![endif]-->";
+    excelFile += "</head>";
+    excelFile += "<body>";
+    excelFile += excel;
+    excelFile += "</body>";
+    excelFile += "</html>";
+
+    var uri = 'data:application/vnd.ms-excel;charset=utf-8,' + encodeURIComponent(excelFile);
+
+    var link = document.createElement("a");
+    link.href = uri;
+
+    link.style = "visibility:hidden";
+    link.download = FileName + ".xls";
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
 
 //判断是否为JSON格式数据
 function isJSON(str) {
@@ -1110,7 +1193,7 @@ function isJSON(str) {
         if (typeof JSON.parse(str) == "object") {
             return true;
         }
-    } catch(e) {
+    } catch (e) {
     }
     return false;
 }
@@ -1484,6 +1567,14 @@ function projectOperateFormatter(value, row, index) {
     ].join('');
 }
 
+function newsOperateFormatter(value, row, index) {
+    return [
+        // '<button type="button" class="newsOfwatch btn btn-primary btn-sm" style="margin-right:15px;">查看</button>',
+        '<button type="button" class="newsOfedit btn btn-primary btn-sm" style="margin-right:15px;">修改</button>',
+        '<button type="button" class="newsOfdelete btn btn-primary btn-sm" style="margin-right:15px;">删除</button>'
+    ].join('');
+}
+
 function projectOperateFormatter_Dis(value, row, index) {
     return [
         '<button type="button" class="ProOfwatch btn btn-primary btn-sm" style="margin-right:15px;">查看资料</button>'
@@ -1495,66 +1586,66 @@ window.userOperateEvents = {
 
     },
     'click .RoleOfaudit': function (e, value, row, index) {
-        $.get('/backApp/user/validateDisState',{disId:row.gid},function (res) {
-           if (res.status == 200){
-               var html = '<div style="text-align: center"> ' +
-                   '   <img src="/backApp'+res.data.license+'" style="width: 35em;height: 20em;margin-bottom: 1em;"><br> ' +
-                   // '   <div>' +
-                   '        <table style="margin:auto;">' +
-                   '            <tr>' +
-                   '                <td style="text-align: right;"><label>公司名称：</label></td>' +
-                   '                <td style="text-align: left;"><label>'+res.data.disCompany+'</label></td>' +
-                   '            </tr>' +
-                   '            <tr>' +
-                   '                <td style="text-align: right;"><label>联系人：</label></td>' +
-                   '                <td style="text-align: left;"><label>'+res.data.disLinkman+'</label></td>' +
-                   '            </tr>' +
-                   '            <tr>' +
-                   '                <td style="text-align: right;"><label>联系电话：</label></td>' +
-                   '                <td style="text-align: left;"><label>'+res.data.disLinktel+'</label></td>' +
-                   '            </tr>' +
-                   '            <tr>' +
-                   '                <td style="text-align: right;"><label>渠道专员：</label></td>' +
-                   '                <td style="text-align: left;"><label>'+res.data.channelComm+'</label></td>' +
-                   '            </tr>' +
-                   '            <tr>' +
-                   '                <td style="text-align: right;"><label>公司规模：</label></td>' +
-                   '                <td style="text-align: left;"><label>'+res.data.size+'</label></td>' +
-                   '            </tr>' +
-                   '            <tr>' +
-                   '                <td style="text-align: right;"><label>是否通过审核：</label></td>' +
-                   '                <td style="text-align: left;">' +
-                   '                    <button id="passAudit" type="button" class="btn btn-primary btn-sm" style="margin-right:15px;" value="pass">通过</button>' +
-                   '                    <button id="unpassAudit" type="button" class="btn btn-primary btn-sm" style="margin-right:15px;" value="unpass">不通过</button>' +
-                   '                </td>' +
-                   '            </tr>' +
-                   '        </table>' +
-                   // '   </div>' +
-                   '</div>';
-               var index = layer.open({
-                   type: 1,
-                   title: "营业执照审核", //不显示标题栏
-                   closeBtn: true,
-                   area: ['80%','80%'],
-                   shade: 0.8,
-                   id: 'LAY_layuipro', //设定一个id，防止重复弹出
-                   btn: ['取消'],
-                   btnAlign: 'r',
-                   moveType: 1, //拖拽模式，0或者1
-                   content: '<div id="licenseDiv" style="padding: 30px; line-height: 22px; background-color: #e9edf3; color: #000; font-weight: 300;height: 100%;"></div>',
-                   success: function(layero){
-                   }
-               });
-               $("#licenseDiv").html(html);
-               $("#passAudit").on('click',function () {
-                    changeDisCheckState(row.gid,$(this).val(),index);
-               });
-               $("#unpassAudit").on('click',function () {
-                   changeDisCheckState(row.gid,$(this).val(),index);
-               });
-           }else {
-               layer.msg(res.msg,{icon:2});
-           }
+        $.get('/backApp/user/validateDisState', {disId: row.gid}, function (res) {
+            if (res.status == 200) {
+                var html = '<div style="text-align: center"> ' +
+                    '   <img src="/backApp' + res.data.license + '" style="width: 35em;height: 20em;margin-bottom: 1em;"><br> ' +
+                    // '   <div>' +
+                    '        <table style="margin:auto;">' +
+                    '            <tr>' +
+                    '                <td style="text-align: right;"><label>公司名称：</label></td>' +
+                    '                <td style="text-align: left;"><label>' + res.data.disCompany + '</label></td>' +
+                    '            </tr>' +
+                    '            <tr>' +
+                    '                <td style="text-align: right;"><label>联系人：</label></td>' +
+                    '                <td style="text-align: left;"><label>' + res.data.disLinkman + '</label></td>' +
+                    '            </tr>' +
+                    '            <tr>' +
+                    '                <td style="text-align: right;"><label>联系电话：</label></td>' +
+                    '                <td style="text-align: left;"><label>' + res.data.disLinktel + '</label></td>' +
+                    '            </tr>' +
+                    '            <tr>' +
+                    '                <td style="text-align: right;"><label>渠道专员：</label></td>' +
+                    '                <td style="text-align: left;"><label>' + res.data.channelComm + '</label></td>' +
+                    '            </tr>' +
+                    '            <tr>' +
+                    '                <td style="text-align: right;"><label>公司规模：</label></td>' +
+                    '                <td style="text-align: left;"><label>' + res.data.size + '</label></td>' +
+                    '            </tr>' +
+                    '            <tr>' +
+                    '                <td style="text-align: right;"><label>是否通过审核：</label></td>' +
+                    '                <td style="text-align: left;">' +
+                    '                    <button id="passAudit" type="button" class="btn btn-primary btn-sm" style="margin-right:15px;" value="pass">通过</button>' +
+                    '                    <button id="unpassAudit" type="button" class="btn btn-primary btn-sm" style="margin-right:15px;" value="unpass">不通过</button>' +
+                    '                </td>' +
+                    '            </tr>' +
+                    '        </table>' +
+                    // '   </div>' +
+                    '</div>';
+                var index = layer.open({
+                    type: 1,
+                    title: "营业执照审核", //不显示标题栏
+                    closeBtn: true,
+                    area: ['80%', '80%'],
+                    shade: 0.8,
+                    id: 'LAY_layuipro', //设定一个id，防止重复弹出
+                    btn: ['取消'],
+                    btnAlign: 'r',
+                    moveType: 1, //拖拽模式，0或者1
+                    content: '<div id="licenseDiv" style="padding: 30px; line-height: 22px; background-color: #e9edf3; color: #000; font-weight: 300;height: 100%;"></div>',
+                    success: function (layero) {
+                    }
+                });
+                $("#licenseDiv").html(html);
+                $("#passAudit").on('click', function () {
+                    changeDisCheckState(row.gid, $(this).val(), index);
+                });
+                $("#unpassAudit").on('click', function () {
+                    changeDisCheckState(row.gid, $(this).val(), index);
+                });
+            } else {
+                layer.msg(res.msg, {icon: 2});
+            }
         });
     },
     'click .RoleOfedit': function (e, value, row, index) {
@@ -1637,7 +1728,7 @@ window.userOperateEvents = {
                 if (res.status == 200) {
                     layer.msg(res.msg, {icon: 1});
                     getUserByRole(role);
-                }else {
+                } else {
                     layer.msg(res.msg, {icon: 2});
                 }
                 layer.close(index);
@@ -1663,6 +1754,21 @@ window.recommOperateEvents = {
         console.log(index);
     },
     'click .recommOfdelete': function (e, value, row, index) {
+        console.log(row);
+        console.log(index);
+    }
+};
+window.newsOperateEvents = {
+    'click .newsOfwatch': function (e, value, row, index) {
+        console.log(row);
+        console.log(index);
+        // $("#editModal").modal('show');
+    },
+    'click .newsOfedit': function (e, value, row, index) {
+        console.log(row);
+        console.log(index);
+    },
+    'click .newsOfdelete': function (e, value, row, index) {
         console.log(row);
         console.log(index);
     }
@@ -1767,13 +1873,13 @@ window.projectOperateEvents = {
                 $.ajax({
                     type: "POST",                  //提交方式
                     dataType: "json",              //预期服务器返回的数据类型
-                    url: "/backApp/project/editProjectInfo" ,          //目标url
+                    url: "/backApp/project/editProjectInfo",          //目标url
                     data: $('#editForm').serialize(), //提交的数据
                     success: function (res) {
                         if (res.status == 200) {
                             layer.msg(res.msg, {icon: 1});
                             projectList();
-                        }else {
+                        } else {
                             layer.msg(res.msg, {icon: 2});
                         }
                         layer.close(index);
@@ -1793,18 +1899,18 @@ window.projectOperateEvents = {
             autoclose: 1//选择后自动关闭
         });
         var radios = $("#editpro").find("input:radio");
-        for (var i = 0;i < radios.length;i++){
+        for (var i = 0; i < radios.length; i++) {
             var radio = $(radios[i]);
-            if (radio.val() == row.state){
-                radio.attr("checked","true");
+            if (radio.val() == row.state) {
+                radio.attr("checked", "true");
                 break;
             }
         }
         var options = $("#proType").find("option");
-        for (var i = 0;i< options.length;i++){
+        for (var i = 0; i < options.length; i++) {
             var option = $(options[i]);
-            if (option.val() == row.type){
-                option.attr("selected","selected");
+            if (option.val() == row.type) {
+                option.attr("selected", "selected");
                 break;
             }
         }
@@ -1839,15 +1945,15 @@ function getCookie(name) {
 }
 
 /*分销商审核*/
-function changeDisCheckState(disId,val,index){
+function changeDisCheckState(disId, val, index) {
     var text = val == "pass" ? "通过" : "不通过";
-    layer.confirm('是否确认'+text+'?', {icon: 3, title:'提示'}, function(index2){
+    layer.confirm('是否确认' + text + '?', {icon: 3, title: '提示'}, function (index2) {
         //do something
-        $.get('/backApp/user/changeDisCkState',{disId:disId,value:val},function(res){
-            if (res.status == 200){
-                layer.msg(res.msg,{icon:1});
-            }else {
-                layer.msg(res.msg,{icon:2});
+        $.get('/backApp/user/changeDisCkState', {disId: disId, value: val}, function (res) {
+            if (res.status == 200) {
+                layer.msg(res.msg, {icon: 1});
+            } else {
+                layer.msg(res.msg, {icon: 2});
             }
             layer.close(index);
             getUserByRole("分销商");

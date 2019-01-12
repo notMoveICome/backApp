@@ -10,9 +10,9 @@ import java.io.Serializable;
 public class AppNews implements Serializable {
     @TableId(value="gid",type= IdType.AUTO)
     private Integer gid;
-    private String picture;
     private String title;
     private String content;
+    private String picture;
     private String linkUrl;
 
     public Integer getGid() {

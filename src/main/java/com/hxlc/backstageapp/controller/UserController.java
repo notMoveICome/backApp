@@ -127,12 +127,15 @@ public class UserController {
      */
     @RequestMapping(value = "/registerUser", method = RequestMethod.POST)
     public SysObject registerUser(@RequestParam Map map) {
-        Integer rows = userService.registerUser(map);
-        if (rows > 0) {
-            return new SysObject(200, "注册成功!", null);
-        } else {
-            return new SysObject(201, "注册失败!", null);
+        try {
+            Integer saleId = userService.registerUser(map); // 返回注册成功的分销商ID
+            DistributorInfo dis = userService.selectDisByDIsID(saleId);
+            dis.setPassword(null);
+            return new SysObject(200, "注册成功!", dis);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return new SysObject(201, "注册失败!", null);
     }
 
     /**
