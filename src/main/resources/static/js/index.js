@@ -95,7 +95,7 @@ function initHtmlCss() {
             '                        <a href="javascript:void(0);" id="projectList"><b>项目管理</b></a>' +
             '                    </li>' +
             '                    <li class="mainmenu">' +
-            '                        <a href="javascript:void(0);"><b>报备管理</b></a>' +
+            '                        <a href="javascript:void(0);" id="baobei"><b>报备管理</b></a>' +
             '                        <ul class="submenu" id="userManage">' +
             '                            <li><a href="javascript:void(0);">管理员</a></li>' +
             '                            <li><a href="javascript:void(0);">分销商</a></li>' +
@@ -146,6 +146,7 @@ function initHtmlCss() {
         $("#demo-list li.active").removeClass("active");
         $(this).addClass("active");
     });
+    $("#baobei").click();
 }
 
 /** 窗口大小resize监听 */
@@ -378,19 +379,19 @@ function queryNewsByTitle(){
 /*项目发布_管理员*/
 function projectPublish() {
     $("#projectPublish").on('click', function () {
-        var publishHtml = '<div class="publishFileDiv">' +
+        var publishHtml = '<div class="publishFileDiv" style="display: none">' +
             '                <img src="img/home/upFile.png">' +
             '                <span>' +
             '                    <button class="btn btn-primary btn-sm">上传文档</button>' +
             '                </span>' +
             '            </div>' +
-            '            <div class="publishFileDiv">' +
+            '            <div class="publishFileDiv" style="display: none">' +
             '                <img src="img/home/upPic.png">' +
             '                <span>' +
             '                    <button class="btn btn-primary btn-sm">上传图片</button>' +
             '                </span>' +
             '            </div>' +
-            '            <div class="publishFileDiv">' +
+            '            <div class="publishFileDiv" style="display: none">' +
             '                <img src="img/home/upZiLiao.png">' +
             '                <span>' +
             '                    <button class="btn btn-primary btn-sm">资料上传</button>' +
@@ -445,7 +446,7 @@ function projectPublish() {
             '                <td><b>电话:</b></td>' +
             '                <td><input type="text" name="tel" id="pro_tel"/></td>' +
             '                <td><b>合作时间:</b></td>' +
-            '                <td><input type="text" id="fromTime" name="biddingBegin"><b> 至 </b><input type="text" id="toTime" name="biddingEnd"></td>' +
+            '                <td><input type="text" id="fromTime" readonly="true" name="biddingBegin"><b> 至 </b><input type="text" id="toTime" readonly="true"  name="biddingEnd"></td>' +
             '            </tr>' +
             '            <tr>' +
             '                <td><b>沙盘解说:</b></td>' +
@@ -461,7 +462,7 @@ function projectPublish() {
             '                <td><b>其他:</b></td>' +
             '                <td><input type="file" name="other" onchange="fileChange(this);" id="pro_other"/></td>' +
             '                <td><b>项目状态:</b></td>' +
-            '                <td><input type="radio" name="state" value="在售"/>在售<input type="radio" name="state" value="暂停"/>暂停<input type="radio" name="state" value="售罄"/>售罄</td>' +
+            '                <td><input type="radio" name="state" checked="checked" value="在售"/>在售<input type="radio" name="state" value="暂停"/>暂停<input type="radio" name="state" value="售罄"/>售罄</td>' +
             '            </tr>' +
             '            <tr>' +
             // '                <td><b>报备时间:</b></td>' +
@@ -846,18 +847,21 @@ function userManage() {
                 });
                 $("#findUser").on("click", function () {
                     findUserByOptions(role);
-                })
+                });
+
             }
             if (role == "客户") {
-                $("#searchUser").append('<span><input id="proName" type="text" class="form-control" placeholder="请输入项目名称"/></span>' +
+                // $("#searchUser").append('<span><input id="proName" type="text" class="form-control" placeholder="请输入项目名称"/></span>' +
+                $("#searchUser").append('<span><select id="proName" name="proName" class="form-control"><option value="" selected>请选择项目名</option>></select></span>' +
                     '<span><input id="userName" type="text" class="form-control" placeholder="请输入分销商姓名"/></span>' +
                     '<span><input id="userTel" type="text" class="form-control" placeholder="请输入电话号码"/></span>' +
-                    '<span><input  type="text" class="form-control" placeholder="请选择起始报备时间" id="fromReport"/></span>' +
+                    '<span><input  type="text" class="form-control" placeholder="请选择起始报备时间" readonly="readonly" id="fromReport"/></span>' +
                     '<span style="width: 2em;line-height: 30px;margin-right: 1em;">至</span>' +
-                    '<span><input  type="text" class="form-control" placeholder="请选择终止报备时间" id="toReport"/></span>');
+                    '<span><input  type="text" class="form-control" placeholder="请选择终止报备时间" readonly="readonly" id="toReport"/></span>');
                 $("#searchUser").append('<button id="findUser" class="btn btn-primary" type="button" style="margin-right: 2em;">查询</button>');
                 $("#searchUser").append('<button id="downExcel" class="btn btn-primary" type="button" style="float: right;margin-right: 2em;">导出</button>');
                 $("#searchUser").append('<button id="exportCustomer" class="btn btn-primary" type="button" style="float: right;margin-right: 2em;">批量报备</button>');
+                findAllProject();
                 $("#proName,#userName,#userTel,#fromReport,#toReport").on('keypress', function (e) {
                     if (e.keyCode == "13") {
                         findCustomer(role);
@@ -886,7 +890,15 @@ function userManage() {
         })
     })
 }
-
+function findAllProject() {
+    $.get('/backApp/project/getAllProject', function (res) {
+        for(var i=0;i<res.data.length;i++){
+            var projectName =res.data[i].name;
+            var option =$("<option value="+projectName+">"+projectName+"</option>");
+            $("#proName").append(option);
+        }
+    })
+}
 /**
  * 导出Excel表格
  * @param role
@@ -1702,7 +1714,7 @@ window.projectOperateEvents = {
                 '                <td>报备时间:</td>' +
                 '                <td><input type="text" name="backTime" id="startReportTime" value="'+row.backTime+'"/></td>' +
                 '                <td>项目状态:</td>' +
-                '                <td><input type="radio" name="state" value="在售"/>在售<input type="radio" name="state" value="暂停"/>暂停<input type="radio" name="state" value="售罄"/>售罄</td>' +
+                '                <td><input type="radio"  name="state" value="在售"/>在售<input type="radio" name="state" value="暂停"/>暂停<input type="radio" name="state" value="售罄"/>售罄</td>' +
                 '            </tr>' +
                 '            <tr>' +
                 '                <td>房型:</td>' +

@@ -1,23 +1,20 @@
 package com.hxlc.backstageapp.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.hxlc.backstageapp.mapper.CustomerMapper;
-import com.hxlc.backstageapp.mapper.UserMapper;
-import com.hxlc.backstageapp.pojo.User;
+
 import com.hxlc.backstageapp.service.ExcelService;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+
 import java.net.URLDecoder;
-import java.util.List;
+
 import java.util.Map;
 
 @Service
@@ -26,7 +23,7 @@ public class ExcelServiceImpl implements ExcelService {
     @Override
     public void load(String role, String data, HttpServletResponse response) throws IOException {
         //获取用户选择的信息进行生成excel导出
-        String decode = URLDecoder.decode(data,"UTF-8");
+        String decode = URLDecoder.decode(data, "UTF-8");
         JSONArray jsonArray = JSONArray.parseArray(decode);
         HSSFWorkbook workbook = null;
         workbook = new HSSFWorkbook();
@@ -114,15 +111,15 @@ public class ExcelServiceImpl implements ExcelService {
             row.createCell(0).setCellValue("姓名");
             row.createCell(1).setCellValue("电话");
             row.createCell(2).setCellValue("项目");
-//            row.createCell(3).setCellValue("分销商");
-            row.createCell(3).setCellValue("状态");
-            row.createCell(4).setCellValue("顾客区域");
-            row.createCell(5).setCellValue("意向面积");
-            row.createCell(6).setCellValue("投资金额");
-            row.createCell(7).setCellValue("报备时间");
-            row.createCell(8).setCellValue("过期时间");
-            row.createCell(9).setCellValue("到访时间");
-            row.createCell(10).setCellValue("成交时间");
+            row.createCell(3).setCellValue("分销商");
+            row.createCell(4).setCellValue("状态");
+            row.createCell(5).setCellValue("顾客区域");
+            row.createCell(6).setCellValue("意向面积");
+            row.createCell(7).setCellValue("投资金额");
+            row.createCell(8).setCellValue("报备时间");
+            row.createCell(9).setCellValue("过期时间");
+            row.createCell(10).setCellValue("到访时间");
+            row.createCell(11).setCellValue("成交时间");
 
             for (int i = 0; i < jsonArray.size(); i++) {
                 Row rows = sheet.createRow(i + 1);
@@ -130,7 +127,7 @@ public class ExcelServiceImpl implements ExcelService {
                 String name = map.get("name").toString();
                 String tel = map.get("tel").toString();
                 String projectName = map.get("projectName").toString();
-//                String distritionName = map.get("distritionName").toString();
+                String distritionName = map.get("distritionName").toString();
 //                String saleName = map.get("saleName").toString();
                 String state = map.get("state").toString();
                 String backTime = map.get("backTime").toString();
@@ -162,14 +159,15 @@ public class ExcelServiceImpl implements ExcelService {
                 rows.createCell(0).setCellValue(name);
                 rows.createCell(1).setCellValue(tel);
                 rows.createCell(2).setCellValue(projectName);
-                rows.createCell(3).setCellValue(state);
-                rows.createCell(4).setCellValue(cusArea);
-                rows.createCell(5).setCellValue(acreage);
-                rows.createCell(6).setCellValue(money);
-                rows.createCell(7).setCellValue(backTime);
-                rows.createCell(8).setCellValue(expireTime);
-                rows.createCell(9).setCellValue(visitTime);
-                rows.createCell(10).setCellValue(dealTime);
+                rows.createCell(3).setCellValue(distritionName);
+                rows.createCell(4).setCellValue(state);
+                rows.createCell(5).setCellValue(cusArea);
+                rows.createCell(6).setCellValue(acreage);
+                rows.createCell(7).setCellValue(money);
+                rows.createCell(8).setCellValue(backTime);
+                rows.createCell(9).setCellValue(expireTime);
+                rows.createCell(10).setCellValue(visitTime);
+                rows.createCell(11).setCellValue(dealTime);
             }
         }
         OutputStream output = response.getOutputStream();

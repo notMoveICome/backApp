@@ -13,6 +13,7 @@ import org.springframework.web.servlet.view.JstlView;
 import javax.servlet.MultipartConfigElement;
 import java.io.File;
 
+
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
 
