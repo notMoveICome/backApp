@@ -35,4 +35,6 @@ public interface ProjectService {
     List<Project> existPro(String pro_name);
 
     SysObject downloadProData(HttpServletResponse response, Integer proId);
+
+    Project getProjectByID(Integer proId);
 }

@@ -160,4 +160,15 @@ public class ProjectController {
     public SysObject downloadProData(HttpServletResponse response,Integer proId){
         return projectService.downloadProData(response,proId);
     }
+
+    /**
+     * 根据项目ID查找项目信息
+     * @param proId
+     * @return
+     */
+    @RequestMapping("/getProjectByID")
+    public SysObject getProjectByID(Integer proId){
+        Project project = projectService.getProjectByID(proId);
+        return SysObject.ok(project);
+    }
 }

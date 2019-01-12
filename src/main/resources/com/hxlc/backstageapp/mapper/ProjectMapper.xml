@@ -44,6 +44,18 @@
 		OR A .gid = b.question_id
     </select>
 
+	<select id="selectProById" resultType="com.hxlc.backstageapp.pojo.Project">
+		SELECT
+			P .*, M .url picUrl
+		FROM
+			project_info P,
+			media_info M
+		WHERE
+			P . gid = #{proId}
+		AND P .gid = M .project_id
+		AND M . TYPE = '图标'
+	</select>
+
     <select id="findRecommendPro" resultType="map">
 		SELECT
 			A .*, P .develop,

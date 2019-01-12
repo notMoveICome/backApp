@@ -210,6 +210,11 @@ public class ProjectServiceImpl implements ProjectService {
         return SysObject.build(201,"服务器异常!");
     }
 
+    @Override
+    public Project getProjectByID(Integer proId) {
+        return projectMapper.selectProById(proId);
+    }
+
     /**
      * 将MultipartFile文件保存到本地
      * @param filecontent

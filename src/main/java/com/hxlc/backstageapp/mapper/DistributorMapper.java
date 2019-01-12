@@ -11,7 +11,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DistributorMapper extends BaseMapper<DistributorInfo> {
 
-    @Select("SELECT * FROM distributor_info WHERE dis_id = #{saleId}")
+//    @Select("SELECT * FROM distributor_info WHERE dis_id = #{saleId}")
+    @Select("SELECT di.*,ui.* " +
+            "FROM distributor_info di ,user_info ui " +
+            "WHERE di.dis_id = #{disId} AND ui.gid = di.dis_id")
     DistributorInfo queryDisByDisId(Integer disId);
 
     @Update("UPDATE distributor_info SET check_state = #{value} WHERE dis_id = #{disId}")

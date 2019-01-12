@@ -86,7 +86,7 @@ function initHtmlCss() {
             '                        <a href="javascript:void(0);" id="indexManage" class="submenu-indicator-minus"><b>首页管理</b></a>' +
             '                    </li>' +
             '                    <li class="mainmenu">' +
-            '                        <a href="javascript:void(0);" id="newsManage" class="submenu-indicator-minus"><b>头条管理</b></a>' +
+            '                        <a href="javascript:void(0);" id="newsManage"><b>头条管理</b></a>' +
             '                    </li>' +
             '                    <li class="mainmenu">' +
             '                        <a href="javascript:void(0);" id="projectPublish"><b>项目发布</b></a>' +
