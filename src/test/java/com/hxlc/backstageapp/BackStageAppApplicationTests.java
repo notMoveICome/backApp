@@ -118,7 +118,6 @@ public class BackStageAppApplicationTests {
 
                 Project project = new Project();
                 project.setGid(list.get(i).getGid());
-                project.setDescPic(data);
 				projectMapper.updateById(project);
             }
 		} catch (IOException e) {

@@ -22,14 +22,19 @@
 
     <select id="findRecommendPro" resultType="map">
 		SELECT
-			A .*, b.develop,
-			b. NAME project_name,
-			b.desc_pic
+			A .*, P .develop,
+			P . NAME project_name,
+			b.url
 		FROM
-			(SELECT * FROM app_face ORDER BY index) A,
-			project_info b
+			(SELECT * FROM app_face) A,
+			media_info b,
+			project_info P
 		WHERE
-			A .project_id = b.gid
+			A .project_id = b.project_id
+		AND b. TYPE = '图标'
+		AND b.project_id = P .gid
+		ORDER BY
+			A . INDEX
 	</select>
 
     <!-- keyProperty:对象属性,若要得到返回的主键,须得类名点

@@ -86,6 +86,9 @@ function initHtmlCss() {
             '                        <a href="javascript:void(0);" id="indexManage" class="submenu-indicator-minus"><b>首页管理</b></a>' +
             '                    </li>' +
             '                    <li class="mainmenu">' +
+            '                        <a href="javascript:void(0);" id="newsManage" class="submenu-indicator-minus"><b>头条管理</b></a>' +
+            '                    </li>' +
+            '                    <li class="mainmenu">' +
             '                        <a href="javascript:void(0);" id="projectPublish"><b>项目发布</b></a>' +
             '                    </li>' +
             '                    <li class="mainmenu">' +
@@ -196,6 +199,7 @@ function projectManageDis() {
 /*左边菜单_管理员*/
 function initLeftUtilOfAdmin() {
     indexManage();
+    newsManage();
     projectPublish();
     projectManage();
     userManage();
@@ -244,11 +248,11 @@ function indexManage() {
                 var data = res.data;
                 var imgs = $(".main-right").find("img");
                 for (var i = 0; i < 3; i++) {
-                    $(imgs[i]).attr("src", "data:image/gif;base64," + data[i].desc_pic);
+                    $(imgs[i]).attr("src", "/backApp" + data[i].url);
                 }
                 var columns = [];
                 for (var attr in data[0]) {
-                    if (attr == "desc_pic" || attr == "index" || attr.indexOf("id") > -1) {
+                    if (attr == "desc_pic" || attr == "index" || attr == "url" || attr.indexOf("id") > -1) {
                         continue;
                     }
                     var column = {
@@ -308,6 +312,35 @@ function indexManage() {
             });
         });
     })
+}
+
+/*头条管理_超级管理员*/
+function newsManage(){
+    $("#newsManage").on('click',function(){
+        var newsHtml = '<div id="newsDiv">' +
+            '       <form id="newsForm" method="post" enctype="multipart/form-data">' +
+            '            <table style="border-collapse: separate;margin: auto;">' +
+            '                <tr>' +
+            '                    <td>标题：</td>' +
+            '                    <td><input type="text" name="title"/></td>' +
+            '                </tr>' +
+            '                <tr>' +
+            '                    <td>图片:</td>' +
+            '                    <td><input type="file" name="picture"/></td>' +
+            '                </tr>' +
+            '                <tr>' +
+            '                    <td>内容：</td>' +
+            '                    <td><textarea name="content"></textarea></td>' +
+            '                </tr>' +
+            '                <tr>' +
+            '                    <td>链接：</td>' +
+            '                    <td><input type="text" name="link_url"/></td>' +
+            '                </tr>' +
+            '            </table>' +
+            '        </form>' +
+            '     </div>';
+        $(".main-right").html(newsHtml);
+    });
 }
 
 /*项目发布_管理员*/

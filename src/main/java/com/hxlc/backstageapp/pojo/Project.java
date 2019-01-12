@@ -21,7 +21,6 @@ public class Project implements Serializable {
     private String develop;
     private String keyword;
     private String type;
-    private byte[] descPic;
     private String price;
     private String address;
     private Float commission;
@@ -99,14 +98,6 @@ public class Project implements Serializable {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public byte[] getDescPic() {
-        return descPic;
-    }
-
-    public void setDescPic(byte[] descPic) {
-        this.descPic = descPic;
     }
 
     public String getPrice() {
@@ -224,7 +215,6 @@ public class Project implements Serializable {
                 ", develop='" + develop + '\'' +
                 ", keyword='" + keyword + '\'' +
                 ", type='" + type + '\'' +
-                ", descPic=" + Arrays.toString(descPic) +
                 ", price=" + price +
                 ", address='" + address + '\'' +
                 ", commission=" + commission +

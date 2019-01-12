@@ -52,7 +52,7 @@ public class ProjectServiceImpl implements ProjectService {
         List<Project> projectList = projectMapper.selectList(new EntityWrapper<Project>());
         for (int i = 0;i < projectList.size();i++){
             Integer disnum = projectList.get(i).getDisnum() == null ? 0 : projectList.get(i).getDisnum();
-            projectList.get(i).setDisnum(disnum);//分销商数加上80
+            projectList.get(i).setDisnum(disnum + 80);//分销商数加上80
             Integer count = customerMapper.selectCount(new EntityWrapper<Customer>().eq("project_id", projectList.get(i).getGid()));
             projectList.get(i).setReportNum(count);
         }
@@ -83,7 +83,8 @@ public class ProjectServiceImpl implements ProjectService {
     public List<Project> findProjectByProjectName(String projectName) {
         List<Project> projectList = projectMapper.selectList(new EntityWrapper<Project>().like("name", projectName));
         for (int i = 0;i < projectList.size();i++){
-            projectList.get(i).setDisnum(projectList.get(i).getDisnum() + 80);//分销商数技术80
+            Integer disnum = projectList.get(i).getDisnum() == null ? 0 : projectList.get(i).getDisnum();
+            projectList.get(i).setDisnum(disnum + 80);//分销商数技术80
             Integer count = customerMapper.selectCount(new EntityWrapper<Customer>().eq("project_id", projectList.get(i).getGid()));
             projectList.get(i).setReportNum(count);
         }
@@ -358,7 +359,7 @@ public class ProjectServiceImpl implements ProjectService {
         }else if ("xgt".equals(name)){
             type = "效果图";
         }else {
-            type = "文件";
+            type = "其他文件";
         }
         savePath = savePath.replaceAll("\\\\","/");
         fileName = fileName.replaceAll("\\\\","/");
