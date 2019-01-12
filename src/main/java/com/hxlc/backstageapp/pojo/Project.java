@@ -22,7 +22,7 @@ public class Project implements Serializable {
     private String keyword;
     private String type;
     private byte[] descPic;
-    private Float price;
+    private String price;
     private String address;
     private Float commission;
     private String header;
@@ -109,11 +109,11 @@ public class Project implements Serializable {
         this.descPic = descPic;
     }
 
-    public Float getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(Float price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 

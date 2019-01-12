@@ -368,6 +368,10 @@ public class UserServiceImpl implements UserService {
                     customer.setState("正常");
                     customer.setBackTime(new Date(date.getTime()));
                     customer.setExpireTime(new Date(date.getTime() + 3600 * 24 * 7 * 1000));// 七天时间
+                    customer.setCusArea(list.get(3));
+                    customer.setAcreage(list.get(4));
+                    customer.setMoney(new Float(list.get(5)));
+                    customer.setRemark(list.get(6));
                     customerMapper.insert(customer);
                     m++;
                 } else {

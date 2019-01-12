@@ -12,7 +12,7 @@ public class AppFace implements Serializable {
     private Integer gid;
     private Integer projectId;
     private Integer index;
-    private float price;
+    private String price;
     private String publishTime;
     private String remark;
 
@@ -40,11 +40,11 @@ public class AppFace implements Serializable {
         this.index = index;
     }
 
-    public float getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(float price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 

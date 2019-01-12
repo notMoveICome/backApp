@@ -871,7 +871,7 @@ function batchExportCustomer(){
         '            <table style="border-collapse:separate;border-spacing: 10px;margin: auto;">' +
         '                <tr>' +
         '                    <td><b>分销商:</b></td>' +
-        '                    <td><select id="disSelect" name="dis"></select></td>' +
+        '                    <td><select id="disSelect" name="disId"></select></td>' +
         '                </tr>' +
         '                <tr>' +
         '                    <td><b>Excel文件:</b></td>' +
@@ -927,6 +927,7 @@ function batchExportCustomer(){
                             shade: 0 ,//不显示遮罩
                             yes: function(){
                                 layer.closeAll();
+                                getUserByRole("客户");
                             }
                         });
                         $("#failList").on('click',function(){
@@ -935,7 +936,11 @@ function batchExportCustomer(){
                                 var json = {
                                     "姓名": fail[i].name,
                                     "电话": fail[i].tel,
-                                    "项目": fail[i].projectName
+                                    "项目": fail[i].projectName,
+                                    "客户区域": fail[i].cusArea,
+                                    "面积": fail[i].acreage,
+                                    "投资额": fail[i].money,
+                                    "备注": fail[i].remark
                                 };
                                 arr.push(json);
                             }

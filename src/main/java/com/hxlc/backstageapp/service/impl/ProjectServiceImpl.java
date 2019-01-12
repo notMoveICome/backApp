@@ -118,7 +118,7 @@ public class ProjectServiceImpl implements ProjectService {
         AppFace appFace = new AppFace();
         appFace.setProjectId(proId);
         appFace.setIndex(count + 1);
-        appFace.setPrice(pro.getPrice() / 1000); // 待定
+        appFace.setPrice(pro.getPrice()); // 待定
         appFace.setPublishTime("6月-12月");// 待定
         Integer row = appFaceMapper.insert(appFace);
         return row;
