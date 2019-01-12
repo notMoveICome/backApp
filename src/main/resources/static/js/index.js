@@ -1684,6 +1684,24 @@ window.projectOperateEvents = {
     },
     'click .ProOfedit': function (e, value, row, index) {
         var div = $('<div id="editpro"></div>');
+        if(row.commission==null){
+            row.commission="";
+        }
+        if(row.keyword==null){
+            row.keyword="";
+        }
+        if(row.header==null){
+            row.header="";
+        }
+        if(row.backTime==null){
+            row.backTime="";
+        }
+        if(row.tel==null){
+            row.tel="";
+        }
+        if(row.desc==null){
+            row.desc="";
+        }
         var html = '<form id="editForm" action="#" method="post" name="editProForm">' +
                 '        <table style="border-collapse:separate; border-spacing:0.5em;margin: auto;">' +
                 '            <tr>' +
