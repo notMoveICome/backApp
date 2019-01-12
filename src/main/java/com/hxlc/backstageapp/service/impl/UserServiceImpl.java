@@ -288,10 +288,16 @@ public class UserServiceImpl implements UserService {
         String v = "";
         if ("pass".equals(value)){
             v = "已过审";
+            distributorMapper.updateDisCkState(disId,v);
+            User user = new User();
+            user.setGid(disId);
+            user.setState("正常");
+            Integer row = userMapper.updateById(user);  // 改变用户的状态
+            return row;
         }else {
             v = "未过审";
+            return distributorMapper.updateDisCkState(disId,v);
         }
-        return distributorMapper.updateDisCkState(disId,v);
     }
 
     @Override
@@ -438,7 +444,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(pwd);
         user.setTel(tel);
         user.setRoleId(2);
-        user.setState("正常");
+        user.setState("不正常");
         Date date = new Date(System.currentTimeMillis());
         user.setCreateTime(date);
         userMapper.addUser(user);// 返回自增逐渐ID
@@ -448,8 +454,8 @@ public class UserServiceImpl implements UserService {
         dis.setChannelComm(attache);
         dis.setCheckState("未提交");
         dis.setSize(size);
-//        return distributorMapper.insert(dis);
-        return user.getGid();
+        return distributorMapper.insert(dis);
+//        return user.getGid();
     }
 
     @Override
