@@ -318,7 +318,7 @@ public class UserController {
      * @return
      */
     @RequestMapping("/getCusByCusIDs")
-    public SysObject getCusByCusIDs(Integer disId,Integer[] ids){
+    public SysObject getCusByCusIDs(@RequestParam("disId") Integer disId,@RequestParam("ids") String ids){
         try {
             List<Customer> list = userService.getCusByCusIDs(disId,ids);
             return SysObject.ok(list);

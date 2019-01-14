@@ -30,4 +30,6 @@ public interface CustomerMapper extends BaseMapper<Customer> {
                                            @Param("usertel") String usertel,
                                            @Param("beginDate") Date beginDate,
                                            @Param("endDate") Date endDate);
+
+    List<Customer> getCusByCusIDs(@Param("disId") Integer disId, @Param("list") List<Integer> list);
 }

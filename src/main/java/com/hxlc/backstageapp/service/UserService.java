@@ -71,5 +71,5 @@ public interface UserService {
 
     String getChTelById(Integer gid);
 
-    List<Customer> getCusByCusIDs(Integer disId, Integer[] ids);
+    List<Customer> getCusByCusIDs(Integer disId, String ids);
 }

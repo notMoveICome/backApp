@@ -120,7 +120,7 @@
 				FROM
 					customer_info
 				WHERE
-					sale_id = #{saleId}
+					sale_id = #{disId}
 			) A,
 			project_info C,
 			user_info u
@@ -128,7 +128,7 @@
 			A .sale_id = u.gid
 		AND A .project_id = C .gid
 		AND A.gid IN
-		<foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+		<foreach collection="list" index="index" item="item" open="(" separator="," close=")">
 			 #{item}
 		</foreach>
 		ORDER BY A.back_time DESC

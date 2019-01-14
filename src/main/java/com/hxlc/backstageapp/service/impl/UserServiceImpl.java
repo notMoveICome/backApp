@@ -325,9 +325,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Customer> getCusByCusIDs(Integer disId, Integer[] ids) {
-        List<Customer> list = distributorMapper.getCusByCusIDs(disId,ids);
-        return list;
+    public List<Customer> getCusByCusIDs(Integer disId, String ids) {
+        String[] idArr = ids.split(",");
+        List<Integer> list = new ArrayList<>();
+        for (int i = 0;i < idArr.length;i++){
+            list.add(Integer.valueOf(idArr[i]));
+        }
+        List<Customer> cusList = customerMapper.getCusByCusIDs(disId,list);
+        return cusList;
     }
 
     private Map<String, Object> parseExcel(Integer disId, MultipartFile cusExcel) {

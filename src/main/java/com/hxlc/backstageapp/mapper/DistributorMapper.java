@@ -26,5 +26,4 @@ public interface DistributorMapper extends BaseMapper<DistributorInfo> {
     @Select("SELECT ui.tel FROM distributor_info di,user_info ui WHERE di.channel_comm = ui.gid AND di.dis_id=#{gid}")
     String getChTelById(Integer gid);
 
-    List<Customer> getCusByCusIDs(@Param("disId") Integer disId, @Param("ids") Integer[] ids);
 }
