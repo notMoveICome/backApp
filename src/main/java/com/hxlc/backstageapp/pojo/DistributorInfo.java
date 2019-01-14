@@ -19,8 +19,8 @@ public class DistributorInfo extends User implements Serializable {
     private String disCompany;
     private String disLinkman;
     private String disLinktel;
-    @TableField(exist = false)
-    private String chanCommTel;
+//    @TableField(exist = false)
+//    private String chanCommTel;
 
     public Integer getGid() {
         return gid;
@@ -94,11 +94,11 @@ public class DistributorInfo extends User implements Serializable {
         this.disLinktel = disLinktel;
     }
 
-    public String getChanCommTel() {
-        return chanCommTel;
-    }
-
-    public void setChanCommTel(String chanCommTel) {
-        this.chanCommTel = chanCommTel;
-    }
+//    public String getChanCommTel() {
+//        return chanCommTel;
+//    }
+//
+//    public void setChanCommTel(String chanCommTel) {
+//        this.chanCommTel = chanCommTel;
+//    }
 }

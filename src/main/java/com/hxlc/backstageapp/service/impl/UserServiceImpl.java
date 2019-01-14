@@ -281,7 +281,7 @@ public class UserServiceImpl implements UserService {
     public DistributorInfo selectDisByDIsID(Integer disId) {
         DistributorInfo dis = distributorMapper.queryDisByDisId(disId);
         String chanTel = distributorMapper.getChTelById(disId);
-        dis.setChanCommTel(chanTel);
+        dis.setChannelCommTel(chanTel);
         return dis;
     }
 
