@@ -35,11 +35,6 @@ mybatis-plus:
 logging:
   level:
     com.hxlc.backstageapp.mapper: debug
-security:
-  ignoring: "/static/**, /css/**/**, /login.html,/img/**"
-  intercept: "/*.html"
-  successUrl: "/index.html"
-  logoutSuccessUrl: "/login.html"
 fileDir:
   projectFile: "E:/ifamily/prodata"   # 项目文件资料
   disLicense: "E:/ifamily/license"   # 分销商营业执照资料

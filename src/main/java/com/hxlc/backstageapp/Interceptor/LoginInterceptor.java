@@ -26,17 +26,17 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
         if (!doLoginInterceptor(path, basePath)) {//是否进行登陆拦截
             return true;
         }
-        //不拦截路径
+//        //不拦截路径
 //        if (path.substring(basePath.length()).startsWith("/user/") || path.substring(basePath.length()).startsWith("/project/")) {
 //            return true;
 //        }
         //如果登录了，会把用户信息存进session
         HttpSession session = request.getSession();
         User users = (User) session.getAttribute("user");
-//        if (users == null) {
-//            response.sendRedirect(request.getContextPath() + "/login");
-//            return false;
-//        }
+        if (users == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return false;
+        }
         return true;
     }
 

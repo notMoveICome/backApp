@@ -66,6 +66,7 @@ public class AppNewsServiceImpl implements AppNewsService{
         return appNewsMapper.deleteById(newsId);
     }
 
+    @Transactional
     @Override
     public Integer editNews(AppNews news, MultipartFile pictureFile) {
         try {
