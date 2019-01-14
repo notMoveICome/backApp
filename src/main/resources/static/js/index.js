@@ -1,8 +1,14 @@
 var userRole;
 $(function () {
-    layui.use(['layer', 'form'], function () {
-        var layer = layui.layer
-            , form = layui.form;
+    // layui.use(['layer', 'form'], function () {
+    //     var layer = layui.layer
+    //         , form = layui.form;
+    // });
+    layui.use(['form', 'layedit', 'laydate'], function(){
+        var form = layui.form
+            ,layer = layui.layer
+            ,layedit = layui.layedit
+            ,laydate = layui.laydate;
     });
     initHtmlCss();
     initLeftUtilOfAdmin();
@@ -767,7 +773,7 @@ function projectManage() {
         var proListHtml = '<div style="background-color: #fff;height: 100%;">' +
             '       <div class="main-right-search"> ' +
             '           <input type="text" id="projectName" style="display: inline" class="form-control" placeholder="请输入项目名称"/> ' +
-            // '               <button type="button" class="btn-primary btn" style="display: inline;margin-left: 20px" id="queryPro">查询</button>'+
+            '               <button type="button" class="btn-primary btn" style="display: inline;margin-left: 20px" id="queryPro">查询</button>'+
             '       </div> ' +
             '       <div class="table-responsive"> ' +
             '           <table id="rightTable" class="table text-nowrap"></table> ' +
@@ -952,7 +958,7 @@ function userManage() {
                     '<span><input  type="text" class="form-control" placeholder="请选择终止报备时间" readonly="readonly" id="toReport"/></span>');
                 $("#searchUser").append('<button id="downExcel" class="btn btn-primary" type="button" style="float: right;margin-right: 20px">导出</button>');
                 $("#searchUser").append('<button id="addUser" class="btn btn-primary" type="button" style="float: right;margin-right: 20px">添加</button>');
-                $("#searchUser").append('<button id="findUser" class="btn btn-primary" type="button" style="float: right;margin-right: 400px">查询人员</button>');
+                $("#searchUser").append('<button id="findUser" class="btn btn-primary" type="button" style="float: right;margin-right: 270px">查询人员</button>');
                 addUser(role);
                 $("#userName,#userTel,#fromReport,#toReport").on('keypress', function (e) {
                     if (e.keyCode == "13") {
@@ -965,16 +971,19 @@ function userManage() {
 
             }
             if (role == "客户") {
-                // $("#searchUser").append('<span><input id="proName" type="text" class="form-control" placeholder="请输入项目名称"/></span>' +
-                $("#searchUser").append('<span><select id="proName" name="proName" class="form-control"><option value="" selected>请选择项目名</option>></select></span>' +
-                    '<span><input id="userName" type="text" class="form-control" placeholder="请输入分销商姓名"/></span>' +
-                    '<span><input id="userTel" type="text" class="form-control" placeholder="请输入电话号码"/></span>' +
-                    '<span><input  type="text" class="form-control" placeholder="请选择起始报备时间" readonly="readonly" id="fromReport"/></span>' +
-                    '<span style="width: 2em;line-height: 30px;margin-right: 1em;">至</span>' +
-                    '<span><input  type="text" class="form-control" placeholder="请选择终止报备时间" readonly="readonly" id="toReport"/></span>');
-                $("#searchUser").append('<button id="findUser" class="btn btn-primary" type="button" style="margin-right: 2em;">查询</button>');
-                $("#searchUser").append('<button id="downExcel" class="btn btn-primary" type="button" style="float: right;margin-right: 2em;">导出</button>');
-                $("#searchUser").append('<button id="exportCustomer" class="btn btn-primary" type="button" style="float: right;margin-right: 2em;">批量报备</button>');
+                layui.use(['form'], function () {
+                    var form = layui.form
+                        , layer = layui.layer
+                });
+                    $("#searchUser").append('<span><select id="proName" name="proName"><option value="" selected>请选择项目名</option></select></span>' +
+                        '<span><input id="userName" type="text" class="form-control" placeholder="请输入分销商姓名"/></span>' +
+                        '<span><input id="userTel" type="text" class="form-control" placeholder="请输入电话号码"/></span>' +
+                        '<span><input  type="text" class="form-control" placeholder="请选择起始报备时间" readonly="readonly" id="fromReport"/></span>' +
+                        '<span style="width: 2em;line-height: 30px;margin-right: 1em;">至</span>' +
+                        '<span><input  type="text" class="form-control" placeholder="请选择终止报备时间" readonly="readonly" id="toReport"/></span>');
+                    $("#searchUser").append('<button id="findUser" class="btn btn-primary" type="button" style="margin-right: 2em;">查询</button>');
+                    $("#searchUser").append('<button id="downExcel" class="btn btn-primary" type="button" style="float: right;margin-right: 2em;">导出</button>');
+                    $("#searchUser").append('<button id="exportCustomer" class="btn btn-primary" type="button" style="float: right;margin-right: 2em;">批量报备</button>');
                 findAllProject();
                 $("#proName,#userName,#userTel,#fromReport,#toReport").on('keypress', function (e) {
                     if (e.keyCode == "13") {
@@ -1012,6 +1021,7 @@ function findAllProject() {
             var option =$("<option value="+projectName+">"+projectName+"</option>");
             $("#proName").append(option);
         }
+        $('select').searchableSelect();
     })
 }
 /**
@@ -1899,8 +1909,8 @@ window.projectOperateEvents = {
         if(row.tel==null){
             row.tel="";
         }
-        if(row.desc==null){
-            row.desc="";
+        if(row.description==null){
+            row.description="";
         }
         var html = '<form id="editForm" action="#" method="post" name="editProForm">' +
                 '        <table style="border-collapse:separate; border-spacing:0.5em;margin: auto;">' +
@@ -1953,7 +1963,7 @@ window.projectOperateEvents = {
                 '                <td>开发商:</td>' +
                 '                <td><input type="text" name="develop" value="'+row.develop+'"/></td>' +
                 '                <td>项目描述:</td>' +
-                '                <td><textarea name="description">'+row.desc+'</textarea></td>' +
+                '                <td><textarea name="description">'+row.description+'</textarea></td>' +
                 '            </tr>' +
                 '        </table>' +
                 '        <input type="hidden" name="gid" value="'+row.gid+'"/>' +

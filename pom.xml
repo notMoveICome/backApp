@@ -13,12 +13,12 @@
 	<artifactId>back-stage-app</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>back-stage-app</name>
+	<packaging>war</packaging>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>1.8</java.version>
 		<thymeleaf.version>3.0.7.RELEASE</thymeleaf.version>
 		<thymeleaf-layout-dialect.version>2.1.1</thymeleaf-layout-dialect.version>
-		<package>war</package>
 	</properties>
 
 	<dependencies>
@@ -239,7 +239,7 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
-				<artifact-packaging>war</artifact-packaging>
+				<artifact-packaging>jar</artifact-packaging>
 			</properties>
 		</profile>
 		<profile>
