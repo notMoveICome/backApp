@@ -70,4 +70,6 @@ public interface UserService {
     Integer validateUserName(String name);
 
     String getChTelById(Integer gid);
+
+    List<Customer> getCusByCusIDs(Integer disId, Integer[] ids);
 }

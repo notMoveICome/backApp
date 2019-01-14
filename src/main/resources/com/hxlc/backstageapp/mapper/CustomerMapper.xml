@@ -108,4 +108,29 @@
 		AND u. NAME LIKE '%${username}%'
 		ORDER BY A.back_time DESC
 	</select>
+
+	<select id="getCusByCusIDs" resultType="com.hxlc.backstageapp.pojo.Customer">
+		SELECT
+			A .*, u. NAME sale_name,
+			C . NAME project_name
+		FROM
+			(
+				SELECT
+					*
+				FROM
+					customer_info
+				WHERE
+					sale_id = #{saleId}
+			) A,
+			project_info C,
+			user_info u
+		WHERE
+			A .sale_id = u.gid
+		AND A .project_id = C .gid
+		AND A.gid IN
+		<foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+			 #{item}
+		</foreach>
+		ORDER BY A.back_time DESC
+	</select>
 </mapper>

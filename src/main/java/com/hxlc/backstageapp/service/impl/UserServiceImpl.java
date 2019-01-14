@@ -279,7 +279,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public DistributorInfo selectDisByDIsID(Integer disId) {
-        return distributorMapper.queryDisByDisId(disId);
+        DistributorInfo dis = distributorMapper.queryDisByDisId(disId);
+        String chanTel = distributorMapper.getChTelById(disId);
+        dis.setChanCommTel(chanTel);
+        return dis;
     }
 
     @Override
@@ -319,6 +322,12 @@ public class UserServiceImpl implements UserService {
     public String getChTelById(Integer gid) {
         String tel = distributorMapper.getChTelById(gid);
         return tel;
+    }
+
+    @Override
+    public List<Customer> getCusByCusIDs(Integer disId, Integer[] ids) {
+        List<Customer> list = distributorMapper.getCusByCusIDs(disId,ids);
+        return list;
     }
 
     private Map<String, Object> parseExcel(Integer disId, MultipartFile cusExcel) {

@@ -311,5 +311,20 @@ public class UserController {
         return SysObject.build(201,"修改异常!");
     }
 
-
+    /**
+     * 查找收藏客户的信息
+     * @param disId
+     * @param ids
+     * @return
+     */
+    @RequestMapping("/getCusByCusIDs")
+    public SysObject getCusByCusIDs(Integer disId,Integer[] ids){
+        try {
+            List<Customer> list = userService.getCusByCusIDs(disId,ids);
+            return SysObject.ok(list);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return SysObject.build(500,"服务器内部错误!");
+    }
 }

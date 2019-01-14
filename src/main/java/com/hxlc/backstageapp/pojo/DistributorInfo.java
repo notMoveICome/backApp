@@ -1,5 +1,6 @@
 package com.hxlc.backstageapp.pojo;
 
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
@@ -18,6 +19,8 @@ public class DistributorInfo extends User implements Serializable {
     private String disCompany;
     private String disLinkman;
     private String disLinktel;
+    @TableField(exist = false)
+    private String chanCommTel;
 
     public Integer getGid() {
         return gid;
@@ -89,5 +92,13 @@ public class DistributorInfo extends User implements Serializable {
 
     public void setDisLinktel(String disLinktel) {
         this.disLinktel = disLinktel;
+    }
+
+    public String getChanCommTel() {
+        return chanCommTel;
+    }
+
+    public void setChanCommTel(String chanCommTel) {
+        this.chanCommTel = chanCommTel;
     }
 }
