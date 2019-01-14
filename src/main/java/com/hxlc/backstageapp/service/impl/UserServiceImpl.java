@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
                 List<DistributorInfo> users = userMapper.selectAllUser();
                 return users;
             }
-            return userMapper.selectList(new EntityWrapper<User>().eq("role_id", roleId));
+            return userMapper.selectList(new EntityWrapper<User>().eq("role_id", roleId).orderBy("gid"));
         }
     }
 
@@ -106,7 +106,7 @@ public class UserServiceImpl implements UserService {
     public Integer changeState(Integer gid, String state) {
         User user = new User();
         user.setGid(gid);
-        user.setState("正常".equals(state) ? "非正常" : "正常");
+        user.setState("正常".equals(state) ? "不正常" : "正常");
         return userMapper.updateById(user);
     }
 

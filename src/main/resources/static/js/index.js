@@ -520,7 +520,7 @@ function projectPublish() {
             '            </tr>' +
             '            <tr>' +
             '                <td><b>项目图标:</b></td>' +
-            '                <td><input type="file" name="xmtb" onchange="fileChange(this);" id="pro_xmtb"/></td>' +
+            '                <td><input type="file" name="xmtb" onchange="fileChange(this);" id="pro_xmtb" accept="image/gif,image/jpeg,image/jpg,image/png"/></td>' +
             '                <td><b>户型图:</b></td>' +
             '                <td><input type="file" name="hxt" onchange="fileChange(this);" id="pro_hxt"/></td>' +
             '                <td><b>效果图:</b></td>' +
@@ -621,16 +621,10 @@ function addProject() {
         return false;
     }
 
-    if (reg.test($("#pro_spjs").val())) {
-        layer.msg("请上传沙盘解说文件", {icon: 2});
+    if (reg.test($("#pro_xmtb").val())) {
+        layer.msg("请上传户型图文件", {icon: 2});
         return false;
     }
-
-    if (reg.test($("#pro_xswd").val())) {
-        layer.msg("请上传销售文件", {icon: 2});
-        return false;
-    }
-
     if (reg.test($("#pro_hxt").val())) {
         layer.msg("请上传户型图文件", {icon: 2});
         return false;
@@ -638,6 +632,15 @@ function addProject() {
 
     if (reg.test($("#pro_xgt").val())) {
         layer.msg("请上传效果图文件", {icon: 2});
+        return false;
+    }
+    if (reg.test($("#pro_spjs").val())) {
+        layer.msg("请上传沙盘解说文件", {icon: 2});
+        return false;
+    }
+
+    if (reg.test($("#pro_xswd").val())) {
+        layer.msg("请上传销售问答文件", {icon: 2});
         return false;
     }
     // 非必须
@@ -695,8 +698,9 @@ function fileChange(target, id) {
     // var filetypes =[".jpg",".png",".rar",".txt",".zip",".doc",".ppt",".xls",".pdf",".docx",".xlsx"];
     var filetypes;
     var msg;
-    if (inputName){
-
+    if (inputName == "xmtb"){
+        filetypes = [".jpg",".png","jpeg"];
+        msg = "图片";
     }else if (inputName == "spjs" || inputName == "xswd") {
         filetypes = [".doc", ".docx", ".pdf"];
         msg = "Word或Pdf文件";
@@ -705,7 +709,7 @@ function fileChange(target, id) {
         msg = "Excel文件";
     } else {
         filetypes = [".zip", ".rar"];
-        msg = "zip压缩文件";
+        msg = "zip或rar压缩文件";
     }
     var isIE = /msie/i.test(navigator.userAgent) && !window.opera;
     var fileSize = 0;
@@ -1471,7 +1475,7 @@ function doUserTable(role,res){
             title: '操作',
             valign: "middle",
             align: 'center',
-            width: "320",
+            width: "250",
             events: userOperateEvents,
             formatter: userOperateFormatter
         });
@@ -1535,10 +1539,12 @@ function userOperateFormatter(value, row, index) {
         }
     }
     btns.push('<button type="button" class="RoleOfedit btn btn-primary  btn-sm" style="margin-right:15px;">修改</button>');
-    if (row.state == "正常") {
-        btns.push('<button type="button" class="RoleOfdisable btn btn-primary  btn-sm" style="margin-right:15px;">禁用</button>');
-    } else {
-        btns.push('<button type="button" class="RoleOfdisable btn btn-primary  btn-sm" style="margin-right:15px;">启用</button>');
+    if (row.roleId == 3){
+        if (row.state == "正常") {
+            btns.push('<button type="button" class="RoleOfdisable btn btn-primary  btn-sm" style="margin-right:15px;">禁用</button>');
+        } else {
+            btns.push('<button type="button" class="RoleOfdisable btn btn-primary  btn-sm" style="margin-right:15px;">启用</button>');
+        }
     }
     btns.push('<button type="button" class="RoleOfdelete btn btn-primary  btn-sm" style="margin-right:15px;">删除</button>');
     return btns.join('');

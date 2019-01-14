@@ -37,6 +37,7 @@
 		WHERE
 			A .sale_id = u.gid
 		AND A .project_id = C .gid
+		ORDER BY A.gid
     </select>
 
 	<!--/*有业务员
@@ -80,6 +81,7 @@
 		WHERE
 			A .sale_id = u.gid
 		AND A .project_id = C .gid
+		ORDER BY A.gid
     </select>
 
     <select id="findCustomerByCondition" resultType="com.hxlc.backstageapp.pojo.Customer">
@@ -104,5 +106,6 @@
 		AND A .sale_id = u.gid
 		AND A .project_id = C .gid
 		AND u. NAME LIKE '%${username}%'
+		ORDER BY A.gid
 	</select>
 </mapper>

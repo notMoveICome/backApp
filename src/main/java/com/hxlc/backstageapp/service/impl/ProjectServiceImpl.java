@@ -101,7 +101,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public List<Project> queryRecommendPro() {
         List<AppFace> faces = appFaceMapper.selectList(new EntityWrapper<AppFace>());
-        List<Project> projects = projectMapper.selectList(new EntityWrapper<Project>());
+        List<Project> projects = projectMapper.selectList(new EntityWrapper<Project>().eq("state","在售"));
         for (int i = 0;i < faces.size();i++){
             for (int j = 0;j < projects.size();j++){
                 if (faces.get(i).getProjectId() == projects.get(j).getGid()){
@@ -137,7 +137,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Transactional
     @Override
-    public void addProject(Project project, MultipartFile spjs, MultipartFile xswd, MultipartFile hxt, MultipartFile xgt, MultipartFile other) {
+    public void addProject(Project project, MultipartFile xmtb, MultipartFile spjs, MultipartFile xswd, MultipartFile hxt, MultipartFile xgt, MultipartFile other) {
         Date date = new Date();
         project.setBackTime(new java.sql.Date(date.getTime()));
         projectMapper.addProject(project);
@@ -148,18 +148,17 @@ public class ProjectServiceImpl implements ProjectService {
         for (int i = 0;i < 4;i++){
             round += new Random().nextInt(9);
         }
+        // 建目录
         String fileDir = project.getName() + format + "_" + round;
         File parentFile = new File(projectFile + "/" + fileDir);
         parentFile.mkdirs();
 
-        Integer spjsId = approvalFile(spjs, parentFile.getPath(), gid);
-        Integer xswdId = approvalFile(xswd, parentFile.getPath(), gid);
-        Project pro = new Project();
-        pro.setGid(gid);
-        pro.setCaptionId(spjsId);
-        pro.setQuestionId(xswdId);
-        projectMapper.updateById(pro);
-
+        // 执行
+        if (StringUtils.isNotBlank(xmtb.getOriginalFilename())){
+            approvalFile(xmtb,parentFile.getPath(),gid);
+        }
+        approvalFile(spjs, parentFile.getPath(), gid);
+        approvalFile(xswd, parentFile.getPath(), gid);
         approvalFile(hxt,parentFile.getPath(),gid);
         approvalFile(xgt,parentFile.getPath(),gid);
         if (StringUtils.isNotBlank(other.getOriginalFilename())){
@@ -225,7 +224,7 @@ public class ProjectServiceImpl implements ProjectService {
      * @param filecontent
      * @param savePath
      */
-    public Integer approvalFile( MultipartFile filecontent,String savePath,Integer gid){
+    public void approvalFile( MultipartFile filecontent,String savePath,Integer gid){
         OutputStream os = null;
         InputStream inputStream = null;
         String fileName = null;
@@ -248,6 +247,9 @@ public class ProjectServiceImpl implements ProjectService {
             // doc转pdf
             if (fileName.endsWith(".doc") || fileName.endsWith("docx")){
                 WordUtil.wordSaveAs(savePath + File.separator + fileName,savePath + File.separator + fileName.substring(0,fileName.lastIndexOf(".")) + ".pdf");
+                addMedia(filecontent.getName(), savePath, fileName, gid);
+                addMedia(filecontent.getName(), savePath, fileName.substring(0,fileName.lastIndexOf(".")) + ".pdf", gid);
+                return;
             }
             // 若是zip文件就进行解压
             if (fileName.endsWith(".zip")){
@@ -279,7 +281,7 @@ public class ProjectServiceImpl implements ProjectService {
                 }
                 zFile.close();
                 System.out.println("zip压缩文件解压成功");
-                return 1;
+                return;
             }
 
             if (fileName.endsWith(".rar")){
@@ -320,15 +322,13 @@ public class ProjectServiceImpl implements ProjectService {
                         }
                         a.close();
                         System.out.println("rar压缩文件解压成功");
-                        return 1;
+                        return;
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
             addMedia(filecontent.getName(), savePath, fileName, gid);
-            Integer mediaId = 0;addMedia(filecontent.getName(), savePath, fileName.substring(0,fileName.lastIndexOf(".")) + ".pdf", gid);
-            return mediaId;
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -340,7 +340,6 @@ public class ProjectServiceImpl implements ProjectService {
                 e.printStackTrace();
             }
         }
-        return null;
     }
 
     /**
@@ -360,7 +359,9 @@ public class ProjectServiceImpl implements ProjectService {
 
     private Integer addMedia(String name, String savePath, String fileName, Integer gid) {
         String type = "";
-        if ("spjs".equals(name)){
+        if ("xmtb".equals(name)){
+            type = "图标";
+        }else if ("spjs".equals(name)){
             type = "沙盘说辞";
         }else if ("xswd".equals(name)){
             type = "销售问答";
@@ -383,7 +384,7 @@ public class ProjectServiceImpl implements ProjectService {
         media.setType(type);
         media.setUrl(url);
         mediaMapper.addMedia(media);
-        return media.getGid();
+        return media.getGid();  // 返回新增ID
     }
 
 }

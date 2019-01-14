@@ -126,7 +126,8 @@ public class ProjectController {
     }
 
     @RequestMapping(value = "/addProject", method = RequestMethod.POST)
-    public SysObject addProject(Project project, @RequestParam(value = "spjs") MultipartFile spjs,
+    public SysObject addProject(Project project, @RequestParam(value = "xmtb") MultipartFile xmtb,
+                                @RequestParam(value = "spjs") MultipartFile spjs,
                                 @RequestParam(value = "xswd") MultipartFile xswd,
                                 @RequestParam(value = "hxt") MultipartFile hxt,
                                 @RequestParam(value = "xgt") MultipartFile xgt,
@@ -134,7 +135,7 @@ public class ProjectController {
                                 HttpServletRequest request) {
 
         try {
-            projectService.addProject(project,spjs,xswd,hxt,xgt,other);
+            projectService.addProject(project,xmtb,spjs,xswd,hxt,xgt,other);
             return new SysObject(200,"发布成功!",null);
         } catch (Exception e) {
             e.printStackTrace();

@@ -30,7 +30,7 @@ public interface ProjectService {
 
     Integer editProjectInfo(Project project);
 
-    void addProject(Project project, MultipartFile spjs, MultipartFile xswd, MultipartFile hxt, MultipartFile hxt1, MultipartFile other);
+    void addProject(Project project, MultipartFile xmtb, MultipartFile spjs, MultipartFile xswd, MultipartFile hxt, MultipartFile hxt1, MultipartFile other);
 
     List<Project> existPro(String pro_name);
 

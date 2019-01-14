@@ -82,7 +82,7 @@ public class UserController {
         if (list == null || list.size() == 0) {
             return new SysObject(201, "查询失败", null);
         }
-        return new SysObject(userService.findUserByCondition(map));
+        return new SysObject(list);
     }
 
     @RequestMapping("/findCustomer")
@@ -91,7 +91,7 @@ public class UserController {
         if (list == null || list.size() == 0) {
             return new SysObject(201, "查询失败", null);
         }
-        return new SysObject(userService.findCustomerByCondition(map));
+        return new SysObject(list);
     }
 
     @RequestMapping("/validateTel")
@@ -184,9 +184,9 @@ public class UserController {
      *
      *  licensePic 照片
      *  disId      分销商ID
-     *  disCompany    公司名称
-     *  disLinkman    联系人
-     *  disLinktel    联系电话
+     *  disCompany    公司名称   ??
+     *  disLinkman    联系人    ??
+     *  disLinktel    联系电话  ??
      * @return
      */
     @RequestMapping(value = "/uploadLicense", method = RequestMethod.POST)

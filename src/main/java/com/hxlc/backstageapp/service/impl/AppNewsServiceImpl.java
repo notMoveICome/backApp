@@ -27,7 +27,7 @@ public class AppNewsServiceImpl implements AppNewsService{
 
     @Override
     public List<AppNews> findNewsList() {
-        return appNewsMapper.selectList(new EntityWrapper<AppNews>());
+        return appNewsMapper.selectList(new EntityWrapper<AppNews>().orderBy("news_time",true));
     }
 
     @Override

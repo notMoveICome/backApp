@@ -37,6 +37,7 @@
 		GROUP BY
 			A .sale_id
 	) B ON C .gid = B.sale_id
+	ORDER BY c.gid
     </select>
 
     <select id="findUserByCondition" resultType="com.hxlc.backstageapp.pojo.DistributorInfo">
@@ -76,6 +77,7 @@
 		GROUP BY
 			A .sale_id
 	) B ON C .gid = B.sale_id
+	ORDER BY c.gid
 	</select>
 
     <select id="selectUser" resultType="com.hxlc.backstageapp.pojo.User">
