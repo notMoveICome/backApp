@@ -1435,7 +1435,7 @@ function doUserTable(role,res){
     };
     var columns = [];
     for (var attr in res.data[0]) {
-        if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr == "disCompany" || attr == "disLinkman" || attr == "disLinktel" || attr == "size" || attr == "license" || attr == "remark") {
+        if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr == "channelCommTel" || attr == "disCompany" || attr == "disLinkman" || attr == "disLinktel" || attr == "size" || attr == "license" || attr == "remark") {
             continue;
         }
         if (role == "管理员" && attr.indexOf("count") > -1) {
