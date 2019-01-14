@@ -69,7 +69,9 @@ public class LoginController {
         User user = userService.findSaleByTelAndPwd(tel, pwd);
         if (user != null && user.getRoleId() != 3 && user.getRoleId() != 4){
 //            if (("正常").equals(user.getState())){
+                String chTel = userService.getChTelById(user.getGid());
                 user.setPassword(null);
+                user.setChannelCommTel(chTel);
                 return new SysObject(200, "业务员登录成功!", user);
 //            }
 //            return new SysObject(201, "该业务员已被停用!", null);

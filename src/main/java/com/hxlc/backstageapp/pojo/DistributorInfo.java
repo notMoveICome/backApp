@@ -12,7 +12,7 @@ public class DistributorInfo extends User implements Serializable {
     private Integer gid;
     private Integer disId;
     private String checkState;
-    private String channelComm;
+    private Integer channelComm;
     private String size;
     private String license;
     private String disCompany;
@@ -43,11 +43,11 @@ public class DistributorInfo extends User implements Serializable {
         this.checkState = checkState;
     }
 
-    public String getChannelComm() {
+    public Integer getChannelComm() {
         return channelComm;
     }
 
-    public void setChannelComm(String channelComm) {
+    public void setChannelComm(Integer channelComm) {
         this.channelComm = channelComm;
     }
 

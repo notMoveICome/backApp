@@ -19,4 +19,7 @@ public interface DistributorMapper extends BaseMapper<DistributorInfo> {
 
     @Update("UPDATE distributor_info SET check_state = #{value} WHERE dis_id = #{disId}")
     Integer updateDisCkState(@Param("disId") Integer disId, @Param("value") String value);
+
+    @Select("SELECT ui.tel FROM distributor_info di,user_info ui WHERE di.channel_comm = ui.gid AND di.dis_id=#{gid}")
+    String getChTelById(Integer gid);
 }

@@ -315,6 +315,12 @@ public class UserServiceImpl implements UserService {
         return userMapper.selectCount(new EntityWrapper<User>().eq("name", name));
     }
 
+    @Override
+    public String getChTelById(Integer gid) {
+        String tel = distributorMapper.getChTelById(gid);
+        return tel;
+    }
+
     private Map<String, Object> parseExcel(Integer disId, MultipartFile cusExcel) {
         //读取Excel里面客户的信息
         List<Customer> customerList = new ArrayList<>();
@@ -462,7 +468,7 @@ public class UserServiceImpl implements UserService {
 
         DistributorInfo dis = new DistributorInfo();
         dis.setDisId(user.getGid());
-        dis.setChannelComm(attache);
+        dis.setChannelComm(Integer.valueOf(attache));
         dis.setCheckState("未提交");
         dis.setSize(size);
         return distributorMapper.insert(dis);

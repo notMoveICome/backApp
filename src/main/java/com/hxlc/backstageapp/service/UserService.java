@@ -68,4 +68,6 @@ public interface UserService {
     Integer changeDisCkState(Integer disId,String value);
 
     Integer validateUserName(String name);
+
+    String getChTelById(Integer gid);
 }

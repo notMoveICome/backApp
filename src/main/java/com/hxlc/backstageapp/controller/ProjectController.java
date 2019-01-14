@@ -81,9 +81,13 @@ public class ProjectController {
 
     @RequestMapping("/addProjectRecomm")
     public SysObject addProjectRecomm(Integer proId) {
-        Integer row = projectService.addProjectRecomm(proId);
-        if (row > 0) {
-            return new SysObject(200, "添加成功!", null);
+        try {
+            Integer row = projectService.addProjectRecomm(proId);
+            if (row > 0) {
+                return new SysObject(200, "添加成功!", null);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return new SysObject(201, "添加失败!", null);
     }

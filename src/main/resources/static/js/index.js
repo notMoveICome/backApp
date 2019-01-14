@@ -200,7 +200,7 @@ function indexManage() {
                 }
                 var columns = [];
                 for (var attr in data[0]) {
-                    if (attr == "desc_pic" || attr == "index" || attr == "url" || attr.indexOf("id") > -1) {
+                    if (attr == "desc_pic" || attr.indexOf("index") > -1 || attr == "url" || attr.indexOf("id") > -1) {
                         continue;
                     }
                     var column = {
@@ -858,6 +858,7 @@ function doProjectTable(res){
         description: "描述",
         develop: "开发商",
         keyword: "关键字",
+        reportLimit: "最大报备次数",
         type: "房型",
         price: "项目单价",
         address: "项目地址",
@@ -871,7 +872,7 @@ function doProjectTable(res){
     };
     var columns = [];
     for (var attr in res.data[0]) {
-        if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr.indexOf("desc") > -1 || attr == "picUrl" || attr.indexOf("bidding") > -1 || attr == "reportLimit" || attr == "keyword" || attr == "address" || attr == "remark") {
+        if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr.indexOf("desc") > -1 || attr == "picUrl" || attr.indexOf("bidding") > -1 || attr == "keyword" || attr == "address" || attr == "remark") {
             continue;
         }
         var column = {

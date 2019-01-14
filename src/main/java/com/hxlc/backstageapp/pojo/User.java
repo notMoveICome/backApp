@@ -19,7 +19,8 @@ public class User implements Serializable {
     private String state;
     //    private String checkState;
     private Date createTime;
-    //    private String channelComm;
+    @TableField(exist = false)
+    private String channelCommTel;
     //    private String size;
     private String remark;
     @TableField(exist = false)
@@ -89,17 +90,17 @@ public class User implements Serializable {
         this.remark = remark;
     }
 
-    //    public String getChannelComm() {
-//        return channelComm;
-//    }
     public Integer getCount() {
         return count;
     }
 
-//    public void setChannelComm(String channelComm) {
-//        this.channelComm = channelComm;
-//    }
+    public String getChannelCommTel() {
+        return channelCommTel;
+    }
 
+    public void setChannelCommTel(String channelCommTel) {
+        this.channelCommTel = channelCommTel;
+    }
 //    public String getCheckState() {
 //        return checkState;
 //    }
