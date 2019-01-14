@@ -204,6 +204,24 @@ input[type=checkbox]:focus, input[type=checkbox]:active {
     line-height: 2em;
     font-size: 1em;
 }
+/*图片缩放*/
+.main-right table td img{
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    cursor: pointer;
+    transition: all .01s;
+}
+.main-right table td img:hover{
+    /*width: auto;*/
+    /*height: auto;*/
+    /*max-width: 100%;*/
+    /*max-height: 100%;*/
+    /*cursor: pointer;*/
+    /*transition: all .01s;*/
+    transform: scale(2.4);
+}
 /*首页*/
 .main-right .recommendDiv{
     float: left;
@@ -248,6 +266,7 @@ input[type=checkbox]:focus, input[type=checkbox]:active {
     width: 85em;
     /*height: 26.5em;*/
     /*margin-top: 15.5em;*/
+    height: 100%;
     background-color: #fff;
     /* padding-top: 1em; */
     text-align: center;

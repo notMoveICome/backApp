@@ -21,6 +21,7 @@ import org.apache.tools.zip.ZipFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -91,6 +92,7 @@ public class ProjectServiceImpl implements ProjectService {
         return projectList;
     }
 
+    @Transactional
     @Override
     public Integer deleteProById(Integer proId) {
         return projectMapper.delete(new EntityWrapper<Project>().eq("gid",proId));
@@ -110,6 +112,7 @@ public class ProjectServiceImpl implements ProjectService {
         return projects;
     }
 
+    @Transactional
     @Override
     public Integer addProjectRecomm(Integer proId) {
         Project project = new Project();
@@ -125,12 +128,14 @@ public class ProjectServiceImpl implements ProjectService {
         return row;
     }
 
+    @Transactional
     @Override
     public Integer editProjectInfo(Project project) {
         project.setDisnum(project.getDisnum() - 80);//分销商数减上80
         return projectMapper.updateById(project);
     }
 
+    @Transactional
     @Override
     public void addProject(Project project, MultipartFile spjs, MultipartFile xswd, MultipartFile hxt, MultipartFile xgt, MultipartFile other) {
         Date date = new Date();

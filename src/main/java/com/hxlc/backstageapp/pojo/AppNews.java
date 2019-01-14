@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
 
 import java.io.Serializable;
+import java.sql.Date;
 
 @TableName("ifamily_news")
 public class AppNews implements Serializable {
@@ -14,6 +15,7 @@ public class AppNews implements Serializable {
     private String content;
     private String picture;
     private String linkUrl;
+    private Date newsTime;
 
     public Integer getGid() {
         return gid;
@@ -53,5 +55,13 @@ public class AppNews implements Serializable {
 
     public void setLinkUrl(String linkUrl) {
         this.linkUrl = linkUrl;
+    }
+
+    public Date getNewsTime() {
+        return newsTime;
+    }
+
+    public void setNewsTime(Date newsTime) {
+        this.newsTime = newsTime;
     }
 }

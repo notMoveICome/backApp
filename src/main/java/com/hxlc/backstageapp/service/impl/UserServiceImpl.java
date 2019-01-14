@@ -19,6 +19,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -67,6 +68,7 @@ public class UserServiceImpl implements UserService {
         return customerMapper.findCustomerInfoBySale(saleId);
     }
 
+    @Transactional
     @Override
     public Integer addUser(String username, String password, String tel, String role) {
         Date date = new Date(new java.util.Date().getTime());
@@ -99,6 +101,7 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+    @Transactional
     @Override
     public Integer changeState(Integer gid, String state) {
         User user = new User();
@@ -107,6 +110,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.updateById(user);
     }
 
+    @Transactional
     @Override
     public Integer updateUser(Integer gid, String username, String password, String tel) {
         User user = new User();
@@ -177,12 +181,14 @@ public class UserServiceImpl implements UserService {
         return customerMapper.findCustomerByCondition(username, proname, usertel, beginDate, endDate);
     }
 
+    @Transactional
     @Override
     public Map<String, Object> batchExportCus(Integer disId, MultipartFile cusExcel) {
         Map<String, Object> map = parseExcel(disId, cusExcel);
         return map;
     }
 
+    @Transactional
     @Override
     public Integer reportCustomer(Customer customer) {
         // 根据项目名查找项目
@@ -215,6 +221,7 @@ public class UserServiceImpl implements UserService {
         return selectDisByDIsID(saleId);
     }
 
+    @Transactional
     @Override
     public Integer saveDisLicense(MultipartFile licensePic,DistributorInfo distributorInfo) {
         InputStream is = null;
@@ -247,6 +254,7 @@ public class UserServiceImpl implements UserService {
         return -1;
     }
 
+    @Transactional
     @Override
     public Integer changeCusVisit(Integer disId, Integer proId, String cusTel) {
         Customer customer = new Customer();
@@ -258,6 +266,7 @@ public class UserServiceImpl implements UserService {
         return row;
     }
 
+    @Transactional
     @Override
     public Integer changeCusDeal(Integer disId, Integer proId, String cusTel) {
         Customer customer = new Customer();
@@ -283,6 +292,7 @@ public class UserServiceImpl implements UserService {
         return map;
     }
 
+    @Transactional
     @Override
     public Integer changeDisCkState(Integer disId,String value) {
         String v = "";
@@ -431,6 +441,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.selectCount(new EntityWrapper<User>().eq("tel", tel));
     }
 
+    @Transactional
     @Override
     public Integer registerUser(Map map) {
         String tel = (String) map.get("tel");
@@ -472,6 +483,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.selectOne(user);
     }
 
+    @Transactional
     @Override
     public Integer delUser(Integer gid) {
         return userMapper.deleteById(gid);

@@ -1,62 +1,3 @@
-var user_fields = {
-    user: {
-        gid: "ID",
-        name: "姓名",
-        password: "密码",
-        tel: "电话",
-        state: "状态",
-        createTime: "创建时间",
-        remark: "备注"
-    },
-    distributor: {
-        gid: "ID",
-        name: "姓名",
-        password: "密码",
-        tel: "电话",
-        state: "状态",
-        count: "报备数量",
-        createTime: "创建时间",
-        remark: "备注",
-        channelComm: '渠道专员',
-        checkState: '审核'
-    },
-    customer: {
-        gid: "ID",
-        name: "姓名",
-        tel: "电话",
-        projectName: "项目",
-        distritionName: "分销商",
-        saleName: "业务员",
-        state: "状态",
-        backTime: "报备时间",
-        expireTime: "过期时间",
-        visitTime: "到访时间",
-        dealTime: "成交时间",
-        remark: "备注",
-        cusArea: "客户区域",
-        acreage: "意向面积",
-        money: "投资额"
-    }
-};
-var project_fields = {
-    gid: "ID",
-    name: "项目名称",
-    disnum: "分销商数",
-    reportNum: "总报备数",
-    description: "描述",
-    develop: "开发商",
-    keyword: "关键字",
-    type: "房型",
-    price: "项目单价",
-    address: "项目地址",
-    commission: "佣金",
-    header: "负责人",
-    tel: "电话",
-    backTime: "报备时间",
-    state: "项目状态",
-    descPic: "项目图片",
-    remark: "备注"
-};
 var userRole;
 $(function () {
     layui.use(['layer', 'form'], function () {
@@ -367,7 +308,8 @@ function doNewsTable (res) {
         "picture": "图片",
         "title": "标题",
         "content": "内容",
-        "linkUrl": "链接"
+        "linkUrl": "链接",
+        "newsTime": "时间"
     };
     var columns = [];
     for (var attr in res.data[0]) {
@@ -381,8 +323,15 @@ function doNewsTable (res) {
             align: "center",
             // sortable: true,
             visible: true,
-            formatter: paramsMatter
         };
+        if (attr == "picture"){
+            column.formatter = imgParamsMatter;
+        }else if (attr == "linkUrl"){
+            column.formatter = linkParamsMatter;
+        }else {
+            column.formatter = paramsMatter;
+        }
+
         columns.push(column);
     }
     columns.push({
@@ -403,19 +352,20 @@ function addNews(){
             '                <table style="border-collapse: separate;border-spacing: 5px;margin: auto;">' +
             '                    <tr>' +
             '                        <td style="text-align: right">标题：</td>' +
-            '                        <td style="text-align: left"><input type="text" name="title" style="width: 25em;"/></td>' +
+            '                        <td style="text-align: left" colspan="2"><input type="text" name="title" style="width: 25em;"/></td>' +
             '                    </tr>' +
             '                    <tr>' +
             '                        <td style="text-align: right">图片：</td>' +
-            '                        <td style="text-align: left"><input type="file" name="pictureFile" style="width: 25em;"/></td>' +
+            '                        <td style="text-align: left"><input id="newsFile" type="file" name="pictureFile" onchange="uploadImg(this)" accept="image/gif,image/jpeg,image/jpg,image/png" style="width: 16em;"/></td>' +
+            '                        <td><img id="newsImg" src="" style="display: none;width: auto;height: auto;max-width: 10em;max-height: 5em;"/></td>' +
             '                    </tr>' +
             '                    <tr>' +
             '                        <td style="text-align: right">内容：</td>' +
-            '                        <td style="text-align: left"><textarea name="content" style="width: 25em;height: 10em;"></textarea></td>' +
+            '                        <td style="text-align: left" colspan="2"><textarea name="content" style="width: 25em;height: 10em;"></textarea></td>' +
             '                    </tr>' +
             '                    <tr>' +
             '                        <td style="text-align: right">链接：</td>' +
-            '                        <td style="text-align: left"><input type="text" name="linkUrl" style="width: 25em;"/></td>' +
+            '                        <td style="text-align: left" colspan="2"><input type="text" name="linkUrl" style="width: 25em;"/></td>' +
             '                    </tr>' +
             '                </table>' +
             '            </form>' +
@@ -426,6 +376,23 @@ function addNews(){
         content: '<div id="addNewsDiv"></div>',
         btn: ['确认','取消'],
         yes: function (index, layero) {
+            if ($("#newsForm input[name=title]").val().replace(/^\s*|\s*$/g,"") == ""){
+                layer.msg("标题不能为空!",{icon:2});
+                return;
+            }
+            if ($("#newsForm input[name=pictureFile]").val() == ""){
+                layer.msg("图片不能为空!",{icon:2});
+                return;
+            }
+            if ($("#newsForm textarea[name=content]").val().replace(/^\s*|\s*$/g,"") == ""){
+                layer.msg("内容不能为空!",{icon:2});
+                return;
+            }
+            if ($("#newsForm input[name=linkUrl]").val().replace(/^\s*|\s*$/g,"") == ""){
+                layer.msg("链接不能为空!",{icon:2});
+                return;
+            }
+
             var form = new FormData(document.getElementById("newsForm"));
             /**
              * ajax提交表单(带文件)
@@ -457,6 +424,26 @@ function addNews(){
         }
     });
     $("#addNewsDiv").append(newsHtml);
+}
+
+function uploadImg() {
+    var pictureFile = $("#newsDiv input[name=pictureFile]");
+    var picVal = pictureFile.val();
+    var picFormat = picVal.substring(picVal.lastIndexOf(".") + 1).toLowerCase();
+    if (picFormat !== "png" && picFormat !== "jpg" && picFormat !== "gif" && picFormat !== "jpeg") {
+        layer.msg("请上传正确格式的图片!", {icon: 2});
+        pictureFile.val("");
+        return;
+    }
+    // 图片的实时显示
+    $("#newsImg").css("display", "none");
+    var reads = new FileReader();
+    var f = document.getElementById('newsFile').files[0];
+    reads.readAsDataURL(f);
+    reads.onload = function (e) {
+        document.getElementById('newsImg').src = this.result;
+        $("#newsImg").css("display", "block");
+    };
 }
 
 /*项目发布_管理员*/
@@ -532,24 +519,24 @@ function projectPublish() {
             '                <td><input type="text" id="fromTime" readonly="true" name="biddingBegin"><b> 至 </b><input type="text" id="toTime" readonly="true"  name="biddingEnd"></td>' +
             '            </tr>' +
             '            <tr>' +
+            '                <td><b>项目图标:</b></td>' +
+            '                <td><input type="file" name="xmtb" onchange="fileChange(this);" id="pro_xmtb"/></td>' +
+            '                <td><b>户型图:</b></td>' +
+            '                <td><input type="file" name="hxt" onchange="fileChange(this);" id="pro_hxt"/></td>' +
+            '                <td><b>效果图:</b></td>' +
+            '                <td><input type="file" name="xgt" onchange="fileChange(this);" id="pro_xgt"/></td>' +
+            '            </tr>' +
+            '            <tr>' +
             '                <td><b>沙盘解说:</b></td>' +
             '                <td><input type="file" name="spjs" onchange="fileChange(this);" id="pro_spjs"/></td>' +
             '                <td><b>销售问答:</b></td>' +
             '                <td><input type="file" name="xswd" onchange="fileChange(this);" id="pro_xswd"/></td>' +
-            '                <td><b>户型图:</b></td>' +
-            '                <td><input type="file" name="hxt" onchange="fileChange(this);" id="pro_hxt"/></td>' +
-            '            </tr>' +
-            '            <tr>' +
-            '                <td><b>效果图:</b></td>' +
-            '                <td><input type="file" name="xgt" onchange="fileChange(this);" id="pro_xgt"/></td>' +
             '                <td><b>其他:</b></td>' +
             '                <td><input type="file" name="other" onchange="fileChange(this);" id="pro_other"/></td>' +
-            '                <td><b>项目状态:</b></td>' +
-            '                <td><input type="radio" name="state" checked="checked" value="在售"/>在售<input type="radio" name="state" value="暂停"/>暂停<input type="radio" name="state" value="售罄"/>售罄</td>' +
             '            </tr>' +
             '            <tr>' +
-            // '                <td><b>报备时间:</b></td>' +
-            // '                <td><input type="text" name="backTime" id="startReportTime"/></td>' +
+            '                <td><b>项目状态:</b></td>' +
+            '                <td><input type="radio" name="state" checked="checked" value="在售"/>在售<input type="radio" name="state" value="暂停"/>暂停<input type="radio" name="state" value="售罄"/>售罄</td>' +
             '                <td><b>项目描述:</b></td>' +
             '                <td><textarea name="description" style="width: 20em;height: 4em;"></textarea></td>' +
             '            </tr>' +
@@ -708,7 +695,9 @@ function fileChange(target, id) {
     // var filetypes =[".jpg",".png",".rar",".txt",".zip",".doc",".ppt",".xls",".pdf",".docx",".xlsx"];
     var filetypes;
     var msg;
-    if (inputName == "spjs" || inputName == "xswd") {
+    if (inputName){
+
+    }else if (inputName == "spjs" || inputName == "xswd") {
         filetypes = [".doc", ".docx", ".pdf"];
         msg = "Word或Pdf文件";
     } else if (inputName == "cusExcel") {
@@ -798,44 +787,7 @@ function queryProByName() {
     var projectName = $("#projectName").val();
     $.post("/backApp/project/queryPro", {projectName: projectName}, function (res) {
         if (res.status == 200) {
-            var columns = [];
-            for (var attr in res.data[0]) {
-                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr.indexOf("desc") > -1 || attr == "picUrl" || attr.indexOf("bidding") > -1 || attr == "reportLimit" || attr == "keyword" || attr == "address" || attr == "remark") {
-                    continue;
-                }
-                var column = {
-                    field: attr,
-                    title: project_fields[attr],
-                    valign: "middle",
-                    align: "center",
-                    // sortable: true,
-                    visible: true,
-                    formatter: paramsMatter
-                };
-                columns.push(column);
-            }
-            if (userRole == "超级管理员") {
-                columns.push({
-                    field: 'operate',
-                    title: '操作',
-                    valign: "middle",
-                    align: 'center',
-                    width: '250',
-                    events: projectOperateEvents,
-                    formatter: projectOperateFormatter
-                });
-            } else if (userRole == "分销商") {
-                columns.push({
-                    field: 'operate',
-                    title: '操作',
-                    valign: "middle",
-                    align: 'center',
-                    width: '90',
-                    events: projectOperateEvents,
-                    formatter: projectOperateFormatter_Dis
-                });
-            }
-            initTable(columns, res.data);
+            doProjectTable(res);
         }
     })
 }
@@ -844,46 +796,107 @@ function queryProByName() {
 function projectList() {
     $.get('/backApp/project/getAllProject', function (res) {
         if (res.status == 200) {
-            var columns = [];
-            for (var attr in res.data[0]) {
-                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr.indexOf("desc") > -1 || attr == "picUrl" || attr.indexOf("bidding") > -1 || attr == "reportLimit" || attr == "keyword" || attr == "address" || attr == "remark") {
-                    continue;
-                }
-                var column = {
-                    field: attr,
-                    title: project_fields[attr],
-                    valign: "middle",
-                    align: "center",
-                    // sortable: true,
-                    visible: true,
-                    formatter: paramsMatter
-                };
-                columns.push(column);
-            }
-            if (userRole == "超级管理员") {
-                columns.push({
-                    field: 'operate',
-                    title: '操作',
-                    valign: "middle",
-                    align: 'center',
-                    width: '210',
-                    events: projectOperateEvents,
-                    formatter: projectOperateFormatter
-                });
-            } else if (userRole == "分销商") {
-                columns.push({
-                    field: 'operate',
-                    title: '操作',
-                    valign: "middle",
-                    align: 'center',
-                    width: '90',
-                    events: projectOperateEvents,
-                    formatter: projectOperateFormatter_Dis
-                });
-            }
-            initTable(columns, res.data);
+            // var columns = [];
+            // for (var attr in res.data[0]) {
+            //     if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr.indexOf("desc") > -1 || attr == "picUrl" || attr.indexOf("bidding") > -1 || attr == "reportLimit" || attr == "keyword" || attr == "address" || attr == "remark") {
+            //         continue;
+            //     }
+            //     var column = {
+            //         field: attr,
+            //         title: project_fields[attr],
+            //         valign: "middle",
+            //         align: "center",
+            //         // sortable: true,
+            //         visible: true,
+            //         formatter: paramsMatter
+            //     };
+            //     columns.push(column);
+            // }
+            // if (userRole == "超级管理员") {
+            //     columns.push({
+            //         field: 'operate',
+            //         title: '操作',
+            //         valign: "middle",
+            //         align: 'center',
+            //         width: '210',
+            //         events: projectOperateEvents,
+            //         formatter: projectOperateFormatter
+            //     });
+            // } else if (userRole == "分销商") {
+            //     columns.push({
+            //         field: 'operate',
+            //         title: '操作',
+            //         valign: "middle",
+            //         align: 'center',
+            //         width: '90',
+            //         events: projectOperateEvents,
+            //         formatter: projectOperateFormatter_Dis
+            //     });
+            // }
+            // initTable(columns, res.data);
+            doProjectTable(res);
         }
     });
+}
+
+function doProjectTable(res){
+    var project_fields = {
+        gid: "ID",
+        name: "项目名称",
+        disnum: "分销商数",
+        reportNum: "总报备数",
+        description: "描述",
+        develop: "开发商",
+        keyword: "关键字",
+        type: "房型",
+        price: "项目单价",
+        address: "项目地址",
+        commission: "佣金",
+        header: "负责人",
+        tel: "电话",
+        backTime: "报备时间",
+        state: "项目状态",
+        descPic: "项目图片",
+        remark: "备注"
+    };
+    var columns = [];
+    for (var attr in res.data[0]) {
+        if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr.indexOf("desc") > -1 || attr == "picUrl" || attr.indexOf("bidding") > -1 || attr == "reportLimit" || attr == "keyword" || attr == "address" || attr == "remark") {
+            continue;
+        }
+        var column = {
+            field: attr,
+            title: project_fields[attr],
+            valign: "middle",
+            align: "center",
+            // sortable: true,
+            visible: true,
+            formatter: paramsMatter
+        };
+        columns.push(column);
+    }
+    if (userRole == "超级管理员") {
+        columns.push({
+            field: 'operate',
+            title: '操作',
+            valign: "middle",
+            align: 'center',
+            width: '210',
+            events: projectOperateEvents,
+            formatter: projectOperateFormatter
+        });
+    } else if (userRole == "分销商") {
+        columns.push({
+            field: 'operate',
+            title: '操作',
+            valign: "middle",
+            align: 'center',
+            width: '90',
+            events: projectOperateEvents,
+            formatter: projectOperateFormatter_Dis
+        });
+    }
+    initTable(columns, res.data);
 }
 
 function paramsMatter(value, row, index) {
@@ -891,6 +904,20 @@ function paramsMatter(value, row, index) {
         value = "-";
     }
     return "<span title=" + value + ">" + value + "</span>";
+}
+
+function  imgParamsMatter(value, row, index) {
+    if (value == null || value == "null") {
+        value = "-";
+    }
+    return "<img src='/backApp"+value+"'>";
+}
+
+function  linkParamsMatter(value, row, index) {
+    if (value == null || value == "null") {
+        value = "-";
+    }
+    return "<a href='"+value+"' target='_blank'>"+value+"</a>";
 }
 
 /*人员管理_管理员*/
@@ -973,6 +1000,7 @@ function userManage() {
         })
     })
 }
+
 function findAllProject() {
     $.get('/backApp/project/getAllProject', function (res) {
         for(var i=0;i<res.data.length;i++){
@@ -1198,135 +1226,6 @@ function isJSON(str) {
     return false;
 }
 
-/*条件查询用户find*/
-function findUserByOptions(role) {
-    var data = {
-        usertel: $("#userTel").val(),
-        username: $("#userName").val(),
-        starttime: $("#fromReport").val(),
-        endtime: $("#toReport").val(),
-        role: role
-    };
-    if (data.endtime != "" && data.starttime != "" && data.endtime == data.starttime) {
-        layer.msg("起始时间和终止时间不能相同", {icon: 2});
-        return false;
-    }
-    $.post("/backApp/user/findUser", data, function (res) {
-        if (res.status == 200) {
-            var columns = [];
-            for (var attr in res.data[0]) {
-                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr == "disCompany" || attr == "disLinkman" || attr == "disLinktel" || attr == "size" || attr == "license" || attr == "remark") {
-                    continue;
-                }
-                if (role == "管理员" && attr.indexOf("count") > -1) {
-                    continue;
-                }
-                if (role == "管理员" && attr.indexOf("ch") > -1) {
-                    continue;
-                }
-                var titles;
-                if (role == "客户") {
-                    titles = user_fields.customer;
-                } else if (role == "管理员") {
-                    titles = user_fields.user;
-                } else {
-                    titles = user_fields.distributor;
-                }
-                if (role == "分销商") {
-                    for (var i = 0; i < res.data.length; i++) {
-                        if (res.data[i].count == null) {
-                            res.data[i].count = 0;
-                        }
-                    }
-                }
-                var column = {
-                    field: attr,
-                    title: titles[attr],
-                    valign: "middle",
-                    align: "center",
-                    sortable: true,
-                    visible: true,
-                    formatter: paramsMatter
-                };
-                columns.push(column);
-            }
-            if (role == "管理员") {
-                columns.push({
-                    field: 'operate',
-                    title: '操作',
-                    valign: "middle",
-                    align: 'center',
-                    events: userOperateEvents,
-                    formatter: userOperateFormatter
-                });
-            }
-            if (role == "分销商" || role == "业务员") {
-                columns.push({
-                    field: 'operate',
-                    title: '操作',
-                    valign: "middle",
-                    align: 'center',
-                    width: "320",
-                    events: userOperateEvents,
-                    formatter: userOperateFormatter
-                });
-            }
-            // else {
-            //     columns.push({
-            //         field: 'operate',
-            //         title: '操作',
-            //         valign: "middle",
-            //         align: 'center',
-            //         events: customerOperateEvents,
-            //         formatter: customerOperateFormatter
-            //     });
-            // }
-            initTable(columns, res.data);
-        } else {
-            layer.msg(res.msg, {icon: 1});
-        }
-    });
-}
-
-
-function findCustomer() {
-    var data = {
-        usertel: $("#userTel").val(),
-        proname: $("#proName").val(),
-        username: $("#userName").val(),
-        starttime: $("#fromReport").val(),
-        endtime: $("#toReport").val()
-    };
-    if (data.endtime != "" && data.starttime != "" && data.endtime == data.starttime) {
-        layer.msg("起始时间和终止时间不能相同", {icon: 2});
-        return false;
-    }
-    $.post("/backApp/user/findCustomer", data, function (res) {
-        if (res.status == 200) {
-            var columns = [];
-            for (var attr in res.data[0]) {
-                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr == "remark") {
-                    continue;
-                }
-                var titles = user_fields.customer;
-                var column = {
-                    field: attr,
-                    title: titles[attr],
-                    valign: "middle",
-                    align: "center",
-                    sortable: true,
-                    visible: true,
-                    formatter: paramsMatter
-                };
-                columns.push(column);
-            }
-            initTable(columns, res.data);
-        } else {
-            layer.msg(res.msg, {icon: 1});
-        }
-    })
-}
-
 //添加管理员用户
 function addUser(role) {
     $("#addUser").on("click", function () {
@@ -1409,85 +1308,185 @@ function addUser(role) {
     })
 }
 
+/*条件查询用户find*/
+function findUserByOptions(role) {
+    var data = {
+        usertel: $("#userTel").val(),
+        username: $("#userName").val(),
+        starttime: $("#fromReport").val(),
+        endtime: $("#toReport").val(),
+        role: role
+    };
+    if (data.endtime != "" && data.starttime != "" && data.endtime == data.starttime) {
+        layer.msg("起始时间和终止时间不能相同", {icon: 2});
+        return false;
+    }
+    $.post("/backApp/user/findUser", data, function (res) {
+        if (res.status == 200) {
+            doUserTable(role,res);
+        } else {
+            layer.msg(res.msg, {icon: 1});
+        }
+    });
+}
+
+function findCustomer() {
+    var data = {
+        usertel: $("#userTel").val(),
+        proname: $("#proName").val(),
+        username: $("#userName").val(),
+        starttime: $("#fromReport").val(),
+        endtime: $("#toReport").val()
+    };
+    if (data.endtime != "" && data.starttime != "" && data.endtime == data.starttime) {
+        layer.msg("起始时间和终止时间不能相同", {icon: 2});
+        return false;
+    }
+    $.post("/backApp/user/findCustomer", data, function (res) {
+        if (res.status == 200) {
+            // var columns = [];
+            // for (var attr in res.data[0]) {
+            //     if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr == "remark") {
+            //         continue;
+            //     }
+            //     var titles = user_fields.customer;
+            //     var column = {
+            //         field: attr,
+            //         title: titles[attr],
+            //         valign: "middle",
+            //         align: "center",
+            //         sortable: true,
+            //         visible: true,
+            //         formatter: paramsMatter
+            //     };
+            //     columns.push(column);
+            // }
+            // initTable(columns, res.data);
+            doUserTable("客户",res);
+        } else {
+            layer.msg(res.msg, {icon: 1});
+        }
+    })
+}
 
 function getUserByRole(role) {
     $.get('/backApp/user/getUserByRole', {role: role}, function (res) {
         if (res.status == 200) {
-            var columns = [];
-            for (var attr in res.data[0]) {
-                if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr == "disCompany" || attr == "disLinkman" || attr == "disLinktel" || attr == "size" || attr == "license" || attr == "remark") {
-                    continue;
-                }
-                if (role == "管理员" && attr.indexOf("count") > -1) {
-                    continue;
-                }
-                if (role == "管理员" && attr.indexOf("ch") > -1) {
-                    continue;
-                }
-                var titles;
-                if (role == "客户") {
-                    titles = user_fields.customer;
-                } else if (role == "管理员") {
-                    titles = user_fields.user;
-                } else {
-                    titles = user_fields.distributor;
-                }
-                if (role == "分销商") {
-                    for (var i = 0; i < res.data.length; i++) {
-                        if (res.data[i].count == null) {
-                            res.data[i].count = 0;
-                        }
-                    }
-                }
-                var column = {
-                    field: attr,
-                    title: titles[attr],
-                    valign: "middle",
-                    align: "center",
-                    sortable: true,
-                    visible: true,
-                    formatter: paramsMatter
-                };
-                // if (attr == "gid"){
-                //     column.visible = false;
-                //     column.sortable = true;
-                // }
-                columns.push(column);
-            }
-            if (role == "管理员") {
-                columns.push({
-                    field: 'operate',
-                    title: '操作',
-                    valign: "middle",
-                    align: 'center',
-                    events: userOperateEvents,
-                    formatter: userOperateFormatter
-                });
-            }
-            if (role == "分销商" || role == "业务员") {
-                columns.push({
-                    field: 'operate',
-                    title: '操作',
-                    valign: "middle",
-                    align: 'center',
-                    width: "320",
-                    events: userOperateEvents,
-                    formatter: userOperateFormatter
-                });
-            }
-            // else {
-            //     columns.push({
-            //         field: 'operate',
-            //         title: '操作',
-            //         valign: "middle",
-            //         align: 'center',
-            //         events: customerOperateEvents,
-            //         formatter: customerOperateFormatter
-            //     });
-            // }
-            initTable(columns, res.data);
+            doUserTable(role,res);
         }
     })
+}
+
+function doUserTable(role,res){
+    var user_fields = {
+        user: {
+            gid: "ID",
+            name: "姓名",
+            password: "密码",
+            tel: "电话",
+            state: "状态",
+            createTime: "创建时间",
+            remark: "备注"
+        },
+        distributor: {
+            gid: "ID",
+            name: "姓名",
+            password: "密码",
+            tel: "电话",
+            state: "状态",
+            count: "报备数量",
+            createTime: "创建时间",
+            remark: "备注",
+            channelComm: '渠道专员',
+            checkState: '审核'
+        },
+        customer: {
+            gid: "ID",
+            name: "姓名",
+            tel: "电话",
+            projectName: "项目",
+            distritionName: "分销商",
+            saleName: "业务员",
+            state: "状态",
+            backTime: "报备时间",
+            expireTime: "过期时间",
+            visitTime: "到访时间",
+            dealTime: "成交时间",
+            remark: "备注",
+            cusArea: "客户区域",
+            acreage: "意向面积",
+            money: "投资额"
+        }
+    };
+    var columns = [];
+    for (var attr in res.data[0]) {
+        if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr == "disCompany" || attr == "disLinkman" || attr == "disLinktel" || attr == "size" || attr == "license" || attr == "remark") {
+            continue;
+        }
+        if (role == "管理员" && attr.indexOf("count") > -1) {
+            continue;
+        }
+        if (role == "管理员" && attr.indexOf("ch") > -1) {
+            continue;
+        }
+        var titles;
+        if (role == "客户") {
+            titles = user_fields.customer;
+        } else if (role == "管理员") {
+            titles = user_fields.user;
+        } else {
+            titles = user_fields.distributor;
+        }
+        if (role == "分销商") {
+            for (var i = 0; i < res.data.length; i++) {
+                if (res.data[i].count == null) {
+                    res.data[i].count = 0;
+                }
+            }
+        }
+        var column = {
+            field: attr,
+            title: titles[attr],
+            valign: "middle",
+            align: "center",
+            sortable: true,
+            visible: true,
+            formatter: paramsMatter
+        };
+        columns.push(column);
+    }
+    if (role == "管理员") {
+        columns.push({
+            field: 'operate',
+            title: '操作',
+            valign: "middle",
+            align: 'center',
+            events: userOperateEvents,
+            formatter: userOperateFormatter
+        });
+    }
+    if (role == "分销商" || role == "业务员") {
+        columns.push({
+            field: 'operate',
+            title: '操作',
+            valign: "middle",
+            align: 'center',
+            width: "320",
+            events: userOperateEvents,
+            formatter: userOperateFormatter
+        });
+    }
+    // else {
+    //     columns.push({
+    //         field: 'operate',
+    //         title: '操作',
+    //         valign: "middle",
+    //         align: 'center',
+    //         events: customerOperateEvents,
+    //         formatter: customerOperateFormatter
+    //     });
+    // }
+    initTable(columns, res.data);
 }
 
 /*建表*/
@@ -1765,12 +1764,101 @@ window.newsOperateEvents = {
         // $("#editModal").modal('show');
     },
     'click .newsOfedit': function (e, value, row, index) {
-        console.log(row);
-        console.log(index);
+        var newsHtml = '<div id="newsDiv" style="background: #e9edf3;padding-top: 1em;padding-bottom: 1em;text-align: center;">' +
+            '            <form id="newsForm" method="post" enctype="multipart/form-data">' +
+            '                <input type="hidden" value="'+row.gid+'" name="gid"/>' +
+            '                <table style="border-collapse: separate;border-spacing: 5px;margin: auto;">' +
+            '                    <tr>' +
+            '                        <td style="text-align: right">标题：</td>' +
+            '                        <td style="text-align: left" colspan="2"><input type="text" name="title" style="width: 25em;" value="'+row.title+'"/></td>' +
+            '                    </tr>' +
+            '                    <tr>' +
+            '                        <td style="text-align: right">图片：</td>' +
+            '                        <td style="text-align: left;"><input id="newsFile" type="file" name="pictureFile" onchange="uploadImg(this)" accept="image/gif,image/jpeg,image/jpg,image/png" style="width: 16em;"/></td>' +
+            '                        <td><img id="newsImg" src="/backApp'+row.picture+'" style="width: auto;height: auto;max-width: 10em;max-height: 5em;"/></td>' +
+            '                    </tr>' +
+            '                    <tr>' +
+            '                        <td style="text-align: right">内容：</td>' +
+            '                        <td style="text-align: left" colspan="2"><textarea name="content" style="width: 25em;height: 10em;" value="'+row.content+'">'+row.content+'</textarea></td>' +
+            '                    </tr>' +
+            '                    <tr>' +
+            '                        <td style="text-align: right">链接：</td>' +
+            '                        <td style="text-align: left" colspan="2"><input type="text" name="linkUrl" style="width: 25em;" value="'+row.linkUrl+'"/></td>' +
+            '                    </tr>' +
+            '                </table>' +
+            '            </form>' +
+            // '            <button type="button" class="btn btn-primary btn-sm" style="margin-right:15px;">添加</button>' +
+            '        </div>';
+        layer.open({
+            type: 1, offset: 'auto', area: ['40%','55%'], title: '修改爱家头条',
+            content: '<div id="editNewsDiv"></div>',
+            btn: ['确认','取消'],
+            yes: function (index, layero) {
+                if ($("#newsForm input[name=title]").val().replace(/^\s*|\s*$/g,"") == ""){
+                    layer.msg("标题不能为空!",{icon:2});
+                    return;
+                }
+                // if ($("#newsForm input[name=pictureFile]").val() == ""){
+                //     layer.msg("图片不能为空!",{icon:2});
+                //     return;
+                // }
+                if ($("#newsForm textarea[name=content]").val().replace(/^\s*|\s*$/g,"") == ""){
+                    layer.msg("内容不能为空!",{icon:2});
+                    return;
+                }
+                if ($("#newsForm input[name=linkUrl]").val().replace(/^\s*|\s*$/g,"") == ""){
+                    layer.msg("链接不能为空!",{icon:2});
+                    return;
+                }
+
+                var form = new FormData(document.getElementById("newsForm"));
+                /**
+                 * ajax提交表单(带文件)
+                 */
+                $.ajax({
+                    //几个参数需要注意一下
+                    type: "POST",//方法类型
+                    dataType: "json",//预期服务器返回的数据类型
+                    cache: false,    //上传文件不需缓存
+                    contentType: false,//需设置为false，因为是FormData对象，且已经声明了属性enctype="multipart/form-data"
+                    processData: false,//需设置为false，因为data值是FormData对象，不需要对数据做处理
+                    async: true,
+                    url: "/backApp/news/editNews",//url
+                    data: form,
+                    success: function (res) {
+                        // console.log(res);//打印服务端返回的数据(调试用)
+                        if (res.status == 200) {
+                            layer.msg(res.msg, {icon: 1});
+                            newsList();
+                        } else {
+                            layer.msg(res.msg, {icon: 2});
+                        }
+                        layer.close(index);
+                    },
+                    error: function () {
+                        layer.msg("上传接口异常!", {icon: 2});
+                    }
+                });
+            }
+        });
+        $("#editNewsDiv").append(newsHtml);
     },
     'click .newsOfdelete': function (e, value, row, index) {
-        console.log(row);
-        console.log(index);
+        layer.confirm('确认要删除吗？', {
+            btn: ['确定', '取消']//按钮
+        }, function (index) {
+            layer.close(index);
+            //此处请求后台程序，下方是成功后的前台处理……
+            $.get('/backApp/news/deleteNewsById', {newsId: row.gid}, function (res) {
+                if (res.status == 200) {
+                    layer.msg(res.msg, {icon: 1});
+                    newsList();
+                } else {
+                    layer.msg(res.msg, {icon: 2});
+                }
+                layer.close(index);
+            });
+        });
     }
 };
 window.projectOperateEvents = {

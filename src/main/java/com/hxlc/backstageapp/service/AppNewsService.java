@@ -13,4 +13,10 @@ public interface AppNewsService {
     List<AppNews> queryNewsByTitle(String title);
 
     Integer addNews(AppNews appNews,MultipartFile pictureFile);
+
+    Integer deleteNewsById(Integer newsId);
+
+    Integer editNews(AppNews appNews, MultipartFile pictureFile);
+
+    List<AppNews> getRecentNews();
 }

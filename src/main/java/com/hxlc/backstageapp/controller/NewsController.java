@@ -25,6 +25,16 @@ public class NewsController {
         return SysObject.ok(list);
     }
 
+    /**
+     * 获得最新的头条动态
+     * @return
+     */
+    @RequestMapping("/getRecentNews")
+    public SysObject getRecentNews(){
+        List<AppNews> list = appNewsService.getRecentNews();
+        return SysObject.ok(list);
+    }
+
     @RequestMapping("/queryNewsByTitle")
     public SysObject queryNewsByTitle(String title){
         List<AppNews> list = appNewsService.queryNewsByTitle(title);
@@ -47,5 +57,42 @@ public class NewsController {
             e.printStackTrace();
         }
         return SysObject.build(201,"服务器异常!");
+    }
+
+    /**
+     * 修改爱家头条信息
+     * @param appNews
+     * @param pictureFile
+     * @return
+     */
+    @RequestMapping("/editNews")
+    public SysObject editNews(AppNews appNews,@RequestParam(value = "pictureFile",required = false) MultipartFile pictureFile){
+        try {
+            Integer row = appNewsService.editNews(appNews,pictureFile);
+            if (row > 0){
+                return SysObject.build(200,"修改成功!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return SysObject.build(201,"服务器异常!");
+    }
+
+    /**
+     * 根据ID删除news
+     * @param newsId
+     * @return
+     */
+    @RequestMapping("/deleteNewsById")
+    public SysObject deleteNewsById(Integer newsId){
+        try {
+            Integer row = appNewsService.deleteNewsById(newsId);
+            if (row > 0){
+                return SysObject.build(200,"删除成功!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return SysObject.build(201,"删除失败!");
     }
 }
