@@ -26,4 +26,6 @@ public interface DistributorMapper extends BaseMapper<DistributorInfo> {
     @Select("SELECT ui.tel FROM distributor_info di,user_info ui WHERE di.channel_comm = ui.gid AND di.dis_id=#{gid}")
     String getChTelById(Integer gid);
 
+    @Select("SELECT license FROM distributor_info where dis_id =#{disId}")
+    String findUrlById(Integer disId);
 }

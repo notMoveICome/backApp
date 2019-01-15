@@ -88,4 +88,6 @@
 		  WHERE
 			PASSWORD = #{pwd} AND NAME =#{tel} OR tel = #{tel};
 	</select>
+
+
 </mapper>

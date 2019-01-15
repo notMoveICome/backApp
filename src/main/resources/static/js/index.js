@@ -268,7 +268,7 @@ function newsManage() {
         var newsHtml = '<div style="background-color: #fff;height: 100%;">' +
             '       <div class="main-right-search"> ' +
             '           <input type="text" id="newsTitle" style="display: inline" class="form-control" placeholder="请输入标题"/> ' +
-            // '               <button type="button" class="btn-primary btn" style="display: inline;margin-left: 20px" id="queryNews">查询</button>'+
+            '               <button type="button" class="btn-primary btn" style="display: inline;margin-left: 20px" id="queryNews">查询</button>'+
             '               <button type="button" class="btn-primary btn" style="float: right;display: inline;margin-left: 20px" id="addNews">添加</button>'+
             '       </div> ' +
             '       <div class="table-responsive"> ' +
@@ -1599,7 +1599,23 @@ function projectOperateFormatter_Dis(value, row, index) {
 
 window.userOperateEvents = {
     'click .RoleOfwatch': function (e, value, row, index) {
-
+        $.get("/backApp/findPicUrl?disId="+row.gid,function (res) {
+            var index = layer.open({
+                type: 1,
+                title: "审核图片", //不显示标题栏
+                closeBtn: true,
+                area: ['80%','60%'],
+                shade: 0.8,
+                id: 'LAY_layuipro', //设定一个id，防止重复弹出
+                btn: ['取消'],
+                // btnAlign: 'r',
+                moveType: 1, //拖拽模式，0或者1
+                content: '<div><img id="pic"></img></div>',
+                success: function (layero) {
+                    $("#pic").attr("src","/backApp"+res.msg);
+                }
+            });
+        })
     },
     'click .RoleOfaudit': function (e, value, row, index) {
         $.get('/backApp/user/validateDisState', {disId: row.gid}, function (res) {

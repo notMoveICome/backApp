@@ -32,7 +32,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     /**
      * 不需要登录拦截的url:登录注册和验证码
      */
-    final String[] notLoginInterceptPaths = {"/userLogin","/salesLogin","/project/**","/user/**","/news/**"};//"/", "/login/**", "/person/**", "/register/**", "/validcode", "/captchaCheck", "/file/**", "/contract/htmltopdf", "/questions/**", "/payLog/**", "/error/**" };
+    final String[] notLoginInterceptPaths = {"/privacy_policy","/userLogin","/salesLogin","/project/**","/user/**","/news/**"};//"/", "/login/**", "/person/**", "/register/**", "/validcode", "/captchaCheck", "/file/**", "/contract/htmltopdf", "/questions/**", "/payLog/**", "/error/**" };
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
