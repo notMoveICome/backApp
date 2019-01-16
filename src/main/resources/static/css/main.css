@@ -228,6 +228,13 @@ input[type=checkbox]:focus, input[type=checkbox]:active {
     text-align: center;
     margin-right: 1.8em;
     background-color: #fff;
+    display: none;
+}
+.main-right .addRecommendDiv{
+    float: left;
+    text-align: center;
+    margin-right: 1.8em;
+    background-color: #fff;
 }
 .main-right .recommendDiv span{
     display: block;
@@ -235,7 +242,17 @@ input[type=checkbox]:focus, input[type=checkbox]:active {
     margin-bottom: 0.5em;
     height: 1.6em;
 }
+.main-right .addRecommendDiv span{
+    display: block;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    height: 1.6em;
+}
 .main-right .recommendDiv img{
+    width: 20em;
+    height: 12em;
+}
+.main-right .addRecommendDiv img{
     width: 20em;
     height: 12em;
 }

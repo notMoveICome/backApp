@@ -31,4 +31,8 @@ public interface ProjectMapper extends BaseMapper<Project> {
     List<Project> findProjectByProjectName(@Param("projectName") String projectName);
 
     Project selectProById(@Param("proId") Integer proId);
+
+    List<Map> getRecommendImg();
+
+    List<Map> queryUnRecommPro();
 }

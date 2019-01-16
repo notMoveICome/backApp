@@ -1,14 +1,15 @@
 var userRole;
+var recomm_length;
 $(function () {
     // layui.use(['layer', 'form'], function () {
     //     var layer = layui.layer
     //         , form = layui.form;
     // });
-    layui.use(['form', 'layedit', 'laydate'], function(){
+    layui.use(['form', 'layedit', 'laydate'], function () {
         var form = layui.form
-            ,layer = layui.layer
-            ,layedit = layui.layedit
-            ,laydate = layui.laydate;
+            , layer = layui.layer
+            , layedit = layui.layedit
+            , laydate = layui.laydate;
     });
     initHtmlCss();
     initLeftUtilOfAdmin();
@@ -159,73 +160,81 @@ function indexManage() {
         var indexHtml = '<div class="recommendDiv">' +
             '                <img src="">' +
             '                <span> ' +
+            '                      <b style="margin-right: 50%;"></b> ' +
             '                     <button class="btn btn-primary btn-sm">修改</button> ' +
             '                </span>' +
             '            </div>' +
             '            <div class="recommendDiv">' +
             '                <img src="">' +
             '                <span> ' +
+            '                      <b style="margin-right: 50%;"></b> ' +
             '                      <button class="btn btn-primary btn-sm">修改</button> ' +
             '                </span>' +
             '            </div>' +
             '            <div class="recommendDiv">' +
             '                <img src="">' +
             '                <span> ' +
+            '                      <b style="margin-right: 50%;"></b> ' +
             '                      <button class="btn btn-primary btn-sm">修改</button> ' +
             '                </span>' +
             '            </div>' +
-            '            <div class="recommendDiv" title="添加">' +
+            '            <div class="recommendDiv">' +
+            '                <img src="">' +
+            '                <span> ' +
+            '                      <b style="margin-right: 50%;"></b> ' +
+            '                      <button class="btn btn-primary btn-sm">修改</button> ' +
+            '                </span>' +
+            '            </div>' +
+            '            <div class="addRecommendDiv" title="添加" style="display: block;">' +
             '                <img src="img/home/addPic.png" style="height: 14.6em;cursor: pointer;" id="addRecommendImg">' +
             '            </div>' +
             '            <div id="recommendProManage">' +
-            '                <h3 style="margin-left: 1em;margin-bottom: 0.5em;">项目推荐管理</h3>' +
+            '                <h3 style="margin-left: 1em;margin-bottom: 0.5em;display: inline">项目推荐管理</h3>' +
+            '                <button class="btn btn-primary btn-sm" id="addRecomProAD" style="margin-left: 83%;margin-bottom: 0.5em;">添加</button>' +
             '                <div>' +
             '                    <table id="rightTable" class="table table-hover">' +
             '                    </table>' +
             '                </div>' +
             '            </div>';
         $(".main-right").html(indexHtml);
-        var fileds = {
-            develop: "地产商",
-            project_name: "项目名称",
-            price: "宣传费用(万)",
-            publish_time: "宣传时间"
-        };
-        $.get('/backApp/project/getRecommendPro', function (res) {
-            if (res.status == 200) {
-                var data = res.data;
-                var imgs = $(".main-right").find("img");
-                for (var i = 0; i < 3; i++) {
-                    $(imgs[i]).attr("src", "/backApp" + data[i].url);
-                }
-                var columns = [];
-                for (var attr in data[0]) {
-                    if (attr == "desc_pic" || attr.indexOf("index") > -1 || attr == "url" || attr.indexOf("id") > -1) {
-                        continue;
+        doRecommAdImg();
+        doRecommendTable();
+        $(".addRecommendDiv").on('click',function () {
+            $.get("/backApp/project/queryUnRecommPro", function (res) {
+                if (res.status == 200) {
+                    var div = $('<div style="text-align: center;margin-top: 1em;"></div>');
+                    var label = $('<label>请选择项目名称：</label>');
+                    var select = $('<select id="proSelect" name="proName" lay-verify="" style="width: 10em;"></select>');
+                    if (res.data.length > 0) {
+                        for (var i = 0; i < res.data.length; i++) {
+                            var option = $('<option value=' + res.data[i].gid + '>' + res.data[i].project_name + '</option>');
+                            select.append(option);
+                        }
                     }
-                    var column = {
-                        field: attr,
-                        title: fileds[attr],
-                        valign: "middle",
-                        align: "center",
-                        visible: true,
-                        formatter: paramsMatter
-                    };
-                    columns.push(column);
+                    div.append(label).append(select);
+                    layer.open({
+                        type: 1, offset: '250px', area: '650px', title: '添加项目',
+                        content: '<div id="addRecommendADDiv"></div>',
+                        btn: ['确认'],
+                        yes: function (index, layero) {
+                            var val = $("#proSelect option:selected").val();
+                            $.post("/backApp/project/addProRecomAD", {gid: val}, function (res) {
+                                if (res.status == 200) {
+                                    layer.msg(res.msg, {icon: 1});
+                                    // $("#indexManage").click();
+                                    doRecommAdImg();
+                                } else {
+                                    layer.msg(res.msg, {icon: 2});
+                                }
+                                layer.close(index)
+                            })
+                        }
+                    });
+                    $("#addRecommendADDiv").append(div);
                 }
-                columns.reverse();
-                columns.push({
-                    field: 'operate',
-                    title: '操作',
-                    valign: "middle",
-                    align: 'center',
-                    events: recommOperateEvents,
-                    formatter: recommOperateFormatter
-                });
-                initTable(columns, data);
-            }
+            });
         });
-        $("#addRecommendImg").on('click', function () {
+        $("#addRecomProAD").on('click', function () {
             $.get("/backApp/project/queryRecommendPro", function (res) {
                 if (res.status == 200) {
                     var div = $('<div style="text-align: center;margin-top: 1em;"></div>');
@@ -259,7 +268,107 @@ function indexManage() {
                 }
             });
         });
-    })
+        $(".recommendDiv button").on('click', function () {
+            var val = $(this).prev().val();
+            var editHtml = '<div style="text-align: center;margin-top: 1em;background: #e9edf3;padding: 1em;">' +
+                '            <b>项目替换：</b>' +
+                '            <select id="appIndex">' +
+                '            </select>' +
+                '        </div>';
+            layer.open({
+                type: 1, offset: '250px', area: '650px', title: '修改',
+                content: '<div id="recomdEditDiv"></div>',
+                btn: ['确认', '取消'],
+                yes: function (index, layero) {
+                    var opVal = $("#appIndex option:selected").val();
+                    $.get('/backApp/project/editProAD',{currentIndex: val, repalceIndex: opVal},function (res) {
+                        if (res.status == 200){
+                            layer.msg(res.msg,{icon: 1});
+                            doRecommAdImg();
+                        }else {
+                            layer.msg(res.msg,{icon: 2});
+                        }
+                        layer.close(index)
+                    });
+                }
+            });
+            $("#recomdEditDiv").html(editHtml);
+            var tableData = $("#rightTable").bootstrapTable('getData');
+            for (var i = 0;i < tableData.length;i++){
+                var rowData = tableData[i];
+                if (rowData.index == val){
+                    continue;
+                }
+                var option = $('<option value="'+rowData.index+'">'+rowData.project_name+'</option>');
+                $("#appIndex").append(option);
+            }
+            var del = $('<option value="0" style="color: red;">撤销</option>');
+            $("#appIndex").append(del);
+        });
+    });
+}
+
+function doRecommAdImg(){
+    $(".recommendDiv").css("display","none");
+    $(".addRecommendDiv").css("display","block");
+    // $.get('/backApp/project/getRecommendImg',function (res) {
+    $.get('/backApp/project/getRecommendPro',function (res) {
+       if (res.status == 200){
+           var data = res.data;
+           var imgs = $(".recommendDiv").find("img");
+           var bs = $(".recommendDiv").find("b");
+           for (var i = 0; i < data.length; i++) {
+               $(imgs[i]).parent().css("display", "block");
+               $(imgs[i]).attr("src", "/backApp" + data[i].url);
+               $(bs[i]).text(data[i].project_name);
+               $(bs[i]).val(data[i].index);
+           }
+           if (data.length == 4){
+               $(".addRecommendDiv").css("display","none");
+           }
+       }
+    });
+}
+
+function doRecommendTable() {
+    var fileds = {
+        develop: "地产商",
+        project_name: "项目名称",
+        price: "宣传费用",
+        publish_time: "宣传时间"
+    };
+    // $.get('/backApp/project/getRecommendPro', function (res) {
+    $.get('/backApp/project/getRecommendImg', function (res) {
+        if (res.status == 200) {
+            var data = res.data;
+            recomm_length = data.length;
+            var columns = [];
+            for (var attr in data[0]) {
+                if (attr == "desc_pic" || attr.indexOf("index") > -1 || attr == "url" || attr.indexOf("id") > -1) {
+                    continue;
+                }
+                var column = {
+                    field: attr,
+                    title: fileds[attr],
+                    valign: "middle",
+                    align: "center",
+                    visible: true,
+                    formatter: paramsMatter
+                };
+                columns.push(column);
+            }
+            columns.reverse();
+            columns.push({
+                field: 'operate',
+                title: '操作',
+                valign: "middle",
+                align: 'center',
+                events: recommOperateEvents,
+                formatter: recommOperateFormatter
+            });
+            initTable(columns, data);
+        }
+    });
 }
 
 /*头条管理_超级管理员*/
@@ -268,6 +377,8 @@ function newsManage() {
         var newsHtml = '<div style="background-color: #fff;height: 100%;">' +
             '       <div class="main-right-search"> ' +
             '           <input type="text" id="newsTitle" style="display: inline" class="form-control" placeholder="请输入标题"/> ' +
+            // '               <button type="button" class="btn-primary btn" style="display: inline;margin-left: 20px" id="queryNews">查询</button>'+
+            '               <button type="button" class="btn-primary btn" style="float: right;display: inline;margin-left: 20px" id="addNews">添加</button>' +
             '               <button type="button" class="btn-primary btn" style="display: inline;margin-left: 20px" id="queryNews">查询</button>'+
             '               <button type="button" class="btn-primary btn" style="float: right;display: inline;margin-left: 20px" id="addNews">添加</button>'+
             '       </div> ' +
@@ -285,8 +396,8 @@ function newsManage() {
         $("#queryNews").on("click", function () {
             queryNewsByTitle();
         });
-        $("#addNews").on('click',function () {
-           addNews();
+        $("#addNews").on('click', function () {
+            addNews();
         });
     });
 }
@@ -301,14 +412,14 @@ function newsList() {
 
 function queryNewsByTitle() {
     var title = $("#newsTitle").val();
-    $.get('/backApp/news/queryNewsByTitle',{title:title},function (res) {
-        if (res.status == 200){
+    $.get('/backApp/news/queryNewsByTitle', {title: title}, function (res) {
+        if (res.status == 200) {
             doNewsTable(res);
         }
     })
 }
 
-function doNewsTable (res) {
+function doNewsTable(res) {
     var news_fileds = {
         "gid": "ID",
         "picture": "图片",
@@ -330,11 +441,11 @@ function doNewsTable (res) {
             // sortable: true,
             visible: true,
         };
-        if (attr == "picture"){
+        if (attr == "picture") {
             column.formatter = imgParamsMatter;
-        }else if (attr == "linkUrl"){
+        } else if (attr == "linkUrl") {
             column.formatter = linkParamsMatter;
-        }else {
+        } else {
             column.formatter = paramsMatter;
         }
 
@@ -352,50 +463,50 @@ function doNewsTable (res) {
     initTable(columns, res.data);
 }
 
-function addNews(){
+function addNews() {
     var newsHtml = '<div id="newsDiv" style="background: #e9edf3;padding-top: 1em;padding-bottom: 1em;text-align: center;">' +
-            '            <form id="newsForm" method="post" enctype="multipart/form-data">' +
-            '                <table style="border-collapse: separate;border-spacing: 5px;margin: auto;">' +
-            '                    <tr>' +
-            '                        <td style="text-align: right">标题：</td>' +
-            '                        <td style="text-align: left" colspan="2"><input type="text" name="title" style="width: 25em;"/></td>' +
-            '                    </tr>' +
-            '                    <tr>' +
-            '                        <td style="text-align: right">图片：</td>' +
-            '                        <td style="text-align: left"><input id="newsFile" type="file" name="pictureFile" onchange="uploadImg(this)" accept="image/gif,image/jpeg,image/jpg,image/png" style="width: 16em;"/></td>' +
-            '                        <td><img id="newsImg" src="" style="display: none;width: auto;height: auto;max-width: 10em;max-height: 5em;"/></td>' +
-            '                    </tr>' +
-            '                    <tr>' +
-            '                        <td style="text-align: right">内容：</td>' +
-            '                        <td style="text-align: left" colspan="2"><textarea name="content" style="width: 25em;height: 10em;"></textarea></td>' +
-            '                    </tr>' +
-            '                    <tr>' +
-            '                        <td style="text-align: right">链接：</td>' +
-            '                        <td style="text-align: left" colspan="2"><input type="text" name="linkUrl" style="width: 25em;"/></td>' +
-            '                    </tr>' +
-            '                </table>' +
-            '            </form>' +
-            // '            <button type="button" class="btn btn-primary btn-sm" style="margin-right:15px;">添加</button>' +
-            '        </div>';
+        '            <form id="newsForm" method="post" enctype="multipart/form-data">' +
+        '                <table style="border-collapse: separate;border-spacing: 5px;margin: auto;">' +
+        '                    <tr>' +
+        '                        <td style="text-align: right">标题：</td>' +
+        '                        <td style="text-align: left" colspan="2"><input type="text" name="title" style="width: 25em;"/></td>' +
+        '                    </tr>' +
+        '                    <tr>' +
+        '                        <td style="text-align: right">图片：</td>' +
+        '                        <td style="text-align: left"><input id="newsFile" type="file" name="pictureFile" onchange="uploadImg(this)" accept="image/gif,image/jpeg,image/jpg,image/png" style="width: 16em;"/></td>' +
+        '                        <td><img id="newsImg" src="" style="display: none;width: auto;height: auto;max-width: 10em;max-height: 5em;"/></td>' +
+        '                    </tr>' +
+        '                    <tr>' +
+        '                        <td style="text-align: right">内容：</td>' +
+        '                        <td style="text-align: left" colspan="2"><textarea name="content" style="width: 25em;height: 10em;"></textarea></td>' +
+        '                    </tr>' +
+        '                    <tr>' +
+        '                        <td style="text-align: right">链接：</td>' +
+        '                        <td style="text-align: left" colspan="2"><input type="text" name="linkUrl" style="width: 25em;"/></td>' +
+        '                    </tr>' +
+        '                </table>' +
+        '            </form>' +
+        // '            <button type="button" class="btn btn-primary btn-sm" style="margin-right:15px;">添加</button>' +
+        '        </div>';
     layer.open({
         type: 1, offset: '250px', area: '650px', title: '添加爱家头条',
         content: '<div id="addNewsDiv"></div>',
-        btn: ['确认','取消'],
+        btn: ['确认', '取消'],
         yes: function (index, layero) {
-            if ($("#newsForm input[name=title]").val().replace(/^\s*|\s*$/g,"") == ""){
-                layer.msg("标题不能为空!",{icon:2});
+            if ($("#newsForm input[name=title]").val().replace(/^\s*|\s*$/g, "") == "") {
+                layer.msg("标题不能为空!", {icon: 2});
                 return;
             }
-            if ($("#newsForm input[name=pictureFile]").val() == ""){
-                layer.msg("图片不能为空!",{icon:2});
+            if ($("#newsForm input[name=pictureFile]").val() == "") {
+                layer.msg("图片不能为空!", {icon: 2});
                 return;
             }
-            if ($("#newsForm textarea[name=content]").val().replace(/^\s*|\s*$/g,"") == ""){
-                layer.msg("内容不能为空!",{icon:2});
+            if ($("#newsForm textarea[name=content]").val().replace(/^\s*|\s*$/g, "") == "") {
+                layer.msg("内容不能为空!", {icon: 2});
                 return;
             }
-            if ($("#newsForm input[name=linkUrl]").val().replace(/^\s*|\s*$/g,"") == ""){
-                layer.msg("链接不能为空!",{icon:2});
+            if ($("#newsForm input[name=linkUrl]").val().replace(/^\s*|\s*$/g, "") == "") {
+                layer.msg("链接不能为空!", {icon: 2});
                 return;
             }
 
@@ -704,10 +815,10 @@ function fileChange(target, id) {
     // var filetypes =[".jpg",".png",".rar",".txt",".zip",".doc",".ppt",".xls",".pdf",".docx",".xlsx"];
     var filetypes;
     var msg;
-    if (inputName == "xmtb"){
-        filetypes = [".jpg",".png","jpeg"];
+    if (inputName == "xmtb") {
+        filetypes = [".jpg", ".png", "jpeg"];
         msg = "图片";
-    }else if (inputName == "spjs" || inputName == "xswd") {
+    } else if (inputName == "spjs" || inputName == "xswd") {
         filetypes = [".doc", ".docx", ".pdf"];
         msg = "Word或Pdf文件";
     } else if (inputName == "cusExcel") {
@@ -773,7 +884,7 @@ function projectManage() {
         var proListHtml = '<div style="background-color: #fff;height: 100%;">' +
             '       <div class="main-right-search"> ' +
             '           <input type="text" id="projectName" style="display: inline" class="form-control" placeholder="请输入项目名称"/> ' +
-            '               <button type="button" class="btn-primary btn" style="display: inline;margin-left: 20px" id="queryPro">查询</button>'+
+            '               <button type="button" class="btn-primary btn" style="display: inline;margin-left: 20px" id="queryPro">查询</button>' +
             '       </div> ' +
             '       <div class="table-responsive"> ' +
             '           <table id="rightTable" class="table text-nowrap"></table> ' +
@@ -849,7 +960,7 @@ function projectList() {
     });
 }
 
-function doProjectTable(res){
+function doProjectTable(res) {
     var project_fields = {
         gid: "ID",
         name: "项目名称",
@@ -917,18 +1028,18 @@ function paramsMatter(value, row, index) {
     return "<span title=" + value + ">" + value + "</span>";
 }
 
-function  imgParamsMatter(value, row, index) {
+function imgParamsMatter(value, row, index) {
     if (value == null || value == "null") {
         value = "-";
     }
-    return "<img src='/backApp"+value+"'>";
+    return "<img src='/backApp" + value + "'>";
 }
 
-function  linkParamsMatter(value, row, index) {
+function linkParamsMatter(value, row, index) {
     if (value == null || value == "null") {
         value = "-";
     }
-    return "<a href='"+value+"' target='_blank'>"+value+"</a>";
+    return "<a href='" + value + "' target='_blank'>" + value + "</a>";
 }
 
 /*人员管理_管理员*/
@@ -976,15 +1087,15 @@ function userManage() {
                     var form = layui.form
                         , layer = layui.layer
                 });
-                    $("#searchUser").append('<span><select id="proName" name="proName"><option value="" selected>请选择项目名</option></select></span>' +
-                        '<span><input id="userName" type="text" class="form-control" placeholder="请输入分销商姓名"/></span>' +
-                        '<span><input id="userTel" type="text" class="form-control" placeholder="请输入电话号码"/></span>' +
-                        '<span><input  type="text" class="form-control" placeholder="请选择起始报备时间" readonly="readonly" id="fromReport"/></span>' +
-                        '<span style="width: 2em;line-height: 30px;margin-right: 1em;">至</span>' +
-                        '<span><input  type="text" class="form-control" placeholder="请选择终止报备时间" readonly="readonly" id="toReport"/></span>');
-                    $("#searchUser").append('<button id="findUser" class="btn btn-primary" type="button" style="margin-right: 2em;">查询</button>');
-                    $("#searchUser").append('<button id="downExcel" class="btn btn-primary" type="button" style="float: right;margin-right: 2em;">导出</button>');
-                    $("#searchUser").append('<button id="exportCustomer" class="btn btn-primary" type="button" style="float: right;margin-right: 2em;">批量报备</button>');
+                $("#searchUser").append('<span><select id="proName" name="proName"><option value="" selected>请选择项目名</option></select></span>' +
+                    '<span><input id="userName" type="text" class="form-control" placeholder="请输入分销商姓名"/></span>' +
+                    '<span><input id="userTel" type="text" class="form-control" placeholder="请输入电话号码"/></span>' +
+                    '<span><input  type="text" class="form-control" placeholder="请选择起始报备时间" readonly="readonly" id="fromReport"/></span>' +
+                    '<span style="width: 2em;line-height: 30px;margin-right: 1em;">至</span>' +
+                    '<span><input  type="text" class="form-control" placeholder="请选择终止报备时间" readonly="readonly" id="toReport"/></span>');
+                $("#searchUser").append('<button id="findUser" class="btn btn-primary" type="button" style="margin-right: 2em;">查询</button>');
+                $("#searchUser").append('<button id="downExcel" class="btn btn-primary" type="button" style="float: right;margin-right: 2em;">导出</button>');
+                $("#searchUser").append('<button id="exportCustomer" class="btn btn-primary" type="button" style="float: right;margin-right: 2em;">批量报备</button>');
                 findAllProject();
                 $("#proName,#userName,#userTel,#fromReport,#toReport").on('keypress', function (e) {
                     if (e.keyCode == "13") {
@@ -1017,14 +1128,15 @@ function userManage() {
 
 function findAllProject() {
     $.get('/backApp/project/getAllProject', function (res) {
-        for(var i=0;i<res.data.length;i++){
-            var projectName =res.data[i].name;
-            var option =$("<option value="+projectName+">"+projectName+"</option>");
+        for (var i = 0; i < res.data.length; i++) {
+            var projectName = res.data[i].name;
+            var option = $("<option value=" + projectName + ">" + projectName + "</option>");
             $("#proName").append(option);
         }
         $('select').searchableSelect();
     })
 }
+
 /**
  * 导出Excel表格
  * @param role
@@ -1338,7 +1450,7 @@ function findUserByOptions(role) {
     }
     $.post("/backApp/user/findUser", data, function (res) {
         if (res.status == 200) {
-            doUserTable(role,res);
+            doUserTable(role, res);
         } else {
             layer.msg(res.msg, {icon: 1});
         }
@@ -1377,7 +1489,7 @@ function findCustomer() {
             //     columns.push(column);
             // }
             // initTable(columns, res.data);
-            doUserTable("客户",res);
+            doUserTable("客户", res);
         } else {
             layer.msg(res.msg, {icon: 1});
         }
@@ -1387,12 +1499,12 @@ function findCustomer() {
 function getUserByRole(role) {
     $.get('/backApp/user/getUserByRole', {role: role}, function (res) {
         if (res.status == 200) {
-            doUserTable(role,res);
+            doUserTable(role, res);
         }
     })
 }
 
-function doUserTable(role,res){
+function doUserTable(role, res) {
     var user_fields = {
         user: {
             gid: "ID",
@@ -1438,10 +1550,7 @@ function doUserTable(role,res){
         if (attr.indexOf("gid") > -1 || attr.indexOf("Id") > -1 || attr == "channelCommTel" || attr == "channelComm" || attr == "disCompany" || attr == "disLinkman" || attr == "disLinktel" || attr == "size" || attr == "license" || attr == "remark") {
             continue;
         }
-        if (role == "管理员" && attr.indexOf("count") > -1) {
-            continue;
-        }
-        if (role == "管理员" && attr.indexOf("ch") > -1) {
+        if (role == "管理员" && (attr == "count" || attr.indexOf("ch") > -1)) {
             continue;
         }
         var titles;
@@ -1550,7 +1659,7 @@ function userOperateFormatter(value, row, index) {
         }
     }
     btns.push('<button type="button" class="RoleOfedit btn btn-primary  btn-sm" style="margin-right:15px;">修改</button>');
-    if (row.roleId == 3){
+    if (row.roleId == 3) {
         if (row.state == "正常") {
             btns.push('<button type="button" class="RoleOfdisable btn btn-primary  btn-sm" style="margin-right:15px;">禁用</button>');
         } else {
@@ -1568,11 +1677,20 @@ function userOperateFormatter(value, row, index) {
 // }
 
 function recommOperateFormatter(value, row, index) {
-    return [
-        '<button type="button" class="recommOfedit btn btn-primary  btn-sm" style="margin-right:15px;">修改</button>',
-        '<button type="button" class="recommOfdisable btn btn-primary  btn-sm" style="margin-right:15px;">停止</button>',
-        '<button type="button" class="recommOfdelete btn btn-primary  btn-sm" style="margin-right:15px;">删除</button>'
-    ].join('');
+    var arr = [];
+    arr.push('<button type="button" class="recommOftop btn btn-primary  btn-sm" style="margin-right:15px;">置顶</button>');
+    if (index == 0) {
+        arr.push('<button type="button" class="recommOfup btn btn-primary  btn-sm" style="margin-right:15px;" disabled="true">上移</button>');
+    } else {
+        arr.push('<button type="button" class="recommOfup btn btn-primary  btn-sm" style="margin-right:15px;">上移</button>');
+    }
+    if (index == recomm_length - 1) {
+        arr.push('<button type="button" class="recommOfdown btn btn-primary  btn-sm" style="margin-right:15px;" disabled="true">下移</button>');
+    } else {
+        arr.push('<button type="button" class="recommOfdown btn btn-primary  btn-sm" style="margin-right:15px;">下移</button>');
+    }
+    arr.push('<button type="button" class="recommOfdelete btn btn-primary  btn-sm" style="margin-right:15px;">删除</button>');
+    return arr.join('');
 }
 
 function projectOperateFormatter(value, row, index) {
@@ -1602,15 +1720,15 @@ window.userOperateEvents = {
         $.get("/backApp/findPicUrl?disId="+row.gid,function (res) {
             var index = layer.open({
                 type: 1,
-                title: "审核图片", //不显示标题栏
+                title: "查看营业执照", //不显示标题栏
                 closeBtn: true,
-                area: ['80%','60%'],
+                area: ['50%','50%'],
                 shade: 0.8,
                 id: 'LAY_layuipro', //设定一个id，防止重复弹出
                 btn: ['取消'],
                 // btnAlign: 'r',
                 moveType: 1, //拖拽模式，0或者1
-                content: '<div><img id="pic"></img></div>',
+                content: '<div style="text-align: center;"><img id="pic" style="width: 50%;height: 50%;"></img></div>',
                 success: function (layero) {
                     $("#pic").attr("src","/backApp"+res.msg);
                 }
@@ -1776,18 +1894,51 @@ window.userOperateEvents = {
 //     }
 // };
 window.recommOperateEvents = {
-    'click .recommOfedit': function (e, value, row, index) {
-        console.log(row);
-        console.log(index);
-        // $("#editModal").modal('show');
+    'click .recommOftop': function (e, value, row, index) {
+        if (row.index != 1) {
+            $.get('/backApp/project/topRecomm', {index: row.index}, function (res) {
+                if (res.status == 200) {
+                    doRecommendTable();
+                } else {
+                    layer.msg(res.msg, {icon: 2});
+                }
+            });
+        }
     },
-    'click .recommOfdisable': function (e, value, row, index) {
-        console.log(row);
-        console.log(index);
+    'click .recommOfup': function (e, value, row, index) {
+        $.get('/backApp/project/upRecomm', {index: row.index}, function (res) {
+            if (res.status == 200) {
+                doRecommendTable();
+            } else {
+                layer.msg(res.msg, {icon: 2});
+            }
+        });
+    },
+    'click .recommOfdown': function (e, value, row, index) {
+        $.get('/backApp/project/downRecomm', {index: row.index}, function (res) {
+            if (res.status == 200) {
+                doRecommendTable();
+            } else {
+                layer.msg(res.msg, {icon: 2});
+            }
+        });
     },
     'click .recommOfdelete': function (e, value, row, index) {
-        console.log(row);
-        console.log(index);
+        layer.confirm('确认要删除吗？', {
+            btn: ['确定', '取消']//按钮
+        }, function (index) {
+            layer.close(index);
+            //此处请求后台程序，下方是成功后的前台处理……
+            $.get('/backApp/project/deleteRecomById', {recommId: row.gid, index: row.index}, function (res) {
+                if (res.status == 200) {
+                    layer.msg(res.msg, {icon: 1});
+                    doRecommendTable();
+                } else {
+                    layer.msg(res.msg, {icon: 2});
+                }
+                layer.close(index);
+            });
+        });
     }
 };
 window.newsOperateEvents = {
@@ -1799,48 +1950,48 @@ window.newsOperateEvents = {
     'click .newsOfedit': function (e, value, row, index) {
         var newsHtml = '<div id="newsDiv" style="background: #e9edf3;padding-top: 1em;padding-bottom: 1em;text-align: center;">' +
             '            <form id="newsForm" method="post" enctype="multipart/form-data">' +
-            '                <input type="hidden" value="'+row.gid+'" name="gid"/>' +
+            '                <input type="hidden" value="' + row.gid + '" name="gid"/>' +
             '                <table style="border-collapse: separate;border-spacing: 5px;margin: auto;">' +
             '                    <tr>' +
             '                        <td style="text-align: right">标题：</td>' +
-            '                        <td style="text-align: left" colspan="2"><input type="text" name="title" style="width: 25em;" value="'+row.title+'"/></td>' +
+            '                        <td style="text-align: left" colspan="2"><input type="text" name="title" style="width: 25em;" value="' + row.title + '"/></td>' +
             '                    </tr>' +
             '                    <tr>' +
             '                        <td style="text-align: right">图片：</td>' +
             '                        <td style="text-align: left;"><input id="newsFile" type="file" name="pictureFile" onchange="uploadImg(this)" accept="image/gif,image/jpeg,image/jpg,image/png" style="width: 16em;"/></td>' +
-            '                        <td><img id="newsImg" src="/backApp'+row.picture+'" style="width: auto;height: auto;max-width: 10em;max-height: 5em;"/></td>' +
+            '                        <td><img id="newsImg" src="/backApp' + row.picture + '" style="width: auto;height: auto;max-width: 10em;max-height: 5em;"/></td>' +
             '                    </tr>' +
             '                    <tr>' +
             '                        <td style="text-align: right">内容：</td>' +
-            '                        <td style="text-align: left" colspan="2"><textarea name="content" style="width: 25em;height: 10em;" value="'+row.content+'">'+row.content+'</textarea></td>' +
+            '                        <td style="text-align: left" colspan="2"><textarea name="content" style="width: 25em;height: 10em;" value="' + row.content + '">' + row.content + '</textarea></td>' +
             '                    </tr>' +
             '                    <tr>' +
             '                        <td style="text-align: right">链接：</td>' +
-            '                        <td style="text-align: left" colspan="2"><input type="text" name="linkUrl" style="width: 25em;" value="'+row.linkUrl+'"/></td>' +
+            '                        <td style="text-align: left" colspan="2"><input type="text" name="linkUrl" style="width: 25em;" value="' + row.linkUrl + '"/></td>' +
             '                    </tr>' +
             '                </table>' +
             '            </form>' +
             // '            <button type="button" class="btn btn-primary btn-sm" style="margin-right:15px;">添加</button>' +
             '        </div>';
         layer.open({
-            type: 1, offset: 'auto', area: ['40%','55%'], title: '修改爱家头条',
+            type: 1, offset: 'auto', area: ['40%', '55%'], title: '修改爱家头条',
             content: '<div id="editNewsDiv"></div>',
-            btn: ['确认','取消'],
+            btn: ['确认', '取消'],
             yes: function (index, layero) {
-                if ($("#newsForm input[name=title]").val().replace(/^\s*|\s*$/g,"") == ""){
-                    layer.msg("标题不能为空!",{icon:2});
+                if ($("#newsForm input[name=title]").val().replace(/^\s*|\s*$/g, "") == "") {
+                    layer.msg("标题不能为空!", {icon: 2});
                     return;
                 }
                 // if ($("#newsForm input[name=pictureFile]").val() == ""){
                 //     layer.msg("图片不能为空!",{icon:2});
                 //     return;
                 // }
-                if ($("#newsForm textarea[name=content]").val().replace(/^\s*|\s*$/g,"") == ""){
-                    layer.msg("内容不能为空!",{icon:2});
+                if ($("#newsForm textarea[name=content]").val().replace(/^\s*|\s*$/g, "") == "") {
+                    layer.msg("内容不能为空!", {icon: 2});
                     return;
                 }
-                if ($("#newsForm input[name=linkUrl]").val().replace(/^\s*|\s*$/g,"") == ""){
-                    layer.msg("链接不能为空!",{icon:2});
+                if ($("#newsForm input[name=linkUrl]").val().replace(/^\s*|\s*$/g, "") == "") {
+                    layer.msg("链接不能为空!", {icon: 2});
                     return;
                 }
 
@@ -1885,7 +2036,7 @@ window.newsOperateEvents = {
             $.get('/backApp/news/deleteNewsById', {newsId: row.gid}, function (res) {
                 if (res.status == 200) {
                     layer.msg(res.msg, {icon: 1});
-                    newsList();
+                    doRecommendTable();
                 } else {
                     layer.msg(res.msg, {icon: 2});
                 }
@@ -1911,80 +2062,80 @@ window.projectOperateEvents = {
     },
     'click .ProOfedit': function (e, value, row, index) {
         var div = $('<div id="editpro"></div>');
-        if(row.commission==null){
-            row.commission="";
+        if (row.commission == null) {
+            row.commission = "";
         }
-        if(row.keyword==null){
-            row.keyword="";
+        if (row.keyword == null) {
+            row.keyword = "";
         }
-        if(row.header==null){
-            row.header="";
+        if (row.header == null) {
+            row.header = "";
         }
-        if(row.backTime==null){
-            row.backTime="";
+        if (row.backTime == null) {
+            row.backTime = "";
         }
-        if(row.tel==null){
-            row.tel="";
+        if (row.tel == null) {
+            row.tel = "";
         }
-        if(row.description==null){
-            row.description="";
+        if (row.description == null) {
+            row.description = "";
         }
         var html = '<form id="editForm" action="#" method="post" name="editProForm">' +
-                '        <table style="border-collapse:separate; border-spacing:0.5em;margin: auto;">' +
-                '            <tr>' +
-                '                <td>项目名称:</td>' +
-                '                <td><input type="text" name="name" value="'+row.name+'"/></td>' +
-                '                <td>分销商数:</td>' +
-                '                <td><input type="text" name="disnum" value="'+row.disnum+'"/></td>' +
-                '            </tr>' +
-                '            <tr>' +
-                '                <td>项目单价:</td>' +
-                '                <td><input type="text" name="price" value="'+row.price+'"/></td>' +
-                '                <td>佣金:</td>' +
-                '                <td><input type="text" name="commission" value="'+row.commission+'"/></td>' +
-                '            </tr>' +
-                '            <tr>' +
-                '                <td>地址:</td>' +
-                '                <td><input type="text" name="address" value="'+row.address+'"/></td>' +
-                '                <td>关键字:</td>' +
-                '                <td></span><input type="text" name="keyword" value="'+row.keyword+'"/></td>' +
-                '            </tr>' +
-                '            <tr>' +
-                '                <td>负责人:</td>' +
-                '                <td><input type="text" name="header" value="'+row.header+'"/></td>' +
-                '                <td>电话:</td>' +
-                '                <td><input type="text" name="tel" value="'+row.tel+'"/></td>' +
-                '            </tr>' +
-                '            <tr>' +
-                '                <td>报备时间:</td>' +
-                '                <td><input type="text" name="backTime" id="startReportTime" value="'+row.backTime+'"/></td>' +
-                '                <td>项目状态:</td>' +
-                '                <td><input type="radio"  name="state" value="在售"/>在售<input type="radio" name="state" value="暂停"/>暂停<input type="radio" name="state" value="售罄"/>售罄</td>' +
-                '            </tr>' +
-                '            <tr>' +
-                '                <td>房型:</td>' +
-                '                <td>' +
-                '                    <select id="proType" name="type">' +
-                '                       <option value="住宅">住宅</option>' +
-                '                       <option value="商铺">商铺</option>' +
-                '                       <option value="写字楼">写字楼</option>' +
-                '                       <option value="公寓">公寓</option>' +
-                '                       <option value="二手房">二手房</option>' +
-                '                       <option value="其他项目">其他项目</option>' +
-                '                    </select>' +
-                '                </td>' +
-                '                <td>报备次数限制:</td>' +
-                '                <td><input name="reportLimit" value="'+row.reportLimit+'"/></td>' +
-                '            </tr>' +
-                '            <tr>' +
-                '                <td>开发商:</td>' +
-                '                <td><input type="text" name="develop" value="'+row.develop+'"/></td>' +
-                '                <td>项目描述:</td>' +
-                '                <td><textarea name="description">'+row.description+'</textarea></td>' +
-                '            </tr>' +
-                '        </table>' +
-                '        <input type="hidden" name="gid" value="'+row.gid+'"/>' +
-                '    </form>';
+            '        <table style="border-collapse:separate; border-spacing:0.5em;margin: auto;">' +
+            '            <tr>' +
+            '                <td>项目名称:</td>' +
+            '                <td><input type="text" name="name" value="' + row.name + '"/></td>' +
+            '                <td>分销商数:</td>' +
+            '                <td><input type="text" name="disnum" value="' + row.disnum + '"/></td>' +
+            '            </tr>' +
+            '            <tr>' +
+            '                <td>项目单价:</td>' +
+            '                <td><input type="text" name="price" value="' + row.price + '"/></td>' +
+            '                <td>佣金:</td>' +
+            '                <td><input type="text" name="commission" value="' + row.commission + '"/></td>' +
+            '            </tr>' +
+            '            <tr>' +
+            '                <td>地址:</td>' +
+            '                <td><input type="text" name="address" value="' + row.address + '"/></td>' +
+            '                <td>关键字:</td>' +
+            '                <td></span><input type="text" name="keyword" value="' + row.keyword + '"/></td>' +
+            '            </tr>' +
+            '            <tr>' +
+            '                <td>负责人:</td>' +
+            '                <td><input type="text" name="header" value="' + row.header + '"/></td>' +
+            '                <td>电话:</td>' +
+            '                <td><input type="text" name="tel" value="' + row.tel + '"/></td>' +
+            '            </tr>' +
+            '            <tr>' +
+            '                <td>报备时间:</td>' +
+            '                <td><input type="text" name="backTime" id="startReportTime" value="' + row.backTime + '"/></td>' +
+            '                <td>项目状态:</td>' +
+            '                <td><input type="radio"  name="state" value="在售"/>在售<input type="radio" name="state" value="暂停"/>暂停<input type="radio" name="state" value="售罄"/>售罄</td>' +
+            '            </tr>' +
+            '            <tr>' +
+            '                <td>房型:</td>' +
+            '                <td>' +
+            '                    <select id="proType" name="type">' +
+            '                       <option value="住宅">住宅</option>' +
+            '                       <option value="商铺">商铺</option>' +
+            '                       <option value="写字楼">写字楼</option>' +
+            '                       <option value="公寓">公寓</option>' +
+            '                       <option value="二手房">二手房</option>' +
+            '                       <option value="其他项目">其他项目</option>' +
+            '                    </select>' +
+            '                </td>' +
+            '                <td>报备次数限制:</td>' +
+            '                <td><input name="reportLimit" value="' + row.reportLimit + '"/></td>' +
+            '            </tr>' +
+            '            <tr>' +
+            '                <td>开发商:</td>' +
+            '                <td><input type="text" name="develop" value="' + row.develop + '"/></td>' +
+            '                <td>项目描述:</td>' +
+            '                <td><textarea name="description">' + row.description + '</textarea></td>' +
+            '            </tr>' +
+            '        </table>' +
+            '        <input type="hidden" name="gid" value="' + row.gid + '"/>' +
+            '    </form>';
         div.html(html);
         layer.open({
             type: 1, offset: '250px', area: '800px', title: '项目修改',

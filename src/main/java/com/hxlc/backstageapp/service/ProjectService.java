@@ -37,4 +37,20 @@ public interface ProjectService {
     SysObject downloadProData(HttpServletResponse response, Integer proId);
 
     Project getProjectByID(Integer proId);
+
+    Integer deleteRecomById(Integer recommId,Integer index);
+
+    Integer upRecomm(Integer index);
+
+    Integer downRecomm(Integer index);
+
+    Integer topRecomm(Integer index);
+
+    List<Map> getRecommendImg();
+
+    Integer editProAD(Integer currentIndex, Integer repalceIndex);
+
+    List<Map> queryUnRecommPro();
+
+    Integer addProRecomAD(Integer gid);
 }

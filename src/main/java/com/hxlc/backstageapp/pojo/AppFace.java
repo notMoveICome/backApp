@@ -13,6 +13,7 @@ public class AppFace implements Serializable {
     private Integer projectId;
     private Integer index;
     private String price;
+    private Integer adIndex;
     private String publishTime;
     private String remark;
 
@@ -62,5 +63,13 @@ public class AppFace implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public Integer getAdIndex() {
+        return adIndex;
+    }
+
+    public void setAdIndex(Integer adIndex) {
+        this.adIndex = adIndex;
     }
 }

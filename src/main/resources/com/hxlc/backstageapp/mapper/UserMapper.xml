@@ -2,42 +2,53 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.hxlc.backstageapp.mapper.UserMapper">
     <select id="selectAllUser" resultType="com.hxlc.backstageapp.pojo.DistributorInfo">
-    SELECT
-		*
+   SELECT
+		E.*
 	FROM
 		(
 			SELECT
-				u.*, di.dis_id,
-				di.check_state,
-				di.channel_comm,
-				di. SIZE,
-				di.license
+				D.*, COALESCE (D.co, 0) AS COUNT
 			FROM
-				user_info u,
-				distributor_info di
-			WHERE
-				di.dis_id = u.gid
-			AND u.role_id IN (1, 2)
-		) C
-	LEFT JOIN (
-		SELECT
-			A .sale_id,
-			COUNT (A .tel)
-		FROM
-			(
-				SELECT
-					ui.*, ci.sale_id
-				FROM
-					user_info ui,
-					customer_info ci
-				WHERE
-					(ui.role_id = 1 OR ui.role_id = 2)
-				AND ui.gid = ci.sale_id
-			) A
-		GROUP BY
-			A .sale_id
-	) B ON C .gid = B.sale_id
-	ORDER BY c.gid
+				(
+					SELECT
+						*
+					FROM
+						(
+							SELECT
+								u.*, di.dis_id,
+								di.check_state,
+								di.channel_comm,
+								di. SIZE,
+								di.license
+							FROM
+								user_info u,
+								distributor_info di
+							WHERE
+								di.dis_id = u.gid
+							AND u.role_id IN (1, 2)
+						) C
+					LEFT JOIN (
+						SELECT
+							A .sale_id,
+							COUNT (A .tel) AS co -- (case when count(A .tel) IS NULL then 0 else count(A .tel) end) AS count
+						FROM
+							(
+								SELECT
+									ui.*, ci.sale_id
+								FROM
+									user_info ui,
+									customer_info ci
+								WHERE
+									(ui.role_id = 1 OR ui.role_id = 2)
+								AND ui.gid = ci.sale_id
+							) A
+						GROUP BY
+							A .sale_id
+					) B ON C .gid = B.sale_id
+				) D
+		) E
+	ORDER BY
+		E. COUNT DESC
     </select>
 
     <select id="findUserByCondition" resultType="com.hxlc.backstageapp.pojo.DistributorInfo">

@@ -219,6 +219,121 @@ public class ProjectServiceImpl implements ProjectService {
         return projectMapper.selectProById(proId);
     }
 
+    @Transactional
+    @Override
+    public Integer deleteRecomById(Integer recommId,Integer index) {
+        Integer row = appFaceMapper.deleteById(recommId);
+        if (row > 0){
+            appFaceMapper.updateIndexUp(index);
+        }
+        return row;
+    }
+
+    @Transactional
+    @Override
+    public Integer upRecomm(Integer index) {
+        AppFace appFace0 = new AppFace();
+        appFace0.setIndex(0);
+        appFaceMapper.update(appFace0,new EntityWrapper<AppFace>().eq("index",index));
+
+        AppFace appFace2 = new AppFace();
+        appFace2.setIndex(index);
+        appFaceMapper.update(appFace2, new EntityWrapper<AppFace>().eq("index", index - 1));
+        AppFace appFace1 = new AppFace();
+        appFace1.setIndex(index - 1);
+        Integer row = appFaceMapper.update(appFace1,new EntityWrapper<AppFace>().eq("index",0));
+        return row;
+    }
+
+    @Transactional
+    @Override
+    public Integer downRecomm(Integer index) {
+//        Integer count = appFaceMapper.selectCount(new EntityWrapper<AppFace>());
+//        if (count == index){
+//            return 1;
+//        }
+        AppFace appFace0 = new AppFace();
+        appFace0.setIndex(0);
+        appFaceMapper.update(appFace0,new EntityWrapper<AppFace>().eq("index",index));
+
+        AppFace appFace2 = new AppFace();
+        appFace2.setIndex(index);
+        appFaceMapper.update(appFace2, new EntityWrapper<AppFace>().eq("index", index + 1));
+        AppFace appFace1 = new AppFace();
+        appFace1.setIndex(index + 1);
+        Integer row = appFaceMapper.update(appFace1,new EntityWrapper<AppFace>().eq("index",0));
+        return row;
+    }
+
+    @Transactional
+    @Override
+    public Integer topRecomm(Integer index) {
+        AppFace appFace = new AppFace();
+        appFace.setIndex(0);
+        appFaceMapper.update(appFace,new EntityWrapper<AppFace>().eq("index",index));
+
+        appFaceMapper.updateIndexDown(index);
+        AppFace appFace1 = new AppFace();
+        appFace1.setIndex(1);
+        Integer row = appFaceMapper.update(appFace1, new EntityWrapper<AppFace>().eq("index", 0));
+        return row;
+    }
+
+    @Override
+    public List<Map> getRecommendImg() {
+        return projectMapper.getRecommendImg();
+    }
+
+    @Transactional
+    @Override
+    public Integer editProAD(Integer currentIndex, Integer repalceIndex) {
+        // 取出两个对象
+        AppFace appFace0 = new AppFace();
+        appFace0.setIndex(currentIndex);
+        AppFace one0 = appFaceMapper.selectOne(appFace0);
+        // 下架
+        if (repalceIndex == 0){     // 表示下架,不是替换
+//            AppFace appFace = new AppFace();
+//            appFace.setAdIndex(null);
+            Integer rs = appFaceMapper.updateAdIndex(null,one0.getGid());
+            appFaceMapper.updateAdIndexUp(one0.getAdIndex());
+            return rs;
+        }
+
+        AppFace appFace1 = new AppFace();
+        appFace1.setIndex(repalceIndex);
+        AppFace one1 = appFaceMapper.selectOne(appFace1);
+        //换位置
+//        AppFace appFace2 = new AppFace();
+//        appFace2.setAdIndex(one0.getAdIndex());//互换
+//        Integer row = appFaceMapper.update(appFace2,new EntityWrapper<AppFace>().eq("gid",one0.getGid()));
+        Integer row = appFaceMapper.updateAdIndex(one1.getAdIndex(), one0.getGid());
+        Integer res = 0;
+        if (row > 0){
+//            AppFace appFace3 = new AppFace();
+//            appFace3.setAdIndex(one0.getAdIndex());
+//            res = appFaceMapper.update(appFace3, new EntityWrapper<AppFace>().eq("gid", one1.getGid()));
+            res = appFaceMapper.updateAdIndex(one0.getAdIndex(),one1.getGid());
+        }
+        return res;
+    }
+
+    @Override
+    public List<Map> queryUnRecommPro() {
+        return projectMapper.queryUnRecommPro();
+    }
+
+    @Transactional
+    @Override
+    public Integer addProRecomAD(Integer gid) {
+        Integer count = appFaceMapper.selectRecomAD();
+        AppFace appFace = new AppFace();
+        appFace.setAdIndex(count + 1);
+        appFace.setGid(gid);
+        Integer row = appFaceMapper.updateById(appFace);
+        return row;
+    }
+
     /**
      * 将MultipartFile文件保存到本地
      * @param filecontent

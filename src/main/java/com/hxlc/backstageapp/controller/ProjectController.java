@@ -4,6 +4,7 @@ import com.hxlc.backstageapp.common.SysObject;
 import com.hxlc.backstageapp.pojo.Media;
 import com.hxlc.backstageapp.pojo.Project;
 import com.hxlc.backstageapp.service.ProjectService;
+import org.apache.commons.collections.bag.SynchronizedSortedBag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -71,6 +72,13 @@ public class ProjectController {
      */
     @RequestMapping("/getRecommendPro")
     public SysObject getRecommendPro() {
+//        return SysObject.ok(projectService.getRecommendPro());
+        return SysObject.ok(projectService.getRecommendImg());
+    }
+
+    @RequestMapping("/getRecommendImg")
+    public SysObject getRecommendImg(){
+//        return SysObject.ok(projectService.getRecommendImg());
         return SysObject.ok(projectService.getRecommendPro());
     }
 
@@ -91,6 +99,90 @@ public class ProjectController {
         }
         return new SysObject(201, "添加失败!", null);
     }
+
+    @RequestMapping("/deleteRecomById")
+    public SysObject deleteRecomById(Integer recommId,Integer index){
+        try {
+            Integer rows = projectService.deleteRecomById(recommId,index);
+            if (rows > 0){
+                return  SysObject.build(200,"删除成功!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return  SysObject.build(201,"删除失败!");
+    }
+
+    @RequestMapping("/topRecomm")
+    public SysObject topRecomm(Integer index){
+        try {
+            Integer row = projectService.topRecomm(index);
+            if (row > 0){
+                return SysObject.build(200,"置顶成功!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return SysObject.build(201,"服务器内部错误!");
+    }
+
+    @RequestMapping("/upRecomm")
+    public SysObject upRecomm(Integer index){
+        try {
+            Integer row = projectService.upRecomm(index);
+            if (row > 0){
+                return SysObject.build(200,"上移成功!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return SysObject.build(201,"服务器内部错误!");
+    }
+
+    @RequestMapping("/downRecomm")
+    public SysObject downRecomm(Integer index){
+        try {
+            Integer row = projectService.downRecomm(index);
+            if (row > 0){
+                return SysObject.build(200,"下移成功!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return SysObject.build(201,"服务器内部错误!");
+    }
+
+    @RequestMapping("/queryUnRecommPro")
+    public  SysObject queryUnRecommPro(){
+        return SysObject.ok(projectService.queryUnRecommPro());
+    }
+
+    @RequestMapping("/addProRecomAD")
+    public SysObject addProRecomAD(Integer gid){
+        try {
+            Integer row = projectService.addProRecomAD(gid);
+            if (row > 0){
+                return SysObject.build(200,"添加成功!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return SysObject.build(500,"服务器内部错误!");
+    }
+
+    @RequestMapping("/editProAD")
+    public SysObject editProAD(Integer currentIndex,Integer repalceIndex){
+        try {
+            Integer row = projectService.editProAD(currentIndex,repalceIndex);
+            if (row > 0){
+                return SysObject.build(200,"修改成功!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return SysObject.build(201,"服务器内部错误!");
+    }
+
 
     //项目查询
     @RequestMapping("/queryPro")

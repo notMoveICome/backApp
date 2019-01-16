@@ -73,6 +73,41 @@
 			A . INDEX
 	</select>
 
+	<select id="getRecommendImg" resultType="map">
+		SELECT
+			A .*, P .develop,
+			P . NAME project_name,
+			b.url
+		FROM
+			(SELECT * FROM app_face) A,
+			media_info b,
+			project_info P
+		WHERE
+			A .project_id = b.project_id
+		AND b. TYPE = '图标'
+		AND b.project_id = P .gid
+		AND A.ad_index !=0
+		ORDER BY
+			A . ad_index
+		LIMIT 4
+	</select>
+
+	<select id="queryUnRecommPro" resultType="map">
+		SELECT
+			A .*, P .develop,
+			P . NAME project_name,
+			b.url
+		FROM
+			(SELECT * FROM app_face) A,
+			media_info b,
+			project_info P
+		WHERE
+			A .project_id = b.project_id
+		AND b. TYPE = '图标'
+		AND b.project_id = P .gid
+		AND A.ad_index IS NULL
+	</select>
+
     <!-- keyProperty:对象属性,若要得到返回的主键,须得类名点
           keyColumn:表中字段
      -->
